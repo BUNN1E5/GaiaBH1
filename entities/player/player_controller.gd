@@ -22,6 +22,8 @@ var gravity : float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export_category("Misc")
 @export var interaction_controller : InteractionController
 @export var cam : Camera3D
+@onready var cam_gimbal : Node3D = cam.get_parent()
+@onready var cam_default_transform : Transform3D = cam.transform
 @export var left_hand : Node3D
 @export var right_hand : Node3D
 
@@ -47,7 +49,7 @@ func _input(event: InputEvent) -> void:
 		var player_settings = PlayerSettings.instance
 		var x_delta = -event.relative.y * PlayerSettings.instance.mouse_sensitivity
 		camera_rotation_x = clamp(camera_rotation_x + x_delta, -deg_to_rad(85), deg_to_rad(85))
-		cam.rotation.x = camera_rotation_x
+		cam_gimbal.rotation.x = camera_rotation_x
 		rotate_y(-event.relative.x * PlayerSettings.instance.mouse_sensitivity)
 
 func _physics_process(delta: float) -> void:

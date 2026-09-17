@@ -99,13 +99,10 @@ func _on_upscaler_selected(_index: int) -> void:
 		get_viewport().scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR
 	elif _index == 2:
 		get_viewport().scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR2
-	elif _index == 3:
-		get_viewport().scaling_3d_mode = Viewport.SCALING_3D_MODE_DLSS
 	pass
 #
 func _on_enable_DLSS_frame_generation(_value : bool) -> void:
 	dlss_frame_gen_toggle.text = "Enabled" if _value else "Disabled"
-	RenderingServer.viewport_set_frame_generation(get_viewport().get_viewport_rid(), _value)
 	
 func _on_fsr_sharpness_changed(_value: float) -> void:
 	fsr_sharpness_label.text = str(_value)

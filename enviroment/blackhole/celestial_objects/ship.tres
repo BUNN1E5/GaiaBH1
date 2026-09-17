@@ -4,11 +4,11 @@
 
 [resource]
 script = ExtResource("1_6jovt")
-position = Vector3(-0.07246, 0, 0.5452313455662173)
-last_position = Vector3(-0.04441519522729442, 0, -0.02808565574865313)
+position = Vector3(0.107297, 0, -0.5577614)
+last_position = Vector3(-0.044415195, 0, -0.028085656)
 mass = 200000.0
 circular_correction_mult = 1.0
-velocity = Vector3(0.07093032811734211, 0, -0.00672)
-velocity_mag = 0.0712479462639718
-circle_str = 0.199968715692474
+velocity = Vector3(-0.07459099, 0, 0.00615153)
+velocity_mag = 0.07484422
+circle_str = 0.21131828658938684
 sub_steps = 1

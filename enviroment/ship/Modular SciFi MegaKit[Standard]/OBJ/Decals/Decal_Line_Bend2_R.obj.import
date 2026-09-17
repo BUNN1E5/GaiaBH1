@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dvecu3ua02vnr"
+path="res://.godot/imported/Decal_Line_Bend2_R.obj-8124a19ae2f123c02e988fcb1a278b3a.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Decal_Line_Bend2_R.obj-8124a19ae2f123c02e988fcb1a278b3a.mesh"]
+
+source_file="res://enviroment/ship/Modular SciFi MegaKit[Standard]/OBJ/Decals/Decal_Line_Bend2_R.obj"
+dest_files=["res://.godot/imported/Decal_Line_Bend2_R.obj-8124a19ae2f123c02e988fcb1a278b3a.mesh", "res://.godot/imported/Decal_Line_Bend2_R.obj-8124a19ae2f123c02e988fcb1a278b3a.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

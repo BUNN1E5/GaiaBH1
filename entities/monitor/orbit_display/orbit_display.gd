@@ -1,7 +1,6 @@
 @tool
 extends Control
 
-
 @export var modifiers : Array[float]
 @export var star_trail := CircularBuffer.new(trail_size)
 @export var ship_trail := CircularBuffer.new(trail_size)

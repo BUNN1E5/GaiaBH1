@@ -14,8 +14,7 @@ var interaction_component : Node
 
 func get_interactable() -> Interactable:
 	if(raycast.is_colliding()):
-		var obj = raycast.get_collider() as Node
-		var interactable = obj.get_node_or_null("InteractableComponent") as Interactable
+		var interactable = raycast.get_collider() as Interactable
 		if interactable and interactable.can_interact:
 			interactable.highlight()
 			return interactable

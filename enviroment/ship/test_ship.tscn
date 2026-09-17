@@ -1,9 +1,11 @@
 [gd_scene format=4 uid="uid://djhqy1cg0w771"]
 
 [ext_resource type="PackedScene" uid="uid://djm07mtqfuu1x" path="res://enviroment/props/monitor/monitor.tscn" id="1_lokjw"]
+[ext_resource type="Script" uid="uid://bg8daxcasdqhy" path="res://entities/interactable/interactable.gd" id="2_b7eu2"]
 [ext_resource type="PackedScene" uid="uid://rlhfhpkbt0nl" path="res://entities/player/player.tscn" id="2_vh8cc"]
 [ext_resource type="Script" uid="uid://b538sift205u6" path="res://entities/interactable/monitor_interactable.gd" id="3_if52q"]
-[ext_resource type="PackedScene" uid="uid://c03663nuhknk3" path="res://entities/interactable/interactable_component.tscn" id="3_thk3k"]
+[ext_resource type="PackedScene" uid="uid://6667ycj0q0cj" path="res://entities/monitor/orbit_display/orbit_display.tscn" id="4_y0c8p"]
+[ext_resource type="Script" uid="uid://bk36gwg7r0nrb" path="res://helpers/circular_buffer.gd" id="5_b7eu2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vh8cc"]
 albedo_color = Color(0.7294118, 0.23529412, 0.6745098, 1)
@@ -52,7 +54,15 @@ emission = Color(0.6955359, 0.6955359, 0.6955359, 1)
 [sub_resource type="PlaneMesh" id="PlaneMesh_fey6a"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_if52q"]
-size = Vector3(2.014286767048361, 0.28375778674126195, 2.0643825894169368)
+size = Vector3(2.0142868, 0.28375778, 2.0643826)
+
+[sub_resource type="Resource" id="Resource_y0c8p"]
+script = ExtResource("5_b7eu2")
+size = 2000
+
+[sub_resource type="Resource" id="Resource_b7eu2"]
+script = ExtResource("5_b7eu2")
+size = 2000
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wawrf"]
 size = Vector3(0.5, 0.5, 0.5)
@@ -66,6 +76,7 @@ size = Vector3(0.5, 0.5, 0.5)
 [node name="TestShip" type="Node3D" unique_id=1190936938]
 
 [node name="Room" type="CSGCombiner3D" parent="." unique_id=567998406]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 use_collision = true
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Room" unique_id=1989388725]
@@ -98,7 +109,7 @@ transform = Transform3D(0.34761474, -0.1578643, 0.079642005, 0, -0.17566472, -0.
 [node name="monitor3" parent="." unique_id=1443245524 instance=ExtResource("1_lokjw")]
 transform = Transform3D(-0.8182833, 0.007056313, 0.0077815503, -0.02109576, 0.002129037, -0.28258565, 0.06574718, 0.08850525, 0.006177433, -0.5052287, -0.7948129, -1.6808244)
 
-[node name="monitor2" type="StaticBody3D" parent="." unique_id=25404224]
+[node name="monitor2" type="StaticBody3D" parent="." unique_id=25404224 node_paths=PackedStringArray("camera_position")]
 transform = Transform3D(0.37798557, 0.085761, -0.043266106, 1.10172245e-08, -0.17566468, -0.348198, -0.09605682, 0.33747137, -0.17025319, -1.3523312, -0.31892085, -1.5582063)
 axis_lock_linear_x = true
 axis_lock_linear_y = true
@@ -106,6 +117,11 @@ axis_lock_linear_z = true
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
+script = ExtResource("3_if52q")
+camera_position = NodePath("Camera3D")
+slide_time = 0.5
+flavor_text = "Monitor LOL"
+color = Color(0.6954113, 0.0011841127, 0.6057382, 1)
 
 [node name="Cube" type="MeshInstance3D" parent="monitor2" unique_id=2079951906]
 material_override = SubResource("StandardMaterial3D_vh8cc")
@@ -123,30 +139,51 @@ transform = Transform3D(0.879, 0, 0, 0, 0.879, 0, 0, 0, 0.879, 0, 0.06315416, 0)
 layers = 3
 mesh = SubResource("PlaneMesh_fey6a")
 
-[node name="InteractableComponent" parent="monitor2" unique_id=1536286828 node_paths=PackedStringArray("camera_position", "object_ref") instance=ExtResource("3_thk3k")]
-script = ExtResource("3_if52q")
-camera_position = NodePath("../Camera3D")
-slide_time = 0.25
-color = Color(0.4117647, 0.9254902, 0.4117647, 1)
-object_ref = NodePath("..")
-
 [node name="Camera3D" type="Marker3D" parent="monitor2" unique_id=2051978815]
-transform = Transform3D(2.5640876978195024, -0.00793651723143246, -0.0036172787936807893, 0.0028630606333009956, -0.23864646149019686, 2.5529715227029097, -0.008238941269007594, -2.5529608629582663, -0.2386356912546984, -0.06526285451388869, 1.2742480091943666, -0.15808422511704423)
+transform = Transform3D(2.5640876, -0.007936517, -0.0036172788, 0.0028630607, -0.23864646, 2.5529716, -0.008238941, -2.5529609, -0.23863569, -0.065262854, 1.274248, -0.15808423)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="monitor2" unique_id=25155178]
-transform = Transform3D(1, 8.6042284e-16, -1.6653345e-16, 0, 1, -1.110223e-16, 0, 9.992007e-16, 0.9999999999999999, 0.0006222426891340227, 0.011298239231107399, -0.021776765584946567)
+transform = Transform3D(1, 8.6042284e-16, -1.6653345e-16, 0, 1, -1.110223e-16, 0, 9.992007e-16, 1, 0.0006222427, 0.011298239, -0.021776766)
 shape = SubResource("BoxShape3D_if52q")
+
+[node name="SubViewport" type="SubViewport" parent="monitor2" unique_id=114024638]
+
+[node name="Camera2D" type="Camera2D" parent="monitor2/SubViewport" unique_id=487961064]
+
+[node name="OrbitDisplay" parent="monitor2/SubViewport/Camera2D" unique_id=500639032 node_paths=PackedStringArray("trails") instance=ExtResource("4_y0c8p")]
+offset_right = 1920.0
+offset_bottom = 1008.0
+star_trail = SubResource("Resource_y0c8p")
+ship_trail = SubResource("Resource_b7eu2")
+trails = [null, NodePath("StarTrail"), NodePath("ShipTrail")]
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=312702938]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.33974266, 0)
 layers = 3
 
 [node name="Player" parent="." unique_id=195665807 instance=ExtResource("2_vh8cc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22123571717034007, -0.4946286384685197, -0.08474841695968638)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22123572, -0.49462864, -0.08474842)
+platform_on_leave = 2
 run_accel = 20.0
 
+[node name="RigidBody3D3" type="RigidBody3D" parent="." unique_id=112870606]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7747643, -0.49462864, 1.339602)
+can_sleep = false
+script = ExtResource("2_b7eu2")
+flavor_text = "Cant Pickup"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D3" unique_id=642113653]
+shape = SubResource("BoxShape3D_wawrf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D3" unique_id=2005226620]
+mesh = SubResource("BoxMesh_if52q")
+
 [node name="RigidBody3D2" type="RigidBody3D" parent="." unique_id=1990812145]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.996000000013737, 0, 1.9914771838796448)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.996, 0, 1.9914771)
+can_sleep = false
+script = ExtResource("2_b7eu2")
+flavor_text = "Cant Pickup"
+can_pickup = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D2" unique_id=1374859121]
 shape = SubResource("BoxShape3D_wawrf")
@@ -154,13 +191,12 @@ shape = SubResource("BoxShape3D_wawrf")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D2" unique_id=577641139]
 mesh = SubResource("BoxMesh_if52q")
 
-[node name="InteractableComponent" parent="RigidBody3D2" unique_id=1882750812 node_paths=PackedStringArray("object_ref") instance=ExtResource("3_thk3k")]
-flavor_text = "Test"
-object_ref = NodePath("..")
-can_pickup = false
-
 [node name="RigidBody3D" type="RigidBody3D" parent="." unique_id=754512111]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4980000000068685, 0, 0.3239999999932479)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.498, 0, 0.324)
+mass = 20.0
+script = ExtResource("2_b7eu2")
+flavor_text = "Can Pickup"
+color = Color(0, 0.50270754, 0.0556485, 1)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D" unique_id=138021302]
 shape = SubResource("BoxShape3D_wawrf")
@@ -168,7 +204,14 @@ shape = SubResource("BoxShape3D_wawrf")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D" unique_id=1390512688]
 mesh = SubResource("BoxMesh_if52q")
 
-[node name="InteractableComponent" parent="RigidBody3D" unique_id=1145343776 node_paths=PackedStringArray("object_ref") instance=ExtResource("3_thk3k")]
-flavor_text = "Test"
-color = Color(0.7465344, 1.5883148e-06, 0.40264374, 1)
-object_ref = NodePath("..")
+[node name="RigidBody3D4" type="RigidBody3D" parent="." unique_id=1671568192]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.498, 0, -0.26196396)
+mass = 20.0
+can_sleep = false
+continuous_cd = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D4" unique_id=115372133]
+shape = SubResource("BoxShape3D_wawrf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D4" unique_id=1354193087]
+mesh = SubResource("BoxMesh_if52q")

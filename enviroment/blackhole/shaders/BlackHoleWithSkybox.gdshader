@@ -26,9 +26,12 @@ uniform vec3 cam_vel_dir;
 uniform float cam_frac_of_lightspeed; //in speed of light
 uniform float sim_speed = 1.;
 
+uniform bool use_redshift = false;
+
 uniform float shutter_speed = 100.;
 uniform vec3 ship_angular_vel = vec3(1.);
 uniform int motion_blur_sample_count = 5;
+varying vec3 blur_vector;
 
 Surface map(in Ray r){
 	
@@ -37,10 +40,21 @@ Surface map(in Ray r){
 	skybox.id = 0.;
 	
 	Surface star;
-	vec3 smear = cross(ship_angular_vel.xyz, star_center - r.origin) * pow(cam_frac_of_lightspeed, .25) * sim_speed; 
-	star.dist = sdCapsule(r.pos - star_center, smear*.3, -smear*.3, star_radius);
-	//star.dist = sdSphere(r.pos - star_center, star_radius);
-	
+	// 1. The lever arm: Vector from the Camera (pivot) to the Star
+    vec3 cam_to_star = star_center - r.origin;
+    
+    // 2. The relative velocity of the star due to camera rotation (V = W x R)
+    vec3 smear_vel = cross(ship_angular_vel, cam_to_star);
+    
+    // 3. The total displacement during the frame (adjust multipliers to taste)
+    vec3 displacement = smear_vel * (1.0 / shutter_speed) * sim_speed;
+    
+    // 4. Local coordinate of the ray
+    vec3 p = r.pos - star_center;
+    
+    // 5. The Capsule: Stretch it backward and forward by half the displacement
+    // so the star's true center remains exactly in the middle of the blur
+    star.dist = sdCapsule(p, -displacement * 0.5, displacement, star_radius);
 	star.id = 2.;
 	return opUnion(star, skybox);
 }
@@ -111,9 +125,11 @@ vec3 solveRayColor(Ray r, vec3 ro, vec2 screen_uv){
 		vec3 sky_color = texture(sky_panorama, r.dir, blur_amount).rgb * sky_panorama_brightness;
 		float brightness = clamp(1.0 / g_shift, 0.0, 1.0);
 
-		sky_color.r *= brightness; // Red stays longest
-		sky_color.g *= pow(brightness, 2.0);
-		sky_color.b *= pow(brightness, 3.0); // Blue vanishes first
+		if(!use_redshift){			
+			sky_color.r *= brightness; // Red stays longest
+			sky_color.g *= pow(brightness, 2.0);
+			sky_color.b *= pow(brightness, 3.0); // Blue vanishes first
+		}
 
 
 		color = mix(vec3(0.0), sky_color * sky_panorama_brightness, 1.);
@@ -129,12 +145,10 @@ void fragment() {
 	
 	//vec3 rd = normalize((INV_VIEW_MATRIX * vec4(VERTEX, 1)).xyz - ro);
 	vec3 rd = normalize((INV_VIEW_MATRIX * vec4(VERTEX, 0.)).xyz);
-	rd = rotation_offset_matrix * rd * vec3(-1);
+	rd = rotation_offset_matrix * rd;
 	ro = rotation_offset_matrix * ro;
-	
 	Ray r = raymarch(ro, rd);
-	
-	vec3 blur_vector = cross(ship_angular_vel, r.dir) * (1./shutter_speed);
+	blur_vector = cross(ship_angular_vel, r.dir) * (1./shutter_speed);
 	vec3 accumulation = vec3(0.);
 	float seed = uv.x + uv.y + TIME;
 	for(int i = 0; i < motion_blur_sample_count; i++){
@@ -142,7 +156,7 @@ void fragment() {
 		float t = (float(i) + noise)/float(motion_blur_sample_count - 1);
 		vec3 sample_dir = normalize(r.dir + blur_vector * (t - .5));
 		Ray _r = r;
-		r.dir = sample_dir;
+		_r.dir = sample_dir;
 		accumulation += solveRayColor(_r, ro, SCREEN_UV);
 	}
 	

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bwua3oyubogv7"
+path="res://.godot/imported/TopPlastic_Corner_Outer.obj-1d66d55c9a51ab3b4633bc2f560fec20.mesh"
+
+[deps]
+
+files=["res://.godot/imported/TopPlastic_Corner_Outer.obj-1d66d55c9a51ab3b4633bc2f560fec20.mesh"]
+
+source_file="res://enviroment/ship/Modular SciFi MegaKit[Standard]/OBJ/Walls/TopPlastic_Corner_Outer.obj"
+dest_files=["res://.godot/imported/TopPlastic_Corner_Outer.obj-1d66d55c9a51ab3b4633bc2f560fec20.mesh", "res://.godot/imported/TopPlastic_Corner_Outer.obj-1d66d55c9a51ab3b4633bc2f560fec20.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b344eoucxm2d8"
+path="res://.godot/imported/Prop_Chest.obj-daf29a1a91fd95bf94f6c6e4c4a3309a.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Prop_Chest.obj-daf29a1a91fd95bf94f6c6e4c4a3309a.mesh"]
+
+source_file="res://enviroment/ship/Modular SciFi MegaKit[Standard]/OBJ/Props/Prop_Chest.obj"
+dest_files=["res://.godot/imported/Prop_Chest.obj-daf29a1a91fd95bf94f6c6e4c4a3309a.mesh", "res://.godot/imported/Prop_Chest.obj-daf29a1a91fd95bf94f6c6e4c4a3309a.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

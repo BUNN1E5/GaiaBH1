@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1_teimc")
-position = Vector3(0.72232, 0, 0)
-last_position = Vector3(0.5833105668040426, 0, 0.6067279826505719)
+position = Vector3(-1.5301512, 0, 0.72815406)
+last_position = Vector3(0.58331054, 0, 0.60672796)
 radius = 0.00465047
 mass = 0.93
-velocity = Vector3(0, 0, 0.06703)
-velocity_mag = 0.06703
+velocity = Vector3(-0.020052334, 0, -0.022053167)
+velocity_mag = 0.029806683
 sub_steps = 1

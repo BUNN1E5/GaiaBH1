@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cgsahvggpaadj"
+path="res://.godot/imported/Platform_3Plates.obj-09491dd8a99eb7aeb249666a8e7d1710.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Platform_3Plates.obj-09491dd8a99eb7aeb249666a8e7d1710.mesh"]
+
+source_file="res://enviroment/ship/Modular SciFi MegaKit[Standard]/OBJ/Platforms/Platform_3Plates.obj"
+dest_files=["res://.godot/imported/Platform_3Plates.obj-09491dd8a99eb7aeb249666a8e7d1710.mesh", "res://.godot/imported/Platform_3Plates.obj-09491dd8a99eb7aeb249666a8e7d1710.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

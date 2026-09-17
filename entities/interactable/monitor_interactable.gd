@@ -26,11 +26,10 @@ func post_pickup():
 		return
 	
 	var tween = get_tree().create_tween()
-	tween.tween_property(pc.cam, "global_transform", cam_orig_transform, slide_time)
+	tween.tween_property(pc.cam, "transform", pc.cam_default_transform, slide_time)
 	tween.tween_callback(func(): Input.mouse_mode = Input.MOUSE_MODE_CAPTURED)
 	tween.tween_callback(func(): pc.lock_player_pos = false)
-	# TODO :: FIX PROBLEM WHERE YOU CAN DESYNC CAMERA
-	tween.tween_callback(func(): pc.cam.global_transform = cam_orig_transform)
+	tween.tween_callback(func(): pc.cam.transform = pc.cam_default_transform)
 
 func interact():
 	super()

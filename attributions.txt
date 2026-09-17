@@ -2,5 +2,5 @@
 <a href="https://www.flaticon.com/free-icons/solar-system" title="solar-system icons">Solar-system icons created by Vitaly Gorbachev - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/space-station" title="space-station icons">Space-station icons created by Vitaly Gorbachev - Flaticon</a>
 <a href="https://svs.gsfc.nasa.gov/3895" title="NASA SVS Starmap">Starmap created by NASA</a>
-<a href="https://skfb.ly/6rGGp" title="Rigged Arms">"Rigged Arms" by mrgyarmati is licensed under Creative Commons Attribution (https://creativecommons.org/licenses/by/4.0/).</a>
 <a href="https://departuremono.com/" title="Departure Mono">"Departure Mono" by Helena Zhang is licensed under SIL Open font license (https://openfontlicense.org)</a>
+<a href="https://quaternius.com/packs/modularscifimegakit.html" title="Modular Sci-fi Megakit">"Modular Sci-Fi MEGAKIT" by Quaternius is licensed under Creative Commons Universal (https://creativecommons.org/publicdomain/zero/1.0/)</a>

@@ -13,7 +13,7 @@
 [node name="Player" type="CharacterBody3D" unique_id=195665807 node_paths=PackedStringArray("interaction_controller", "cam")]
 script = ExtResource("1_symyc")
 interaction_controller = NodePath("InteractionController")
-cam = NodePath("PixelatedCamera")
+cam = NodePath("CameraGimbal/PixelatedCamera")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=801605889]
 visible = false
@@ -23,20 +23,22 @@ mesh = SubResource("CapsuleMesh_u3f3p")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=22555520]
 shape = SubResource("CapsuleShape3D_merdl")
 
-[node name="hand" type="Marker3D" parent="." unique_id=581556249]
+[node name="hand" type="Marker3D" parent="." unique_id=1857999474]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -1.5)
 
-[node name="PixelatedCamera" type="Camera3D" parent="." unique_id=260350728]
-physics_interpolation_mode = 1
+[node name="CameraGimbal" type="Node3D" parent="." unique_id=776195461]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="InteractionRaycase" type="RayCast3D" parent="CameraGimbal" unique_id=222632064]
+target_position = Vector3(0, 0, -1.5)
+
+[node name="PixelatedCamera" type="Camera3D" parent="CameraGimbal" unique_id=260350728]
+physics_interpolation_mode = 1
 cull_mask = 3
 current = true
 fov = 80.0
 
-[node name="InteractionRaycase" type="RayCast3D" parent="PixelatedCamera" unique_id=222632064]
-target_position = Vector3(0, 0, -3)
-
-[node name="RemoteTransform3D" type="RemoteTransform3D" parent="PixelatedCamera" unique_id=1916033330]
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="CameraGimbal" unique_id=1916033330]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 remote_path = NodePath("../../hand")
 
@@ -78,6 +80,6 @@ visible = false
 
 [node name="InteractionController" type="Node" parent="." unique_id=195643338 node_paths=PackedStringArray("raycast", "hand", "player_camera")]
 script = ExtResource("5_fkugw")
-raycast = NodePath("../PixelatedCamera/InteractionRaycase")
+raycast = NodePath("../CameraGimbal/InteractionRaycase")
 hand = NodePath("../hand")
-player_camera = NodePath("../PixelatedCamera")
+player_camera = NodePath("../CameraGimbal/PixelatedCamera")

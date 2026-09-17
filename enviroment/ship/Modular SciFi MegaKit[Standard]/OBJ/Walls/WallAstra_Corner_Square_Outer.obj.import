@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://plgjk06l0oa7"
+path="res://.godot/imported/WallAstra_Corner_Square_Outer.obj-6dffa5133174630b7fce007df34ac5b2.mesh"
+
+[deps]
+
+files=["res://.godot/imported/WallAstra_Corner_Square_Outer.obj-6dffa5133174630b7fce007df34ac5b2.mesh"]
+
+source_file="res://enviroment/ship/Modular SciFi MegaKit[Standard]/OBJ/Walls/WallAstra_Corner_Square_Outer.obj"
+dest_files=["res://.godot/imported/WallAstra_Corner_Square_Outer.obj-6dffa5133174630b7fce007df34ac5b2.mesh", "res://.godot/imported/WallAstra_Corner_Square_Outer.obj-6dffa5133174630b7fce007df34ac5b2.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

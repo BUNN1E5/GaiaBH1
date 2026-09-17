@@ -192,4 +192,4 @@ func _process(delta: float) -> void:
 	sky_material.set_shader_parameter("Schwarzschild_radius", bh_radius_world)
 	
 	sky_material.set_shader_parameter("cam_vel_dir", ship.velocity.normalized())
-	sky_material.set_shader_parameter("cam_frac_of_lightspeed", (ship.velocity.length()**2) / (LIGHT_IN_AUD**2))
+	sky_material.set_shader_parameter("cam_frac_of_lightspeed",  (ship.velocity.length()) / (LIGHT_IN_AUD))

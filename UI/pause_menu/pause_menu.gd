@@ -11,14 +11,14 @@ var last_mouse_mode = Input.MouseMode.MOUSE_MODE_CAPTURED
 var pause_state : bool :
 	set(state):
 		if state: # TRUE We are NOW pause
-			if pause_state == state: # True this is our first assignment
+			if pause_state != state: # True this is our first assignment
 				last_mouse_mode = Input.mouse_mode
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			pass
 		else: # False we are not
 			Input.mouse_mode = last_mouse_mode
 			pass
-		Input.mouse_mode = int(!state) * Input.MOUSE_MODE_CAPTURED
+		#Input.mouse_mode = int(!state) * Input.MOUSE_MODE_CAPTURED
 		pause_state = state
 		self.visible = state
 		get_tree().paused = state
