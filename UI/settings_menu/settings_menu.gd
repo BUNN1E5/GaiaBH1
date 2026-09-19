@@ -17,14 +17,6 @@ class_name SettingsMenu
 @onready var fsr_sharpness_slider : HSlider = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/FSR-Sharpness/Control/HSlider"
 @onready var fsr_sharpness_group : Control = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/FSR-Sharpness"
 
-@onready var dlss_scale_label : Label = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/FSR-Sharpness/Control/Label2"
-@onready var dlss_scale_slider : HSlider = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/FSR-Sharpness/Control/HSlider"
-@onready var dlss_scale_group : Control = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/FSR-Sharpness"
-
-@onready var dlss_frame_gen_toggle : Button = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/DLSS-Frame-Generation/Button"
-@onready var dlss_frame_gen_group : Control = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/DLSS-Frame-Generation"
-
-
 @onready var res_scale_slider: HSlider = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/Resolution-Scale/Control/HSlider"
 @onready var res_scale_label: Label = $"VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/Resolution-Scale/Control/Label2"
 @onready var fullscreen_option: OptionButton = $VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/VideoSettings/Fullscreen/OptionButton
@@ -38,13 +30,6 @@ class_name SettingsMenu
 @onready var contrast_slider: HSlider = $VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/AdjustmentSettings2/Contrast/HSlider
 @onready var saturation_slider: HSlider = $VBoxContainer/TabContainer/Graphics/ScrollContainer/VBoxContainer/AdjustmentSettings2/Saturation/HSlider
 
-var dlss_supported : bool:
-	get:
-		var gpu_name = RenderingServer.get_rendering_device().get_device_name()
-		var is_rtx = "RTX" in gpu_name
-		var is_new_enough = int(gpu_name) > 2000
-		return is_rtx and is_new_enough
-
 func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)
 	
@@ -52,10 +37,6 @@ func _ready() -> void:
 	#resolution_option.item_selected.connect(_on_resolution_selected)
 	
 	upscaler_option.item_selected.connect(_on_upscaler_selected)
-	dlss_frame_gen_toggle.toggled.connect(_on_enable_DLSS_frame_generation)
-	if dlss_supported:
-		upscaler_option.add_item("DLSS 3.5", 3)
-		dlss_frame_gen_group.visible = dlss_supported
 	
 	fsr_sharpness_slider.value_changed.connect(_on_fsr_sharpness_changed)
 	
@@ -100,9 +81,6 @@ func _on_upscaler_selected(_index: int) -> void:
 	elif _index == 2:
 		get_viewport().scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR2
 	pass
-#
-func _on_enable_DLSS_frame_generation(_value : bool) -> void:
-	dlss_frame_gen_toggle.text = "Enabled" if _value else "Disabled"
 	
 func _on_fsr_sharpness_changed(_value: float) -> void:
 	fsr_sharpness_label.text = str(_value)
@@ -171,7 +149,6 @@ func apply_settings_to_ui() -> void:
 	upscaler_option.selected = GraphicSettings.instance.upscaler_mode
 	res_scale_slider.value = GraphicSettings.instance.resolution_scale
 	fsr_sharpness_slider.value = GraphicSettings.instance.fsr_sharpness
-	dlss_frame_gen_toggle.button_pressed = GraphicSettings.instance.dlss_frame_generation
 	fullscreen_option.selected = GraphicSettings.instance.window_mode
 	vsync_option.selected = GraphicSettings.instance.vsync_mode
 	fps_limit_slider.value = GraphicSettings.instance.fps_limit
@@ -187,8 +164,6 @@ func update_settings_from_ui() -> void:
 	GraphicSettings.instance.resolution_scale = res_scale_slider.value
 	GraphicSettings.instance.fsr_sharpness = fsr_sharpness_slider.value
 	
-	# DLSS / NVIDIA Specifics
-	GraphicSettings.instance.dlss_frame_generation = dlss_frame_gen_toggle.button_pressed
 	
 	# Display & FPS
 	GraphicSettings.instance.window_mode = fullscreen_option.selected

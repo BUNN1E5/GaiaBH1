@@ -4,30 +4,49 @@
 [ext_resource type="PackedScene" uid="uid://cka4uavekheii" path="res://enviroment/blackhole/raymarched_black_hole.tscn" id="1_wdj6m"]
 [ext_resource type="Resource" uid="uid://0vyu13i24lio" path="res://enviroment/blackhole/celestial_objects/black_hole.tres" id="4_5k4jt"]
 [ext_resource type="Resource" uid="uid://b81ddy0ql4ee1" path="res://enviroment/blackhole/celestial_objects/star.tres" id="5_qy63d"]
+[ext_resource type="Script" uid="uid://bk36gwg7r0nrb" path="res://helpers/circular_buffer.gd" id="6_5k4jt"]
 [ext_resource type="Resource" uid="uid://blen5bntwp0p7" path="res://enviroment/blackhole/celestial_objects/ship.tres" id="6_6et1j"]
+[ext_resource type="PackedScene" uid="uid://6667ycj0q0cj" path="res://entities/monitor/orbit_display/orbit_display.tscn" id="6_qy63d"]
 
 [sub_resource type="Environment" id="Environment_l8qe7"]
 glow_enabled = true
 glow_normalized = true
 glow_intensity = 0.25
 
+[sub_resource type="Resource" id="Resource_6et1j"]
+script = ExtResource("6_5k4jt")
+size = 2000
+
+[sub_resource type="Resource" id="Resource_etqu2"]
+script = ExtResource("6_5k4jt")
+size = 2000
+
 [node name="Main" type="Node3D" unique_id=1257114819]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1719591188]
 environment = SubResource("Environment_l8qe7")
 
-[node name="RaymarchedBlackHole" parent="." unique_id=666130988 instance=ExtResource("1_wdj6m")]
-reference_object = 2
+[node name="RaymarchedBlackHole" parent="." unique_id=666130988 node_paths=PackedStringArray("ship_node") instance=ExtResource("1_wdj6m")]
+transform = Transform3D(-0.99894613, 0, 0.04589683, 0, 1, 0, -0.04589683, 0, -0.99894613, 0, 0, 0)
 game_minutes_to_days = 20.0
 day_ratio = 144.0
 AU_SCALE = 5000.0
 object_scale = 10.0
 bh_scale_mult = 6000.0
+ship_node = NodePath("../TestShip")
 bh = ExtResource("4_5k4jt")
 star = ExtResource("5_qy63d")
 star_radius_world = 232.5235
-ship_distance_to_bh = 0.48897418
+ship_drag = 0.000165
+ship_distance_to_bh = 0.3692422
+ship_orbit_eliptical = 0.001
 ship = ExtResource("6_6et1j")
 bh_size_from_ship = 0.0001
 
 [node name="TestShip" parent="." unique_id=1190936938 instance=ExtResource("1_2262g")]
+transform = Transform3D(0.0077971183, 0, -0.9999696, 0, 1, 0, 0.9999696, 0, 0.0077971183, -1846.1549, 0, 14.395211)
+
+[node name="OrbitDisplay" parent="." unique_id=500639032 node_paths=PackedStringArray("trails") instance=ExtResource("6_qy63d")]
+star_trail = SubResource("Resource_6et1j")
+ship_trail = SubResource("Resource_etqu2")
+trails = [null, NodePath("StarTrail"), NodePath("ShipTrail")]

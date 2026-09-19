@@ -185,9 +185,10 @@ func _process(delta: float) -> void:
 	bh_radius_world = bh_scale_mult * object_scale * bh.radius * AU_SCALE
 
 	if(ship_node != null):
-		ship_node.position = ship_world_pos
-		ship_node.look_at(-bh_world_pos)
-		
+		if(ship_node.position.distance_to(ship_world_pos) > .1):
+			ship_node.position = ship_world_pos
+			ship_node.look_at(-bh_world_pos) 
+			
 	sky_material.set_shader_parameter("star_radius", star_radius_world)
 	sky_material.set_shader_parameter("Schwarzschild_radius", bh_radius_world)
 	

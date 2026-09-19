@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1_accpi")
-position = Vector3(0.15504393, 0, -0.07112396)
+position = Vector3(0.15798572, 0, -0.076986596)
 last_position = Vector3(-0.015800029, 0, -0.034966826)
 radius = 1.8300158010022875e-07
 mass = 9.27
-velocity = Vector3(0.002032619, 0, 0.002254374)
-velocity_mag = 0.0030354147
+velocity = Vector3(0.0032598148, 0, 0.0015099193)
+velocity_mag = 0.0035925268
 sub_steps = 1

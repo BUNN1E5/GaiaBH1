@@ -1,27 +1,27 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://d1xlrydr8w0tr"]
 
 [ext_resource type="Shader" uid="uid://bowf6umcpg54l" path="res://enviroment/blackhole/shaders/BlackHoleWithSkybox.gdshader" id="1_algd4"]
-[ext_resource type="CompressedCubemap" uid="uid://o5b03qkmry33" path="res://enviroment/skybox/starmap_2020_1920.png" id="2_algd4"]
+[ext_resource type="CompressedCubemap" uid="uid://bxda76i3j7vfq" path="res://enviroment/skybox/cubemap-ce5e089c5c27fbd2a65d664e021bef64.jpg" id="2_algd4"]
 
 [resource]
 render_priority = 0
 shader = ExtResource("1_algd4")
 shader_parameter/sky_panorama = ExtResource("2_algd4")
-shader_parameter/rotation_offset_matrix = Basis(0.18162747, 0, 0.98336744, 0, 1, 0, -0.98336744, 0, 0.18162747)
-shader_parameter/sky_panorama_brightness = 7.0
+shader_parameter/rotation_offset_matrix = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+shader_parameter/sky_panorama_brightness = 1.0
 shader_parameter/star_radius = 232.5235
-shader_parameter/star_center = Vector3(110.29914, 0, 6725.1553)
+shader_parameter/star_center = Vector3(1595.63, 0, 4720.7773)
 shader_parameter/star_color = Color(3.2944162, 3.219715, 2.9707108, 1)
-shader_parameter/black_hole_center = Vector3(2436.1663, 0, 449.95868)
+shader_parameter/black_hole_center = Vector3(0, 0, 0)
 shader_parameter/Schwarzschild_radius = 54.90047403006863
-shader_parameter/near_bh_step_mult = 0.25
+shader_parameter/near_bh_step_mult = 0.1
 shader_parameter/MAX_DIST = 100000.0
 shader_parameter/ITERATIONS = 500
 shader_parameter/EPSILON = 0.001
-shader_parameter/cam_vel_dir = Vector3(-0.20307268, 0, 0.9791637)
-shader_parameter/cam_frac_of_lightspeed = 0.00043094447340077523
+shader_parameter/cam_vel_dir = Vector3(-0.017086253, 0, 0.999854)
+shader_parameter/cam_frac_of_lightspeed = 0.0004969714760501494
 shader_parameter/sim_speed = 1.0
 shader_parameter/use_redshift = true
 shader_parameter/shutter_speed = 200.0
-shader_parameter/ship_angular_vel = Vector3(0, 0.5200449, 0)
+shader_parameter/ship_angular_vel = Vector3(0, 0, 0)
 shader_parameter/motion_blur_sample_count = 200
