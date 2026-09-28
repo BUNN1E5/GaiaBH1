@@ -1,9 +1,7 @@
-
-enable clip_distances;
-
 struct Params {
 camera_position_world : vec3<f32>,
 inv_view_matrix : mat4x4<f32>,
+inv_projection_matrix : mat4x4<f32>,
 viewport_size : vec2<f32>,
 
 rotation_offset_matrix : mat3x3<f32>,
@@ -52,15 +50,15 @@ fn fs_main(
 	@builtin(position) position	: vec4f
 ) -> @location(0) vec4f {
 
-	var uv = (position.xy * 2 - params.viewport_size.xy) / params.viewport_size.y;
-	var ro = params.camera_position_world;
+	let uv = (position.xy * 2 - params.viewport_size.xy) / params.viewport_size.y;
+	let ro = params.camera_position_world;
 	
 	let clip = vec4f(uv, 1.0, 1.0);
-	var view_dir :vec4f = params.inv_view_matrix * clip;
+	var view_dir :vec4f = params.inv_projection_matrix * clip;
 	view_dir = vec4f(view_dir.xyz / view_dir.w, 0.0);
-	var rd = normalize((params.inv_view_matrix * view_dir).xyz);
+	let rd = normalize((params.inv_view_matrix * view_dir).xyz);
 
-	var r : Ray = raymarch(ro, rd);
+	let r : Ray = raymarch(ro, rd);
 	return vec4f(solve_ray_color(r), 1);
 }
 
@@ -68,7 +66,6 @@ struct Ray{
 	origin : vec3f,
 	dir : vec3f,
 	pos : vec3f,
-	vol_col : vec3f,
 	dist : f32,
 	hit : bool,
 	inside_bh : bool,
