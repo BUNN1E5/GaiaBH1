@@ -1,3 +1,0 @@
-class OrbitController extends ComponentBase{
-
-}
