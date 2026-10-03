@@ -27,7 +27,10 @@ import {
     bool,
     cameraPosition,
     positionWorldDirection,
-    screenUV
+    screenUV,
+    screenCoordinate,
+    screenSize,
+    time
 } from 'three/tsl';
 
 class BlackHoleNode extends TempNode{
@@ -152,14 +155,12 @@ class BlackHoleNode extends TempNode{
         return color;
     });
 
-    setup(){
-
-        const blackhole = Fn(({ro, rd}) => {
+    blackhole = Fn(({ro, rd}) => {
             return vec4(this.solveRayColor(this.raymarch(ro, rd)), 1);
         });
 
-        
-        return blackhole({ro: cameraPosition, rd: positionWorldDirection.add(vec3(screenUV,1))});
+    setup(){
+        return this.blackhole({ro: cameraPosition.mul(time), rd: positionWorldDirection.add(screenUV).normalize()});
     }
 }
 

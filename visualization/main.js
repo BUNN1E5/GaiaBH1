@@ -64,7 +64,6 @@ function render( time ) {
   camera.updateProjectionMatrix();
   //orbitManager.update(time * 0.001);
   orbitControls.update();
-  camera.updateMatrixWorld();
   renderPipeline.render()
   stats.update();
 }
