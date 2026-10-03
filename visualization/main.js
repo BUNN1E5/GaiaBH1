@@ -1,16 +1,16 @@
 import * as THREE from 'three';
-import { pass, screenUV } from 'three/tsl';
+import { pass, mrt, output, emissive } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { OrbitManager } from './orbit-manager.js'
 import BlackHoleNode from './shaders/blackhole-tsl.js'
 import Stats from 'three/addons/libs/stats.module.js';
 import { GUI } from 'dat.gui'
 
-import { gaussianBlur } from 'three/addons/tsl/display/GaussianBlurNode.js';
+import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 
 let canvas = document.querySelector( '#c' );
 
-const renderer = new THREE.WebGPURenderer({antialias: true, forceWebGL:true, canvas });
+const renderer = new THREE.WebGPURenderer({antialias: true, forceWebGL:false, canvas });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 await renderer.init();
@@ -22,8 +22,16 @@ camera.position.z = 5;
 scene.add(camera);
 
 
-const scenePass = pass(scene, camera);
-renderPipeline.outputNode = scenePass;
+const scenePass = pass( scene, camera );
+scenePass.setMRT( mrt( {
+	output,
+	emissive
+} ) );
+const scenePassColor = scenePass.getTextureNode( 'output' );
+const emissivePass = scenePass.getTextureNode( 'emissive' );
+const bloomPass = bloom( emissivePass );
+renderPipeline.outputNode = scenePassColor.add( bloomPass );
+
 
 const cubemapFaces = [
   './visualization/face_0.jpg',
@@ -39,6 +47,9 @@ cubeTexture.colorSpace = THREE.SRGBColorSpace;
 const gui = new GUI();
 const blackHoleNode = new BlackHoleNode(cubeTexture);
 const orbitManager = new OrbitManager(blackHoleNode);
+orbitManager.bh.mass = 9.27
+orbitManager.star.mass = 0.93
+
 
 orbitManager.reference_object = OrbitManager.StellarObject.Star;
 
@@ -54,27 +65,8 @@ orbitFolder.add(orbitManager, 'object_scale', 0, 10);
 orbitFolder.add(orbitManager, 'star_scale_mult', 0, 100);
 orbitFolder.add(orbitManager, 'bh_scale_mult', 0, 100);
 
-function addBodyControls(name, body) {
-  const folder = gui.addFolder(name);
-  folder.add(body, 'mass', 0, 20);
-  folder.add(body, 'radius', 0, 1);
-  folder.add(body, 'drag', 0, 1);
-
-  const positionFolder = folder.addFolder('position');
-  for (const axis of ['x', 'y', 'z']) {
-    positionFolder.add(body.position, axis);
-  }
-
-  const velocityFolder = folder.addFolder('velocity');
-  for (const axis of ['x', 'y', 'z']) {
-    velocityFolder.add(body.velocity, axis);
-  }
-}
-
-addBodyControls('Star', orbitManager.star);
-addBodyControls('Black Hole', orbitManager.bh);
-
-const blackHoleFolder = gui.addFolder('Black Hole Rendering');
+const blackHoleFolder = gui.addFolder('Blackhole');
+blackHoleFolder.add(orbitManager.bh, 'radius', 0, 1);
 blackHoleFolder.add(blackHoleNode.iterations, 'value', 1, 500).step(1).name('iterations');
 blackHoleFolder.add(blackHoleNode.max_dist, 'value', 1, 100000).name('maximum distance');
 blackHoleFolder.add(blackHoleNode.sky_brightness, 'value', 0, 5).name('sky brightness');
@@ -82,12 +74,16 @@ blackHoleFolder.add(blackHoleNode.epsilon, 'value', 0.000001, 0.01).name('surfac
 blackHoleFolder.add(blackHoleNode.near_bh_step_mult, 'value', 0.001, 1).name('near-hole step');
 blackHoleFolder.add(blackHoleNode.use_redshift, 'value').name('redshift');
 
+const starFolder = gui.addFolder('Star');
+
+starFolder.add(orbitManager.star, 'radius', 0, 1);
 const starColor = { color: `#${blackHoleNode.star_color.value.getHexString()}` };
-blackHoleFolder.addColor(starColor, 'color').name('star color').onChange((value) => {
+starFolder.addColor(starColor, 'color').name('star color').onChange((value) => {
   blackHoleNode.star_color.value.set(value);
 });
+starFolder.open();
 orbitFolder.open();
-blackHoleFolder.open();
+
 
 scene.backgroundNode = blackHoleNode;
 

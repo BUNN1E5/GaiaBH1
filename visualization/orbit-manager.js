@@ -94,6 +94,8 @@ export class OrbitManager{
 
         this.blackHoleNode.black_hole_center.value.copy(bh_world_pos);
         this.blackHoleNode.star_center.value.copy(star_world_pos);
+        console.log(this.bh.position);
+        console.log(reference_pos);
 
         this.blackHoleNode.schwarzschild_radius.value = bh_radius_world;
         this.blackHoleNode.star_radius.value = star_radius_world;
