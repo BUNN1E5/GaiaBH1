@@ -1,28 +1,28 @@
-import {ComponentBase, ShaderLib, RenderShaderPass, Shader, Vector3, Vector4, Time, GPUCullMode}  from '@orillusion/core';
+import {Vector3} from 'three';
 import {CelestialBody} from './celestial-body.js';
 
-const blackholeWGSL = await fetch(new URL('./shaders/blackhole.wgsl', import.meta.url));
-ShaderLib.register('BlackHoleShader', await blackholeWGSL.text());
+//const blackholeWGSL = await fetch(new URL('./shaders/blackhole.wgsl', import.meta.url));
+//ShaderLib.register('BlackHoleShader', await blackholeWGSL.text());
 
 export class OrbitManager extends ComponentBase{    
     constructor(){
         super();
 
-        let renderShader = new RenderShaderPass('BlackHoleShader', 'BlackHoleShader');
-        renderShader.setShaderEntry('vs_main', 'fs_main');
-        renderShader.shaderState.cullMode = GPUCullMode.none;
-        renderShader.shaderState.writeMasks = [15, 0, 0, 0];
+        // let renderShader = new RenderShaderPass('BlackHoleShader', 'BlackHoleShader');
+        // renderShader.setShaderEntry('vs_main', 'fs_main');
+        // renderShader.shaderState.cullMode = GPUCullMode.none;
+        // renderShader.shaderState.writeMasks = [15, 0, 0, 0];
 
-        let shader = new Shader();
-        shader.addRenderPass(renderShader);
-        shader.setUniformFloat('skybox_brightness', 1.0);
-        shader.setUniformVector4('star_color', new Vector4(1, 1, 1, 1));
-        shader.setUniformFloat('near_bh_step_mult', 0.02);
-        shader.setUniformFloat('max_dist', 1000.0);
-        shader.setUniformFloat('epsilon', 0.001);
-        shader.setUniformInt32('iterations', 32);
-        shader.setUniformInt32('use_redshift', 0);
-        this.shader = shader;
+        // let shader = new Shader();
+        // shader.addRenderPass(renderShader);
+        // shader.setUniformFloat('skybox_brightness', 1.0);
+        // shader.setUniformVector4('star_color', new Vector4(1, 1, 1, 1));
+        // shader.setUniformFloat('near_bh_step_mult', 0.02);
+        // shader.setUniformFloat('max_dist', 1000.0);
+        // shader.setUniformFloat('epsilon', 0.001);
+        // shader.setUniformInt32('iterations', 32);
+        // shader.setUniformInt32('use_redshift', 0);
+        // this.shader = shader;
     }
     
     shader
@@ -107,17 +107,22 @@ export class OrbitManager extends ComponentBase{
                 break;
         }
 
-        let bh_world_pos = Vector3.multiplyScalar(Vector3.sub(this.bh.position, Vector3.multiplyScalar(reference_pos, +this.stationary_reference)), this.AU_SCALE)
-        let star_world_pos = Vector3.multiplyScalar(Vector3.sub(this.star.position, Vector3.multiplyScalar(reference_pos, +this.stationary_reference)), this.AU_SCALE)
+        //We are removing non stationary references cause it isnt needed for this demonstration
+        //var bh_world_pos = (bh.position - reference_pos * float(stationary_reference)) * AU_SCALE
+	    //var star_world_pos = (star.position - reference_pos * float(stationary_reference)) * AU_SCALE
+        let bh_world_pos = new Vector3().subVectors(this.bh.position, reference_pos).multiplyScalar(this.AU_SCALE)
+        let star_world_pos = new Vector3().subVectors(this.star.position, reference_pos).multiplyScalar(this.AU_SCALE)
 
-        this.star_radius_world = this.star_scale_mult * this.object_scale * this.star.radius * this.AU_SCALE
+        //star_radius_world = star_scale_mult * object_scale * star.radius * AU_SCALE
+	    //bh_radius_world = bh_scale_mult * object_scale * bh.radius * AU_SCALE
+        this.star_radius_world = this.star_scale_mult * this.object_scale * this.star.radius * this.AU_SCALE;
         this.bh_radius_world = this.bh_scale_mult * this.object_scale * this.bh.radius * this.AU_SCALE
 
-        this.shader.setUniformFloat("sim_speed", this.sim_speed)
-        this.shader.setUniformVector3("black_hole_center", bh_world_pos)
-        this.shader.setUniformVector3("star_center", star_world_pos)        
+        // this.shader.setUniformFloat("sim_speed", this.sim_speed)
+        // this.shader.setUniformVector3("black_hole_center", bh_world_pos)
+        // this.shader.setUniformVector3("star_center", star_world_pos)        
 
-        this.shader.setUniformFloat("star_radius", this.star_radius_world)
-        this.shader.setUniformFloat("schwarzschild_radius", this.bh_radius_world)
+        // this.shader.setUniformFloat("star_radius", this.star_radius_world)
+        // this.shader.setUniformFloat("schwarzschild_radius", this.bh_radius_world)
     }
 }

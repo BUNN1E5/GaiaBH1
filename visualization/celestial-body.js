@@ -1,4 +1,4 @@
-import {MathUtil, Vector3} from '@orillusion/core';
+import {Vector3} from 'three';
 
 export class CelestialBody{
     //Physical Constant used in Gravity Equation
@@ -9,39 +9,37 @@ export class CelestialBody{
     static MAX_ACCEL = 35. // AU/Day
     static MAX_VEL = 10. // AU/DAY
 
-    position = Vector3.ZERO.clone()
-    last_position = Vector3.ZERO.clone()
+    position = new Vector3()
     radius = 1.0
     mass = 1.0
     drag = 0.0
-    velocity = Vector3.ZERO.clone()
+    velocity = new Vector3()
 
     get velocity_mag(){
-        return this.velocity.length;
+        return this.velocity.length();
     } 
 
-    accleration(_position, _velocity, _other_position, _other_mass, _other_radius){
-        let dist = Vector3.sub(_other_position, _position)
-        let r = dist.length
+    acceleration(_position, _velocity, _other_position, _other_mass, _other_radius){
+        let accel = new Vector3().subVectors(_other_position, _position) //distance
+        let r = accel.length()
         if(r < _other_radius){
-            return Vector3.ZERO.clone()
+            return new Vector3()
         }
-        let mag = Math.min((CelestialBody.G * _other_mass / (dist.lengthSquared * (1.0 - (_other_radius/r)))), CelestialBody.MAX_ACCEL)
-        let accel = Vector3.multiplyScalar(dist.normalize(), mag)
-            
-        accel = Vector3.sub(accel, Vector3.multiplyScalar(this.velocity, this.drag))
-        return accel
+        let mag = Math.min((CelestialBody.G * _other_mass / (accel.lengthSq() * (1.0 - (_other_radius/r)))), CelestialBody.MAX_ACCEL)
+        return accel.normalize().multiplyScalar(mag).addScaledVector(_velocity, -this.drag)
     }
+
+    clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
     integrate_adaptive(delta, other){
         let step_sensitivity = 1
-        let r = Vector3.sub(this.position,other.position).lengthSquared;
+        let r = this.position.distanceToSquared(other.position);
         if(r < other.radius ** 2){
             //we are inside something else
-            this.velocity = Vector3.ZERO.clone()
+            this.velocity = new Vector3()
             return
         }
-        let sub_steps = MathUtil.clampf(1./r * step_sensitivity, 1, 400)
+        let sub_steps = Math.floor(this.clamp(1./r * step_sensitivity, 1, 400))
         let sub_delta = delta / sub_steps
         for(let i = 0; i < sub_steps; i++){
             this._rk4_step(other, sub_delta)
@@ -49,29 +47,44 @@ export class CelestialBody{
     }
 
     _rk4_step(other, dt){
-        let rk4_state = this._get_next_rk4_state(this.position, this.velocity, other.position, other, dt)
-        this.position = rk4_state[0]
-        this.velocity = rk4_state[1]
+        const [rk4_pos, rk4_vel] = this._get_next_rk4_state(this.position, this.velocity, other, dt)
+        this.position.copy(rk4_pos)
+        this.velocity.copy(rk4_vel)
     }
 
     //Returns [Vector3, Vector3]
-    _get_next_rk4_state(pos, vel, _other_position, other, dt){
-        // k1
-        let v1 = vel
-        let a1 = this.accleration(pos, v1, _other_position, other.mass, other.radius)
+    _get_next_rk4_state(pos, vel, other, dt){
+        const op = other.position, om = other.mass, or = other.radius
+        
+        var v1 = vel
+        var a1 = this.acceleration(pos, v1, op, om, or)
         // k2
-        let v2 = Vector3.add(vel, Vector3.multiplyScalar(a1, dt * 0.5))
-        let a2 = this.accleration(Vector3.add(pos, Vector3.multiplyScalar(v1, dt * 0.5)), v2, _other_position, other.mass, other.radius)
+        var v2 = vel.clone().addScaledVector(a1, (dt * 0.5))
+        var a2 = this.acceleration(pos.clone().addScaledVector(v1, (dt * 0.5)), v2, op, om, or)
         // k3
-        let v3 = Vector3.add(vel, Vector3.multiplyScalar(a2, dt * 0.5))
-        let a3 = this.accleration(Vector3.add(pos, Vector3.multiplyScalar(v2, dt * 0.5)), v3, _other_position, other.mass, other.radius)
+        var v3 = vel.clone().addScaledVector(a2, (dt * 0.5))
+        var a3 = this.acceleration(pos.clone().addScaledVector(v2, (dt * 0.5)), v3, op, om, or)
         // k4
-        let v4 = Vector3.add(vel, Vector3.multiplyScalar(a3, dt))
-        let a4 = this.accleration(Vector3.add(pos, Vector3.multiplyScalar(v3, dt)), v4, _other_position, other.mass, other.radius)
-        //OMG this is why function overloading is goated, this is horrible.
-        vel = Vector3.add(vel, Vector3.multiplyScalar(Vector3.add(Vector3.add(a1, Vector3.multiplyScalar(a2, 2)), Vector3.add(Vector3.multiplyScalar(a3, 2), a4)), dt / 6.0))
-        pos = Vector3.add(pos, Vector3.multiplyScalar(Vector3.add(Vector3.add(v1, Vector3.multiplyScalar(v2, 2)), Vector3.add(Vector3.multiplyScalar(v3, 2), v4)), dt / 6.0))
-        vel = Vector3.multiplyScalar(vel.normalize(), Math.min(vel.length, CelestialBody.MAX_VEL))
-        return [pos, vel]
+        var v4 = vel.clone().addScaledVector(a3, dt)
+        var a4 = this.acceleration(pos.clone().addScaledVector(v3, dt), v4, op, om, or)
+
+        //vel += (a1 + 2*a2 + 2*a3 + a4) / 6.0 * dt
+        //vel = vel.normalized() * min(vel.length(), Limits.MAX_VEL)
+        const _vel = new Vector3().addVectors(vel, new Vector3()
+                        .addScaledVector(a1, 1)
+                        .addScaledVector(a2, 2)
+                        .addScaledVector(a3, 2)
+                        .addScaledVector(a4, 1)
+                        .multiplyScalar(1/6.0 * dt))
+                        .clampLength(0, CelestialBody.MAX_VEL)
+        
+        //pos += (v1 + 2*v2 + 2*v3 + v4) / 6.0 * dt
+        const _pos = new Vector3().addVectors(pos, new Vector3()
+                        .addScaledVector(v1, 1)
+                        .addScaledVector(v2, 2)
+                        .addScaledVector(v3, 2)
+                        .addScaledVector(v4, 1)
+                        .multiplyScalar(1/6.0 * dt))
+        return [_pos, _vel]
     }
 }

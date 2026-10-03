@@ -42,17 +42,16 @@ fn vs_main(
 fn fs_main(
 	@builtin(position) fragcoord	: vec4f
 ) -> @location(0) vec4f {
-	//let screen_uv = fragcoord.xy / vec2f(globalUniform.windowWidth , globalUniform.windowHeight);
-	let screen_uv = fragcoord.xy;
-	let ro = globalUniform.CameraPos;
+	var screen_uv = fragcoord.xy / vec2<f32>(globalUniform.windowWidth , globalUniform.windowHeight );
 	
-	let clip = vec4f(screen_uv, 1.0, 1.0);
-	var view_dir :vec4f = globalUniform.projMatInv * clip;
-	view_dir = vec4f(view_dir.xyz / view_dir.w, 0.0);
-	let rd = normalize((globalUniform.viewToWorld * view_dir).xyz);
+	let viewmat = globalUniform.viewMat * globalUniform.projMat;
+	let dof = vec3f(viewmat[0][2], viewmat[1][2], viewmat[2][2]);
+	let ro = globalUniform.CameraPos;
+	let rd = dof * vec3(screen_uv, 1.0);
 
 	let r : Ray = raymarch(ro, rd);
 	return vec4f(solve_ray_color(r), 1);
+	//return vec4f(screen_uv, 0, 1);
 }
 
 struct Ray{
