@@ -51,7 +51,7 @@ class BlackHoleNode extends TempNode{
     constructor(//pass,
                 cubeTextureNode, 
                 iterations = 200,
-                max_dist = 100000,
+                max_dist = 100000000,
                 sky_brightness = 1,
                 schwarzschild_radius = 1,
                 black_hole_center = new Vector3(),

@@ -49,9 +49,12 @@ const blackHoleNode = new BlackHoleNode(cubeTexture);
 const orbitManager = new OrbitManager(blackHoleNode);
 orbitManager.bh.mass = 9.27
 orbitManager.star.mass = 0.93
+blackHoleNode.star_color.value.set(new THREE.Vector4(1, 1, 1, 1));
 
 
-orbitManager.reference_object = OrbitManager.StellarObject.Star;
+orbitManager.reference_object = OrbitManager.StellarObject.BlackHole;
+orbitManager.AU_SCALE = 1500;
+orbitManager.near_bh_step_mult = .15;
 
 const orbitFolder = gui.addFolder('Orbit Manager');
 orbitFolder.add(orbitManager, 'simulate');
@@ -59,24 +62,21 @@ orbitFolder.add(orbitManager, 'reference_object', {
   Star: OrbitManager.StellarObject.Star,
   BlackHole: OrbitManager.StellarObject.BlackHole
 });
-orbitFolder.add(orbitManager, 'sim_speed', 0, 10).name('simulation speed');
-orbitFolder.add(orbitManager, 'AU_SCALE', 0, 50);
+orbitFolder.add(orbitManager, 'sim_speed', 0, 100).name('simulation speed');
+orbitFolder.add(orbitManager, 'AU_SCALE', 0, 2000);
 orbitFolder.add(orbitManager, 'object_scale', 0, 10);
 orbitFolder.add(orbitManager, 'star_scale_mult', 0, 100);
-orbitFolder.add(orbitManager, 'bh_scale_mult', 0, 100);
+orbitFolder.add(orbitManager, 'bh_scale_mult', 0, 600);
 
 const blackHoleFolder = gui.addFolder('Blackhole');
-blackHoleFolder.add(orbitManager.bh, 'radius', 0, 1);
-blackHoleFolder.add(blackHoleNode.iterations, 'value', 1, 500).step(1).name('iterations');
-blackHoleFolder.add(blackHoleNode.max_dist, 'value', 1, 100000).name('maximum distance');
+blackHoleFolder.add(blackHoleNode.iterations, 'value', 1, 1000).step(1).name('iterations');
+blackHoleFolder.add(blackHoleNode.max_dist, 'value', 1, 10000000).name('maximum distance');
 blackHoleFolder.add(blackHoleNode.sky_brightness, 'value', 0, 5).name('sky brightness');
-blackHoleFolder.add(blackHoleNode.epsilon, 'value', 0.000001, 0.01).name('surface tolerance');
-blackHoleFolder.add(blackHoleNode.near_bh_step_mult, 'value', 0.001, 1).name('near-hole step');
+blackHoleFolder.add(blackHoleNode.near_bh_step_mult, 'value', 0.001, .25).name('near-hole step');
 blackHoleFolder.add(blackHoleNode.use_redshift, 'value').name('redshift');
+blackHoleFolder.open();
 
 const starFolder = gui.addFolder('Star');
-
-starFolder.add(orbitManager.star, 'radius', 0, 1);
 const starColor = { color: `#${blackHoleNode.star_color.value.getHexString()}` };
 starFolder.addColor(starColor, 'color').name('star color').onChange((value) => {
   blackHoleNode.star_color.value.set(value);

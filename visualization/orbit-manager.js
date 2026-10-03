@@ -11,7 +11,13 @@ export class OrbitManager{
     
     static StellarObject = Object.freeze({ Star: 0, BlackHole: 1 });
 
-    reference_object = OrbitManager.StellarObject.BlackHole
+    _reference_object = OrbitManager.StellarObject.BlackHole
+    get reference_object() {
+        return this._reference_object
+    }
+    set reference_object(value) {
+        this._reference_object = Number(value)
+    }
 
     //These are our scaler variables
     //They are our only proper way to modify it
@@ -64,7 +70,7 @@ export class OrbitManager{
 
         this.bh = new CelestialBody()
         this.bh.mass = 1.0
-        this.bh.radius = () => (2 * CelestialBody.G * this.bh.mass) / (CelestialBody.c**2)
+        this.bh.radius = (2 * CelestialBody.G * this.bh.mass) / (CelestialBody.c**2)
 
         this.star.position = new Vector3(0.72232, 0, 0)
         this.star.velocity = new Vector3(0, 0, 0.06703)
@@ -94,9 +100,6 @@ export class OrbitManager{
 
         this.blackHoleNode.black_hole_center.value.copy(bh_world_pos);
         this.blackHoleNode.star_center.value.copy(star_world_pos);
-        console.log(this.bh.position);
-        console.log(reference_pos);
-
         this.blackHoleNode.schwarzschild_radius.value = bh_radius_world;
         this.blackHoleNode.star_radius.value = star_radius_world;
     }
