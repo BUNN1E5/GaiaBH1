@@ -26,11 +26,10 @@ import {
     int,
     bool,
     cameraPosition,
-    positionWorldDirection,
+    cameraWorldMatrix,
     screenUV,
-    screenCoordinate,
-    screenSize,
-    time
+    cameraProjectionMatrixInverse,
+    transformDirection
 } from 'three/tsl';
 
 class BlackHoleNode extends TempNode{
@@ -49,7 +48,8 @@ class BlackHoleNode extends TempNode{
     iterations: 'int'
     }, 'Ray')
 
-    constructor(cubeTextureNode, 
+    constructor(//pass,
+                cubeTextureNode, 
                 iterations = 100,
                 max_dist = 100000,
                 sky_brightness = 1,
@@ -60,6 +60,7 @@ class BlackHoleNode extends TempNode{
                 star_color = new Vector4(1)
     ){
         super('vec4')
+        // this.pass = pass;
         this.skybox = cubeTextureNode;
 
         this.schwarzschild_radius = uniform(float(schwarzschild_radius));
@@ -129,11 +130,13 @@ class BlackHoleNode extends TempNode{
     });
 
     solveRayColor = Fn(({ r }) =>{
-        const color = vec3(0).toVar();
-        // If(r.get('insideBH').equal(true), ()=>{}) //We default to black
-        // .ElseIf(r.get('hit').equal(true), ()=>{
-        //     color.assign(this.star_color.rgb.mul(this.star_color.a));
-        // }).Else(()=>{
+        const color = vec3(0,0,0).toVar();
+        If(r.get('insideBH').equal(true), ()=>{
+            color.assign(0,0,0);
+        }) //We default to black
+        .ElseIf(r.get('hit').equal(true), ()=>{
+            color.assign(this.star_color.rgb.mul(this.star_color.a));
+        }).Else(()=>{
         
             const dist_from_bh = distance(r.get('origin'), this.black_hole_center);
             const safe_dist = max(dist_from_bh, this.schwarzschild_radius.add(this.epsilon));
@@ -151,7 +154,7 @@ class BlackHoleNode extends TempNode{
             //color is already black in this case
             const _color = mix(color, sky_color.mul(this.sky_brightness), 1);
             color.assign(_color);
-        // });
+        });
         return color;
     });
 
@@ -159,9 +162,18 @@ class BlackHoleNode extends TempNode{
             return vec4(this.solveRayColor(this.raymarch(ro, rd)), 1);
         });
 
-    setup(){
-        return this.blackhole({ro: cameraPosition.mul(time), rd: positionWorldDirection.add(screenUV).normalize()});
+    
+
+    setup(builder){
+
+        const ndc = vec4(screenUV.mul(2).sub(1), 1, 1);
+        const view = cameraProjectionMatrixInverse.mul(ndc);
+        const rd = transformDirection(view.xyz.div(view.w), cameraWorldMatrix);
+
+        return this.blackhole({ro: cameraPosition, rd: rd});
     }
 }
 
 export default BlackHoleNode;
+
+// export const blackhole = ({node, cubeTexture}) => new BlackHoleNode(node, cubeTexture);

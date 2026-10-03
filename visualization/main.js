@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { pass } from 'three/tsl';
+import { pass, screenUV } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { OrbitManager } from './orbit-manager.js'
 import BlackHoleNode from './shaders/blackhole-tsl.js'
@@ -22,7 +22,7 @@ scene.add(camera);
 
 
 const scenePass = pass(scene, camera);
-const blurredPass = gaussianBlur( scenePass, 1);
+renderPipeline.outputNode = scenePass;
 
 const cubemapFaces = [
   './visualization/face_0.jpg',
@@ -34,16 +34,13 @@ const cubemapFaces = [
 ];
 const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
 cubeTexture.colorSpace = THREE.SRGBColorSpace;
-//scene.background = cubeTexture;
+
 
 const blackHoleNode = new BlackHoleNode(cubeTexture);
-//const orbitManager = new OrbitManager(blackHoleNode);
-//orbitManager.bh_scale_mult = 0;
+const orbitManager = new OrbitManager(blackHoleNode);
 
 
-renderPipeline.outputNode = blurredPass;
-renderPipeline.outputNode = blackHoleNode;
-
+scene.backgroundNode = blackHoleNode;
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 
@@ -51,19 +48,15 @@ const stats = new Stats();
 document.body.appendChild(stats.dom);
 stats.showPanel(0);
 
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
-
 renderer.setAnimationLoop( render );
 
 function render( time ) {
   canvas = renderer.domElement;
   camera.aspect = canvas.clientWidth / canvas.clientHeight;
   camera.updateProjectionMatrix();
+  //renderer.render(scene, camera);
   //orbitManager.update(time * 0.001);
-  orbitControls.update();
   renderPipeline.render()
+  // scene.update();
   stats.update();
 }
