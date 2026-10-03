@@ -1,13 +1,17 @@
+import { TempNode, Vector3, Vector4 } from 'three';
+
 import {
     uniform,
     Loop,
     Fn,
     If,
+    Break,
     struct,
     length,
     min,
     max,
     mix,
+    clamp,
     distance,
     pow2,
     pow3,
@@ -17,11 +21,12 @@ import {
     reciprocal,
     normalize,
     vec3,
+    vec4,
     float,
     int,
     bool,
     cameraPosition,
-    positionWorld,
+    screenUV
 } from 'three/tsl';
 
 class BlackHoleNode extends TempNode{
@@ -41,21 +46,17 @@ class BlackHoleNode extends TempNode{
     }, 'Ray')
 
     constructor(cubeTextureNode, 
-                positionNode,
-                directionNode,
                 iterations = 100,
                 max_dist = 100000,
                 sky_brightness = 1,
                 schwarzschild_radius = 1,
-                black_hole_center = vec3(0,0,0),
+                black_hole_center = new Vector3(),
                 star_radius = 1.,
-                star_center = vec3(0,0,0),
-                star_color = vec4(1,1,1,1)
+                star_center = new Vector3(),
+                star_color = new Vector4(1)
     ){
         super('vec4')
         this.skybox = cubeTextureNode;
-        this.positionNode = positionNode;
-        this.directionNode = directionNode;
 
         this.schwarzschild_radius = uniform(float(schwarzschild_radius));
         this.epsilon = uniform(float(.0001));
@@ -73,15 +74,13 @@ class BlackHoleNode extends TempNode{
 
 
     sdSphere = Fn(({ p, s }) => { return length(p).sub(s); });
-
-
     map = Fn(({ p }) => {
-        return sdSphere({p: p.sub(this.star_center), s: this.star_radius});
+        return this.sdSphere({p: p.sub(this.star_center), s: this.star_radius});
     });
 
 
     raymarch = Fn(({ ro, rd }) => {
-        const r = Ray({
+        const r = this.Ray({
             origin: ro,
             dir: rd,
             pos: ro,
@@ -93,7 +92,7 @@ class BlackHoleNode extends TempNode{
 
         Loop(this.iterations, ({ i }) => {
             r.get('iterations').assign(i);
-            const d = map(r.pos);
+            const d = this.map({p: r.get('pos')});
             If(d.lessThan(this.epsilon), () => {
                 r.get('hit').assign(true);
                 Break();
@@ -134,7 +133,7 @@ class BlackHoleNode extends TempNode{
             const dist_from_bh = distance(r.get('origin'), this.black_hole_center);
             const safe_dist = max(dist_from_bh, this.schwarzschild_radius.add(this.epsilon));
             const g_shift = reciprocal(sqrt(oneMinus(this.schwarzschild_radius.div(safe_dist))));
-            const sky_color = cubeTexture(this.skybox, r.get('dir')).toVar();
+            const sky_color = cubeTexture(this.skybox, r.get('dir')).rgb.toVar();
             const brightness = clamp(reciprocal(g_shift), 0, 1);
 
             If(this.use_redshift, ()=>{
@@ -150,4 +149,15 @@ class BlackHoleNode extends TempNode{
         });
         return color;
     });
+
+    setup(){
+
+        const blackhole = Fn(({ro, rd}) => {
+            return vec4(this.solveRayColor(this.raymarch(ro, rd)), 1);
+        });
+
+        return blackhole({ro: cameraPosition, rd: vec3(screenUV, 1).normalize()});
+    }
 }
+
+export default BlackHoleNode;

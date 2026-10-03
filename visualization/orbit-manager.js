@@ -1,32 +1,12 @@
 import {Vector3} from 'three';
 import {CelestialBody} from './celestial-body.js';
+import BlackHoleNode from './shaders/blackhole-tsl.js'
 
-//const blackholeWGSL = await fetch(new URL('./shaders/blackhole.wgsl', import.meta.url));
-//ShaderLib.register('BlackHoleShader', await blackholeWGSL.text());
-
-export class OrbitManager extends ComponentBase{    
-    constructor(){
-        super();
-
-        // let renderShader = new RenderShaderPass('BlackHoleShader', 'BlackHoleShader');
-        // renderShader.setShaderEntry('vs_main', 'fs_main');
-        // renderShader.shaderState.cullMode = GPUCullMode.none;
-        // renderShader.shaderState.writeMasks = [15, 0, 0, 0];
-
-        // let shader = new Shader();
-        // shader.addRenderPass(renderShader);
-        // shader.setUniformFloat('skybox_brightness', 1.0);
-        // shader.setUniformVector4('star_color', new Vector4(1, 1, 1, 1));
-        // shader.setUniformFloat('near_bh_step_mult', 0.02);
-        // shader.setUniformFloat('max_dist', 1000.0);
-        // shader.setUniformFloat('epsilon', 0.001);
-        // shader.setUniformInt32('iterations', 32);
-        // shader.setUniformInt32('use_redshift', 0);
-        // this.shader = shader;
+export class OrbitManager{    
+    constructor(blackHoleNode){
+        this.blackHoleNode = new BlackHoleNode();
+        this.start();
     }
-    
-    shader
-
     simulate = true
     
     static StellarObject = Object.freeze({ Star: 0, BlackHole: 1 });
@@ -36,7 +16,7 @@ export class OrbitManager extends ComponentBase{
 
     //These are our scaler variables
     //They are our only proper way to modify it
-    sim_speed_mul  = 1.
+    sim_speed_mul = 1.
 
     sim_speed_inv =1
     get sim_speed() {
@@ -58,11 +38,8 @@ export class OrbitManager extends ComponentBase{
 
     //Blackhole stuff
     bh
-    bh_radius_world = 0
-
     //Star Stuff
     star
-    star_radius_world = 0
 
     simulate_orbits(delta){
         if(!this.simulate) return;
@@ -95,8 +72,8 @@ export class OrbitManager extends ComponentBase{
         this.bh_size_from_ship = this.bh_size_from_ship
     }
 
-    onUpdate(){
-        this.simulate_orbits(Time.delta)
+    update(time){
+        this.simulate_orbits(time)
         let reference_pos;
         switch(this.reference_object){
             case OrbitManager.StellarObject.Star:
@@ -115,14 +92,13 @@ export class OrbitManager extends ComponentBase{
 
         //star_radius_world = star_scale_mult * object_scale * star.radius * AU_SCALE
 	    //bh_radius_world = bh_scale_mult * object_scale * bh.radius * AU_SCALE
-        this.star_radius_world = this.star_scale_mult * this.object_scale * this.star.radius * this.AU_SCALE;
-        this.bh_radius_world = this.bh_scale_mult * this.object_scale * this.bh.radius * this.AU_SCALE
+        let star_radius_world = this.star_scale_mult * this.object_scale * this.star.radius * this.AU_SCALE;
+        let bh_radius_world = this.bh_scale_mult * this.object_scale * this.bh.radius * this.AU_SCALE
 
-        // this.shader.setUniformFloat("sim_speed", this.sim_speed)
-        // this.shader.setUniformVector3("black_hole_center", bh_world_pos)
-        // this.shader.setUniformVector3("star_center", star_world_pos)        
+        this.blackHoleNode.black_hole_center = bh_world_pos;
+        this.blackHoleNode.star_center = star_world_pos;
 
-        // this.shader.setUniformFloat("star_radius", this.star_radius_world)
-        // this.shader.setUniformFloat("schwarzschild_radius", this.bh_radius_world)
+        this.blackHoleNode.schwarzschild_radius = bh_radius_world;
+        this.blackHoleNode.star_radius = star_radius_world;
     }
 }
