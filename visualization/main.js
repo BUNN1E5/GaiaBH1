@@ -24,17 +24,26 @@ scene.add(camera);
 const scenePass = pass(scene, camera);
 const blurredPass = gaussianBlur( scenePass, 1);
 
-const cubemapPath = './visualization/face_0.jpg';
-const cubeTexture = await new THREE.CubeTextureLoader().loadAsync([
-  cubemapPath, cubemapPath, cubemapPath,
-  cubemapPath, cubemapPath, cubemapPath,
-]);
+const cubemapFaces = [
+  './visualization/face_0.jpg',
+  './visualization/face_1.jpg',
+  './visualization/face_2.jpg',
+  './visualization/face_3.jpg',
+  './visualization/face_4.jpg',
+  './visualization/face_5.jpg',
+];
+const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
 cubeTexture.colorSpace = THREE.SRGBColorSpace;
+//scene.background = cubeTexture;
 
 const blackHoleNode = new BlackHoleNode(cubeTexture);
-const orbitManager = new OrbitManager(blackHoleNode);
+//const orbitManager = new OrbitManager(blackHoleNode);
+//orbitManager.bh_scale_mult = 0;
 
+
+renderPipeline.outputNode = blurredPass;
 renderPipeline.outputNode = blackHoleNode;
+
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 
@@ -53,9 +62,9 @@ function render( time ) {
   canvas = renderer.domElement;
   camera.aspect = canvas.clientWidth / canvas.clientHeight;
   camera.updateProjectionMatrix();
-  orbitManager.update();
+  //orbitManager.update(time * 0.001);
   orbitControls.update();
+  camera.updateMatrixWorld();
   renderPipeline.render()
   stats.update();
 }
-

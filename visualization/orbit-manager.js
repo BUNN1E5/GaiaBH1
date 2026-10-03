@@ -3,8 +3,8 @@ import {CelestialBody} from './celestial-body.js';
 import BlackHoleNode from './shaders/blackhole-tsl.js'
 
 export class OrbitManager{    
-    constructor(blackHoleNode){
-        this.blackHoleNode = new BlackHoleNode();
+    constructor(blackHoleNode = null){
+        this.blackHoleNode = blackHoleNode ?? new BlackHoleNode();
         this.start();
     }
     simulate = true
@@ -66,21 +66,21 @@ export class OrbitManager{
 
         this.star.position = new Vector3(0.72232, 0, 0)
         this.star.velocity = new Vector3(0, 0, 0.06703)
+
         this.bh.position = new Vector3(-0.07246, 0, 0)
         this.bh.velocity = new Vector3(0, 0, -0.00672)
         this.bh.radius = (2 * CelestialBody.G * this.bh.mass) / (CelestialBody.c**2)
-        this.bh_size_from_ship = this.bh_size_from_ship
     }
 
     update(time){
         this.simulate_orbits(time)
-        let reference_pos;
+        let reference_pos = new Vector3();
         switch(this.reference_object){
             case OrbitManager.StellarObject.Star:
-                reference_pos = this.star.position
+                reference_pos.copy(this.star.position)
                 break;
             case OrbitManager.StellarObject.BlackHole:
-                reference_pos = this.bh.position
+                reference_pos.copy(this.bh.position);
                 break;
         }
 
@@ -94,11 +94,12 @@ export class OrbitManager{
 	    //bh_radius_world = bh_scale_mult * object_scale * bh.radius * AU_SCALE
         let star_radius_world = this.star_scale_mult * this.object_scale * this.star.radius * this.AU_SCALE;
         let bh_radius_world = this.bh_scale_mult * this.object_scale * this.bh.radius * this.AU_SCALE
+        console.log(this.bh.position)
 
-        this.blackHoleNode.black_hole_center = bh_world_pos;
-        this.blackHoleNode.star_center = star_world_pos;
+        this.blackHoleNode.black_hole_center.value.copy(bh_world_pos);
+        this.blackHoleNode.star_center.value.copy(star_world_pos);
 
-        this.blackHoleNode.schwarzschild_radius = bh_radius_world;
-        this.blackHoleNode.star_radius = star_radius_world;
+        this.blackHoleNode.schwarzschild_radius.value = bh_radius_world;
+        this.blackHoleNode.star_radius.value = star_radius_world;
     }
 }

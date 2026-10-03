@@ -26,6 +26,7 @@ import {
     int,
     bool,
     cameraPosition,
+    positionWorldDirection,
     screenUV
 } from 'three/tsl';
 
@@ -126,10 +127,11 @@ class BlackHoleNode extends TempNode{
 
     solveRayColor = Fn(({ r }) =>{
         const color = vec3(0).toVar();
-        If(r.get('insideBH').equal(true), ()=>{}) //We default to black
-        .ElseIf(r.get('hit').equal(true), ()=>{
-            color.assign(this.star_color.rgb.mul(this.star_color.a));
-        }).Else(()=>{
+        // If(r.get('insideBH').equal(true), ()=>{}) //We default to black
+        // .ElseIf(r.get('hit').equal(true), ()=>{
+        //     color.assign(this.star_color.rgb.mul(this.star_color.a));
+        // }).Else(()=>{
+        
             const dist_from_bh = distance(r.get('origin'), this.black_hole_center);
             const safe_dist = max(dist_from_bh, this.schwarzschild_radius.add(this.epsilon));
             const g_shift = reciprocal(sqrt(oneMinus(this.schwarzschild_radius.div(safe_dist))));
@@ -146,7 +148,7 @@ class BlackHoleNode extends TempNode{
             //color is already black in this case
             const _color = mix(color, sky_color.mul(this.sky_brightness), 1);
             color.assign(_color);
-        });
+        // });
         return color;
     });
 
@@ -156,7 +158,8 @@ class BlackHoleNode extends TempNode{
             return vec4(this.solveRayColor(this.raymarch(ro, rd)), 1);
         });
 
-        return blackhole({ro: cameraPosition, rd: vec3(screenUV, 1).normalize()});
+        
+        return blackhole({ro: cameraPosition, rd: positionWorldDirection.add(vec3(screenUV,1))});
     }
 }
 
