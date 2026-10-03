@@ -1,4 +1,4 @@
-import { TempNode, Vector3, Vector4 } from 'three';
+import { TempNode, Vector3, Color } from 'three';
 
 import {
     uniform,
@@ -50,14 +50,14 @@ class BlackHoleNode extends TempNode{
 
     constructor(//pass,
                 cubeTextureNode, 
-                iterations = 100,
+                iterations = 200,
                 max_dist = 100000,
                 sky_brightness = 1,
                 schwarzschild_radius = 1,
                 black_hole_center = new Vector3(),
                 star_radius = 1.,
                 star_center = new Vector3(),
-                star_color = new Vector4(1)
+                star_color = new Color(1)
     ){
         super('vec4')
         // this.pass = pass;
@@ -107,7 +107,7 @@ class BlackHoleNode extends TempNode{
             const r2 = rel_p.dot(rel_p);
             const r_len = r2.sqrt();
 
-            If(r_len.lessThan(this.schwarzschild_radius.mul(.1)), () => {
+            If(r_len.lessThan(this.schwarzschild_radius), () => {
                 r.get('insideBH').assign(true);
                 Break();
             });
@@ -131,11 +131,9 @@ class BlackHoleNode extends TempNode{
 
     solveRayColor = Fn(({ r }) =>{
         const color = vec3(0,0,0).toVar();
-        If(r.get('insideBH').equal(true), ()=>{
-            color.assign(0,0,0);
-        }) //We default to black
+        If(r.get('insideBH').equal(true), ()=>{}) //We default to black
         .ElseIf(r.get('hit').equal(true), ()=>{
-            color.assign(this.star_color.rgb.mul(this.star_color.a));
+            color.assign(this.star_color.rgb);
         }).Else(()=>{
         
             const dist_from_bh = distance(r.get('origin'), this.black_hole_center);

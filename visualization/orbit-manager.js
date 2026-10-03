@@ -11,7 +11,6 @@ export class OrbitManager{
     
     static StellarObject = Object.freeze({ Star: 0, BlackHole: 1 });
 
-    stationary_reference = false;
     reference_object = OrbitManager.StellarObject.BlackHole
 
     //These are our scaler variables
@@ -22,8 +21,11 @@ export class OrbitManager{
     get sim_speed() {
         return this.sim_speed_mul * 1/this.sim_speed_inv
     }
+    set sim_speed(value) {
+        this.sim_speed_mul = value * this.sim_speed_inv
+    }
 
-    AU_SCALE = 1;
+    AU_SCALE = 100;
     object_scale = 1;
     star_scale_mult = 1.
     bh_scale_mult = 1.
@@ -62,7 +64,7 @@ export class OrbitManager{
 
         this.bh = new CelestialBody()
         this.bh.mass = 1.0
-        this.bh.radius = (2 * CelestialBody.G * this.bh.mass) / (CelestialBody.c**2)
+        this.bh.radius = () => (2 * CelestialBody.G * this.bh.mass) / (CelestialBody.c**2)
 
         this.star.position = new Vector3(0.72232, 0, 0)
         this.star.velocity = new Vector3(0, 0, 0.06703)
@@ -84,17 +86,11 @@ export class OrbitManager{
                 break;
         }
 
-        //We are removing non stationary references cause it isnt needed for this demonstration
-        //var bh_world_pos = (bh.position - reference_pos * float(stationary_reference)) * AU_SCALE
-	    //var star_world_pos = (star.position - reference_pos * float(stationary_reference)) * AU_SCALE
         let bh_world_pos = new Vector3().subVectors(this.bh.position, reference_pos).multiplyScalar(this.AU_SCALE)
         let star_world_pos = new Vector3().subVectors(this.star.position, reference_pos).multiplyScalar(this.AU_SCALE)
 
-        //star_radius_world = star_scale_mult * object_scale * star.radius * AU_SCALE
-	    //bh_radius_world = bh_scale_mult * object_scale * bh.radius * AU_SCALE
         let star_radius_world = this.star_scale_mult * this.object_scale * this.star.radius * this.AU_SCALE;
         let bh_radius_world = this.bh_scale_mult * this.object_scale * this.bh.radius * this.AU_SCALE
-        console.log(this.bh.position)
 
         this.blackHoleNode.black_hole_center.value.copy(bh_world_pos);
         this.blackHoleNode.star_center.value.copy(star_world_pos);
