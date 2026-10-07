@@ -23,7 +23,6 @@ export class OrbitManager{
     //These are our scaler variables
     //They are our only proper way to modify it
     sim_speed_mul = 1.
-
     sim_speed_inv =1
     get sim_speed() {
         return this.sim_speed_mul * 1/this.sim_speed_inv
@@ -54,28 +53,22 @@ export class OrbitManager{
         if(!this.simulate) return;
 
         var sim_delta = delta * this.sim_speed
-        
-        //Gravity Equation
-        // F = ma = G * (m1 * m2) / r^2
-        // v += ma * dt ==> v += G * m2 / r^2
         this.bh.integrate_adaptive(sim_delta, this.star)
         this.star.integrate_adaptive(sim_delta, this.bh)
-        //var ship_accel = dist.normalized() * (G * bh.mass / (r ** 2.0 * (1.0- (bh.radius/r))));
-        //ship.integrate_adaptive(sim_delta, bh)
     }
 
     start(){
         this.star = new CelestialBody()
         this.star.mass = 0.93
         this.star.radius = OrbitManager.SOLAR_RADIUS
-        this.star.position.set(-1.093386, 0, 0.058931123)
-        this.star.velocity.set(0.0038253244, 0, -0.025581008)
+        this.star.position.set(.72232, 0, 0)
+        this.star.velocity.set(0, 0, 0.06703)
 
         this.bh = new CelestialBody()
         this.bh.mass = 9.27
         this.bh.radius = (2 * CelestialBody.G * this.bh.mass) / (CelestialBody.c**2)
-        this.bh.position.set(0.51302415, 0, 0.32600823)
-        this.bh.velocity.set(-0.0019253857, 0, 0.012857342)
+        this.bh.position.set(-0.07246, 0, 0)
+        this.bh.velocity.set(0, 0, -0.00672)
     }
 
     update(time){
@@ -99,6 +92,7 @@ export class OrbitManager{
 
         this.blackHoleNode.black_hole_center.value.copy(bh_world_pos);
         this.blackHoleNode.star_center.value.copy(star_world_pos);
+
         this.blackHoleNode.schwarzschild_radius.value = bh_radius_world;
         this.blackHoleNode.star_radius.value = star_radius_world;
     }

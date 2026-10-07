@@ -26,12 +26,12 @@ const scenePass = pass( scene, camera );
 scenePass.setMRT( mrt( {
 	output,
 	emissive
-} ) );
+}));
+
 const scenePassColor = scenePass.getTextureNode( 'output' );
 const emissivePass = scenePass.getTextureNode( 'emissive' );
 const bloomPass = bloom( emissivePass );
 renderPipeline.outputNode = scenePassColor.add( bloomPass );
-
 
 const cubemapFaces = [
   './visualization/face_0.jpg',
@@ -47,38 +47,46 @@ cubeTexture.colorSpace = THREE.SRGBColorSpace;
 const gui = new GUI();
 const blackHoleNode = new BlackHoleNode(cubeTexture);
 const orbitManager = new OrbitManager(blackHoleNode);
+
 blackHoleNode.star_color.value.set(new THREE.Vector4(1, 1, 1, 1));
+blackHoleNode.iterations = 500
+blackHoleNode.max_dist = 100000.0
 
-orbitManager.near_bh_step_mult = .15;
+orbitManager.star_scale_mult = 1
+orbitManager.black_hole_scale_mult = 100
+orbitManager.near_bh_step_mult = .1
+orbitManager.AU_SCALE = 10000
+orbitManager.object_scale = 11.933
 
-const orbitFolder = gui.addFolder('Orbit Manager');
-orbitFolder.add(orbitManager, 'simulate');
-orbitFolder.add(orbitManager, 'stationary_reference');
-orbitFolder.add(orbitManager, 'reference_object', {
-  Star: OrbitManager.StellarObject.Star,
-  BlackHole: OrbitManager.StellarObject.BlackHole
-});
-orbitFolder.add(orbitManager, 'sim_speed', 0, 100).name('simulation speed');
-orbitFolder.add(orbitManager, 'AU_SCALE', 0, 20000);
-orbitFolder.add(orbitManager, 'object_scale', 0, 20);
-orbitFolder.add(orbitManager, 'star_scale_mult', 0, 100);
-orbitFolder.add(orbitManager, 'bh_scale_mult', 0, 600);
 
-const blackHoleFolder = gui.addFolder('Blackhole');
-blackHoleFolder.add(blackHoleNode.iterations, 'value', 1, 1000).step(1).name('iterations');
-blackHoleFolder.add(blackHoleNode.max_dist, 'value', 1, 10000000).name('maximum distance');
-blackHoleFolder.add(blackHoleNode.sky_brightness, 'value', 0, 5).name('sky brightness');
-blackHoleFolder.add(blackHoleNode.near_bh_step_mult, 'value', 0.001, .25).name('near-hole step');
-blackHoleFolder.add(blackHoleNode.use_redshift, 'value').name('redshift');
-blackHoleFolder.open();
+// const orbitFolder = gui.addFolder('Orbit Manager');
+// orbitFolder.add(orbitManager, 'simulate');
+// orbitFolder.add(orbitManager, 'stationary_reference');
+// orbitFolder.add(orbitManager, 'reference_object', {
+//   Star: OrbitManager.StellarObject.Star,
+//   BlackHole: OrbitManager.StellarObject.BlackHole
+// });
+// orbitFolder.add(orbitManager, 'sim_speed', 0, 100).name('simulation speed');
+// orbitFolder.add(orbitManager, 'AU_SCALE', 0, 20000);
+// orbitFolder.add(orbitManager, 'object_scale', 0, 20);
+// orbitFolder.add(orbitManager, 'star_scale_mult', 0, 100);
+// orbitFolder.add(orbitManager, 'bh_scale_mult', 0, 600);
 
-const starFolder = gui.addFolder('Star');
-const starColor = { color: `#${blackHoleNode.star_color.value.getHexString()}` };
-starFolder.addColor(starColor, 'color').name('star color').onChange((value) => {
-  blackHoleNode.star_color.value.set(value);
-});
-starFolder.open();
-orbitFolder.open();
+// const blackHoleFolder = gui.addFolder('Blackhole');
+// blackHoleFolder.add(blackHoleNode, 'iterations', 1, 1000).name('iterations');
+// blackHoleFolder.add(blackHoleNode, 'max_dist', 1, 10000000).name('maximum distance');
+// blackHoleFolder.add(blackHoleNode.sky_brightness, 'value', 0, 5).name('sky brightness');
+// blackHoleFolder.add(blackHoleNode.near_bh_step_mult, 'value', 0.001, .25).name('near-hole step');
+// blackHoleFolder.add(blackHoleNode.use_redshift, 'value').name('redshift');
+// blackHoleFolder.open();
+
+// const starFolder = gui.addFolder('Star');
+// const starColor = { color: `#${blackHoleNode.star_color.value.getHexString()}` };
+// starFolder.addColor(starColor, 'color').name('star color').onChange((value) => {
+//   blackHoleNode.star_color.value.set(value);
+// });
+// starFolder.open();
+// orbitFolder.open();
 
 
 scene.backgroundNode = blackHoleNode;

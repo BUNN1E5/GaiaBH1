@@ -57,18 +57,18 @@ class BlackHoleNode extends TempNode{
                 black_hole_center = new Vector3(),
                 star_radius = 1.,
                 star_center = new Vector3(),
-                star_color = new Color(1)
+                star_color = new Color(1, 1, 1, 1)
     ){
         super('vec4')
         // this.pass = pass;
         this.skybox = cubeTextureNode;
 
         this.schwarzschild_radius = uniform(float(schwarzschild_radius));
-        this.epsilon = uniform(float(.0001));
+        this.epsilon = uniform(float(.001));
         this.iterations = uniform(int(iterations));
         this.max_dist = uniform(float(max_dist));
         this.sky_brightness = uniform(float(sky_brightness));
-        this.near_bh_step_mult = uniform(float(.02));
+        this.near_bh_step_mult = uniform(float(.1));
         this.use_redshift = uniform(bool(false));
         
         this.black_hole_center = uniform(black_hole_center);
