@@ -2,7 +2,6 @@ import {Vector3} from 'three';
 
 export class CelestialBody{
     //Physical Constant used in Gravity Equation
-    // G = 4* PI^2 * AU^3 / (SOLAR_MASS * 
     // G = (4 * PI^2) / (SOLAR_MASS * DAYS_IN_YEAR^2)
     static G = 4 * Math.PI ** 2 / (1. * 365.256 ** 2)
     static c = 173.145;
