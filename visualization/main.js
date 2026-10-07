@@ -47,24 +47,20 @@ cubeTexture.colorSpace = THREE.SRGBColorSpace;
 const gui = new GUI();
 const blackHoleNode = new BlackHoleNode(cubeTexture);
 const orbitManager = new OrbitManager(blackHoleNode);
-orbitManager.bh.mass = 9.27
-orbitManager.star.mass = 0.93
 blackHoleNode.star_color.value.set(new THREE.Vector4(1, 1, 1, 1));
 
-
-orbitManager.reference_object = OrbitManager.StellarObject.BlackHole;
-orbitManager.AU_SCALE = 1500;
 orbitManager.near_bh_step_mult = .15;
 
 const orbitFolder = gui.addFolder('Orbit Manager');
 orbitFolder.add(orbitManager, 'simulate');
+orbitFolder.add(orbitManager, 'stationary_reference');
 orbitFolder.add(orbitManager, 'reference_object', {
   Star: OrbitManager.StellarObject.Star,
   BlackHole: OrbitManager.StellarObject.BlackHole
 });
 orbitFolder.add(orbitManager, 'sim_speed', 0, 100).name('simulation speed');
-orbitFolder.add(orbitManager, 'AU_SCALE', 0, 2000);
-orbitFolder.add(orbitManager, 'object_scale', 0, 10);
+orbitFolder.add(orbitManager, 'AU_SCALE', 0, 20000);
+orbitFolder.add(orbitManager, 'object_scale', 0, 20);
 orbitFolder.add(orbitManager, 'star_scale_mult', 0, 100);
 orbitFolder.add(orbitManager, 'bh_scale_mult', 0, 600);
 

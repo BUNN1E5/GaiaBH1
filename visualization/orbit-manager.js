@@ -12,6 +12,7 @@ export class OrbitManager{
     static StellarObject = Object.freeze({ Star: 0, BlackHole: 1 });
 
     _reference_object = OrbitManager.StellarObject.BlackHole
+    stationary_reference = true
     get reference_object() {
         return this._reference_object
     }
@@ -31,10 +32,10 @@ export class OrbitManager{
         this.sim_speed_mul = value * this.sim_speed_inv
     }
 
-    AU_SCALE = 100;
-    object_scale = 1;
+    AU_SCALE = 10000;
+    object_scale = 11.933;
     star_scale_mult = 1.
-    bh_scale_mult = 1.
+    bh_scale_mult = 100.
 
     static SOLAR_RADIUS = 0.00465047;//AU
     static AUS_TO_LIGHT = 499.005 //AU/S
@@ -65,19 +66,16 @@ export class OrbitManager{
 
     start(){
         this.star = new CelestialBody()
-        this.star.mass = 1.0
+        this.star.mass = 0.93
         this.star.radius = OrbitManager.SOLAR_RADIUS
+        this.star.position.set(-1.093386, 0, 0.058931123)
+        this.star.velocity.set(0.0038253244, 0, -0.025581008)
 
         this.bh = new CelestialBody()
-        this.bh.mass = 1.0
+        this.bh.mass = 9.27
         this.bh.radius = (2 * CelestialBody.G * this.bh.mass) / (CelestialBody.c**2)
-
-        this.star.position = new Vector3(0.72232, 0, 0)
-        this.star.velocity = new Vector3(0, 0, 0.06703)
-
-        this.bh.position = new Vector3(-0.07246, 0, 0)
-        this.bh.velocity = new Vector3(0, 0, -0.00672)
-        this.bh.radius = (2 * CelestialBody.G * this.bh.mass) / (CelestialBody.c**2)
+        this.bh.position.set(0.51302415, 0, 0.32600823)
+        this.bh.velocity.set(-0.0019253857, 0, 0.012857342)
     }
 
     update(time){
@@ -92,8 +90,9 @@ export class OrbitManager{
                 break;
         }
 
-        let bh_world_pos = new Vector3().subVectors(this.bh.position, reference_pos).multiplyScalar(this.AU_SCALE)
-        let star_world_pos = new Vector3().subVectors(this.star.position, reference_pos).multiplyScalar(this.AU_SCALE)
+        const reference_offset = this.stationary_reference ? reference_pos : new Vector3();
+        let bh_world_pos = new Vector3().subVectors(this.bh.position, reference_offset).multiplyScalar(this.AU_SCALE)
+        let star_world_pos = new Vector3().subVectors(this.star.position, reference_offset).multiplyScalar(this.AU_SCALE)
 
         let star_radius_world = this.star_scale_mult * this.object_scale * this.star.radius * this.AU_SCALE;
         let bh_radius_world = this.bh_scale_mult * this.object_scale * this.bh.radius * this.AU_SCALE
