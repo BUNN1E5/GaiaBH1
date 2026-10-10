@@ -107,7 +107,7 @@ class BlackHoleNode extends TempNode{
             const r2 = rel_p.dot(rel_p);
             const r_len = r2.sqrt();
 
-            If(r_len.lessThan(this.schwarzschild_radius), () => {
+            If(r_len.lessThan(this.schwarzschild_radius.mul(.01)), () => {
                 r.get('insideBH').assign(true);
                 Break();
             });
