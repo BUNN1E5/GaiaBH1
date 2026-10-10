@@ -47,7 +47,7 @@ const gui = renderer.inspector.createParameters( 'Settings' );
 const blackHoleNode = new BlackHoleNode(cubeTexture);
 const orbitManager = new OrbitManager(blackHoleNode);
 
-blackHoleNode.star_color.value.set(new THREE.Vector4(1, 1, 1, 2));
+blackHoleNode.star_emissive.value = 2;
 blackHoleNode.iterations.value = 500;
 blackHoleNode.max_dist.value = 100000.0;
 
@@ -79,14 +79,13 @@ blackHoleFolder.add(blackHoleNode.use_redshift, 'value').name('redshift');
 
 const starFolder = gui.addFolder('Star');
 starFolder.addColor(blackHoleNode.star_color, 'value').name('star color');
-starFolder.add(blackHoleNode.star_emissive, 'value').name('star emissive');
+starFolder.add(blackHoleNode.star_emissive, 'value', 0, 10).name('star emissive');
 
 const scenePassColor = scenePass.getTextureNode( 'output' );
-const emissivePass = blackHoleNode.a;
-const bloomPass = bloom( emissivePass, 1, 1 );
+const bloomPass = bloom( scenePassColor, 1.5, 0.4, 1 );
 
 
-scene.backgroundNode = blackHoleNode.rgb.mul(blackHoleNode.a);
+scene.backgroundNode = blackHoleNode.rgb;
 renderPipeline.outputNode = scenePassColor.add( bloomPass );
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);

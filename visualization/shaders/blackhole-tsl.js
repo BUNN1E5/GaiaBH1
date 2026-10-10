@@ -132,10 +132,10 @@ class BlackHoleNode extends TempNode{
     });
 
     solveRayColor = Fn(({ r }) =>{
-        const color = vec4(0,0,0,0).toVar();
+        const color = vec3(0,0,0).toVar();
         If(r.get('insideBH').equal(true), ()=>{}) //We default to black
         .ElseIf(r.get('hit').equal(true), ()=>{
-            color.assign(vec4(this.star_color.rgb, this.star_emissive));
+            color.assign(this.star_color.rgb.mul(this.star_emissive));
         }).Else(()=>{
         
             const dist_from_bh = distance(r.get('origin'), this.black_hole_center);
@@ -153,13 +153,13 @@ class BlackHoleNode extends TempNode{
             });
             //color is already black in this case
             const _color = mix(color, sky_color.mul(this.sky_brightness), 1);
-            color.assign(vec4(_color.rgb, 0));
+            color.assign(_color.rgb);
         });
         return color;
     });
 
     blackhole = Fn(({ro, rd}) => {
-            return vec4(this.solveRayColor(this.raymarch(ro, rd)));
+            return this.solveRayColor(this.raymarch(ro, rd));
         });
 
     
