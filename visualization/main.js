@@ -4,8 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { OrbitManager } from './orbit-manager.js'
 import BlackHoleNode from './shaders/blackhole-tsl.js'
 import Stats from 'three/addons/libs/stats.module.js';
-import { GUI } from 'dat.gui'
-
+import { Inspector } from 'three/addons/inspector/Inspector.js';
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 
 let canvas = document.querySelector( '#c' );
@@ -14,6 +13,8 @@ const renderer = new THREE.WebGPURenderer({antialias: true, forceWebGL:false, ca
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 await renderer.init();
+
+renderer.inspector = new Inspector()
 
 const renderPipeline = new THREE.RenderPipeline(renderer);
 const scene = new THREE.Scene();
@@ -28,10 +29,7 @@ scenePass.setMRT( mrt( {
 	emissive
 }));
 
-const scenePassColor = scenePass.getTextureNode( 'output' );
-const emissivePass = scenePass.getTextureNode( 'emissive' );
-const bloomPass = bloom( emissivePass );
-renderPipeline.outputNode = scenePassColor.add( bloomPass );
+
 
 const cubemapFaces = [
   './visualization/face_0.jpg',
@@ -45,7 +43,7 @@ const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
 cubeTexture.colorSpace = THREE.SRGBColorSpace;
 cubeTexture.flipY = true
 
-const gui = new GUI();
+const gui = renderer.inspector.createParameters( 'Settings' );
 const blackHoleNode = new BlackHoleNode(cubeTexture);
 const orbitManager = new OrbitManager(blackHoleNode);
 
@@ -78,18 +76,18 @@ blackHoleFolder.add(blackHoleNode.max_dist, 'value', 1, 100000).name('maximum di
 blackHoleFolder.add(blackHoleNode.sky_brightness, 'value', 0, 5).name('sky brightness');
 blackHoleFolder.add(blackHoleNode.near_bh_step_mult, 'value', 0.001, .25).name('near-hole step');
 blackHoleFolder.add(blackHoleNode.use_redshift, 'value').name('redshift');
-blackHoleFolder.open();
 
 const starFolder = gui.addFolder('Star');
-const starColor = { color: `#${blackHoleNode.star_color.value.getHexString()}` };
-starFolder.addColor(starColor, 'color').name('star color').onChange((value) => {
-  blackHoleNode.star_color.value.set(value);
-});
-starFolder.open();
-orbitFolder.open();
+starFolder.addColor(blackHoleNode.star_color, 'value').name('star color');
+starFolder.add(blackHoleNode.star_emissive, 'value').name('star emissive');
+
+const scenePassColor = scenePass.getTextureNode( 'output' );
+const emissivePass = blackHoleNode.a;
+const bloomPass = bloom( emissivePass, 1, 1 );
 
 
-scene.backgroundNode = blackHoleNode;
+scene.backgroundNode = blackHoleNode.rgb.mul(blackHoleNode.a);
+renderPipeline.outputNode = scenePassColor.add( bloomPass );
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 
@@ -99,17 +97,24 @@ stats.showPanel(0);
 
 renderer.setAnimationLoop( render );
 
-const clock = new THREE.Clock()
+const timer = new THREE.Timer()
 function render( time ) {
+  timer.update()
+  //findBestRenderScale(timer.getDelta(), 120)
   canvas = renderer.domElement;
   camera.aspect = canvas.clientWidth / canvas.clientHeight;
   camera.updateProjectionMatrix();
-  orbitManager.update(clock.getDelta());
-  console.log(clock.getDelta() * 1000)
+  orbitManager.update(timer.getDelta());
   renderPipeline.render()
   stats.update();
 }
 
-function findBestRenderScale(){
-  // TODO :: Find the best renderscale so that we can max out our resolution
+//We want this to hit at least our target FPS
+//If the computer can do more than it, cool IG
+function findBestRenderScale(delta, targetFPS){
+  let targetDelta = 1/targetFPS;
+  let deltaS = delta;
+  let diff = Math.max(1, 1 - (targetDelta - deltaS))
+  console.log(diff)
+  renderer.setPixelRatio(window.devicePixelRatio * diff)
 }

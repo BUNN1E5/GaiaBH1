@@ -57,7 +57,8 @@ class BlackHoleNode extends TempNode{
                 black_hole_center = new Vector3(),
                 star_radius = 1.,
                 star_center = new Vector3(),
-                star_color = new Color(1, 1, 1, 1)
+                star_color = new Color(1, 1, 1),
+                star_emissive = 1.
     ){
         super('vec4')
         // this.pass = pass;
@@ -75,6 +76,7 @@ class BlackHoleNode extends TempNode{
         this.star_center = uniform(star_center);
         this.star_radius = uniform(float(star_radius));
         this.star_color = uniform(star_color);
+        this.star_emissive = uniform(star_emissive);
     }
 
 
@@ -130,10 +132,10 @@ class BlackHoleNode extends TempNode{
     });
 
     solveRayColor = Fn(({ r }) =>{
-        const color = vec3(0,0,0).toVar();
+        const color = vec4(0,0,0,0).toVar();
         If(r.get('insideBH').equal(true), ()=>{}) //We default to black
         .ElseIf(r.get('hit').equal(true), ()=>{
-            color.assign(this.star_color.rgb);
+            color.assign(vec4(this.star_color.rgb, this.star_emissive));
         }).Else(()=>{
         
             const dist_from_bh = distance(r.get('origin'), this.black_hole_center);
@@ -151,13 +153,13 @@ class BlackHoleNode extends TempNode{
             });
             //color is already black in this case
             const _color = mix(color, sky_color.mul(this.sky_brightness), 1);
-            color.assign(_color);
+            color.assign(vec4(_color.rgb, 0));
         });
         return color;
     });
 
     blackhole = Fn(({ro, rd}) => {
-            return vec4(this.solveRayColor(this.raymarch(ro, rd)), 1);
+            return vec4(this.solveRayColor(this.raymarch(ro, rd)));
         });
 
     
@@ -167,7 +169,6 @@ class BlackHoleNode extends TempNode{
         const ndc = vec4(screenUV.mul(2).sub(1), 1, 1);
         const view = cameraProjectionMatrixInverse.mul(ndc);
         const rd = transformDirection(view.xyz.div(view.w), cameraWorldMatrix);
-
         return this.blackhole({ro: cameraPosition, rd: rd});
     }
 }
