@@ -13,7 +13,7 @@ I had originally written the shader in the godot shader language but the live we
 
 Before we do anything with the blackhole, we need to setup our project. For this we are going to start with a modified version of three's [creating a scene](https://threejs.org/manual/#creating-a-scene) tutorial.
 
-[livecodes:step-0]
+:::livecode[step-0]
 
 I kept the standard mesh box in there so we can make sure that something is properly rendering, we will remove it in the next part.
 
@@ -21,8 +21,6 @@ I kept the standard mesh box in there so we can make sure that something is prop
 
 Now that we are setup we can start with just a basic raymarcher.
 
-[livecodes:step-1]
-
-
+:::livecode[step-1]
 
 ## Step 2 : Gravitational Lensing
