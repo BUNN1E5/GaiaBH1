@@ -5,10 +5,24 @@ I had originally built this blackhole shader for the [Unlikely Collaborators™ 
 ## Check Out the live demo
 [![Play Demo](DemoImage.gif)](https://goldenneedham.com/demos/GaiaBH1/)
 
-You might notice that the signature accretion disks are missing, well that is because the black hole we are modelling actually does not have them. So subsequently our shader doesn't need it either. Our shader was originally written in the godot shader language but the live web demo and what we will be working on here today was build in Three.JS using TSL. I will still provide equivalent godot versions to the code. 
+You might notice that the signature accretion disks are missing, well that is because the black hole we are modelling actually does not have them. So subsequently our shader doesn't need it either. Although it shouldnt be *too* hard to add them after if you want.
+
+I had originally written the shader in the godot shader language but the live web demo and what we will be working on here today was built in three.js shading language or TSL.
+
+## Step 0: Setting Up Three.js
+
+Before we do anything with the blackhole, we need to setup our project. For this we are going to start with a modified version of three's [creating a scene](https://threejs.org/manual/#creating-a-scene) tutorial.
+
+[livecodes:step-0]
+
+I kept the standard mesh box in there so we can make sure that something is properly rendering, we will remove it in the next part.
 
 ## Step 1: Basic Raymarching
 
-We need to start with our basic raymarching foundation
+Now that we are setup we can start with just a basic raymarcher.
 
-## Step 1 : Gravitational Lensing
+[livecodes:step-1]
+
+
+
+## Step 2 : Gravitational Lensing

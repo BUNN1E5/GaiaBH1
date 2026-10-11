@@ -22,7 +22,6 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 camera.position.z = 5;
 scene.add(camera);
 
-
 const scenePass = pass( scene, camera );
 scenePass.setMRT( mrt( {
 	output,
