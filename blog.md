@@ -19,8 +19,23 @@ I kept the standard mesh box in there so we can make sure that something is prop
 
 ## Step 1: Basic Raymarching
 
-Now that we are setup we can start with just a basic raymarcher.
+Now that we have our scene setup we can start with our raymarcher boilerplate. We are gonna start with with an uncolored sphere just to make sure that everything is working.
+
+Our basic raymarcher is composed of 3 different parts. Our main, raymarch, and map functions.
+
+Our main function is our entrypoint into the shader, here we convert the screen position of every pixel on the screen to a world position. To do this, we first convert our screen space UVs into clip space. Our screen space UVs are usually from 0 to 1 so we must convert them to -1 to 1 and for our clip space, we then can set our z to 0 for the near clipping plane, and w to 1 for uniform scaling.
+
+We then project our clip space into view space by multiplying it by the inverse of our projection matrix, and then dividing the xyz terms by our w term. 
+
+Last but not least we then need to translate our 
+
+```glsl
+vec4 clipspace = vec4(screen_uv*2, 0, 1);
+vec4 ndc = clipspace * inverseProjectionMatrix;
+vec3 viewspace = ndc.xyz/ndc.w;
+```
 
 :::livecode[step-1]
+
 
 ## Step 2 : Gravitational Lensing
