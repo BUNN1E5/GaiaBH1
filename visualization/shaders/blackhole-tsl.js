@@ -166,7 +166,7 @@ class BlackHoleNode extends TempNode{
 
     setup(builder){
 
-        const ndc = vec4(screenUV.mul(2).sub(1), 1, 1);
+        const ndc = vec4(screenUV.mul(2).sub(1), -1, 1);
         const view = cameraProjectionMatrixInverse.mul(ndc);
         const rd = transformDirection(view.xyz.div(view.w), cameraWorldMatrix);
         return this.blackhole({ro: cameraPosition, rd: rd});

@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { BlackHole } from './blackhole.js'
-import { screenUV } from 'three/tsl'
 
 let canvas = document.querySelector( '#c' );
 
-const renderer = new THREE.WebGPURenderer({antialias: true, forceWebGL:false, canvas });
+const renderer = new THREE.WebGPURenderer({antialias: true, canvas });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 await renderer.init();
@@ -19,7 +18,6 @@ scene.add(camera);
 
 const blackHole = new BlackHole()
 scene.backgroundNode = blackHole.main()
-//scene.backgroundNode = color(0xff0000); 
 
 renderer.setAnimationLoop( render );
 

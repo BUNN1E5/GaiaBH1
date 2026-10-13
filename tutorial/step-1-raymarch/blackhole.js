@@ -5,6 +5,7 @@ import {
     Break,
     length,
     vec3,
+    normalize,
     vec4,
     float,
     cameraPosition,
@@ -16,26 +17,21 @@ import {
 
 export class BlackHole{
     MAX_STEPS = 100;
-    MAX_DIST = 100;
     EPSILON = 0.1;
 
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
-    
-    map = Fn(({p}) => {
-        return this.sdSphere({p : p, r : 1});
-    });
-
     raymarch = Fn(({ ro, rd }) => {
-        const dist = float(0).toVar();
+        const rayPosition = ro.toVar();
+        const color = vec3(0).toVar();
         Loop(this.MAX_STEPS, ({ i }) => {
-            const p = ro.add(rd.mul(dist))
-            const step = this.map({p : p})
-            dist.addAssign(step)
-            If(dist.greaterThan(this.MAX_DIST), () => {
+            const step = this.sdSphere({p : rayPosition, r : 1});
+            If(step.lessThan(this.EPSILON), () => {
+                color.assign(vec3(1));
                 Break();
             });
+            rayPosition.addAssign(rd.mul(step));
         });
-        return dist.div(this.MAX_DIST);
+        return color;
     });
 
     main = Fn(() => {
