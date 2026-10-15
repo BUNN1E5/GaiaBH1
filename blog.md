@@ -10,7 +10,7 @@ You might notice that the signature accretion disks are missing. Well that is be
 I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL. However I will provide equivalent GLSL because TSL can get a bit wordy and hard to parse.
 
 
-If you are confortable with raymarching skip to [step 2 gravitational lensing](#step-2-gravitational-lensing)
+If you are confortable with raymarching skip to [step 3 gravitational lensing](#step-3-gravitational-lensing)
 
 ## Step 0: Setting Up Three.js
 
@@ -87,7 +87,11 @@ vec3 raymarch(vec3 ro, vec3 rd){
 
 <live-code path='step-1-main'/>
 
-## Step 2: Gravitational Lensing
+## Step 2: Skybox
+
+
+
+## Step 3: Gravitational Lensing
 
 If you want to get more in depth about the derivation [check out this article](https://rantonels.github.io/starless/). We are gonna just skip to the end and have our geodesic equation. Note we add an extra term $r_s$ for the Schwarzschild radius, and $r$ is our ray position relative to the bh. 
 
@@ -107,4 +111,4 @@ $$
 
 and now we just have to plug the equations in to get the light bending
 
-<live-code path='step-2'/>
+<live-code path='step-3'/>

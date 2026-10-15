@@ -25,12 +25,13 @@ export class BlackHole{
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
     raymarch = Fn(({ ro, rd }) => {
         const rayPosition = ro.toVar();
+        const rdir = rd.toVar();
         const color = vec3(0).toVar();
         
         //New code here!!
 
         //h2 is conserved so we only need to calculate it once
-        const h = (rayPosition.sub(this.black_hole_center)).cross(rd);
+        const h = (rayPosition.sub(this.black_hole_center)).cross(rdir);
         const h2 = h.dot(h); // dot product with itself gets square magnitude
         
         //End new code
@@ -44,12 +45,13 @@ export class BlackHole{
 
             //New code here!!
 
-            //ray relative position
-            const rrp = rayPosition - this.black_hole_center;
-            const r2 = rrp.dot(rrp);
-            const r5 = r2.mul(r2).mul(rrp.length);
-            const f = float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(normalize(rrp)).div(r5);
+            const rrp = rayPosition - this.black_hole_center; //ray relative position
+            const r2 = rrp.dot(rrp); 
+            const rlen = rrp.length();
+            const r5 = r2.mul(r2).mul(rlen);
+            const f = float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp).div(r5);
 
+            rdir.
             //end new code
 
             rayPosition.addAssign(rd.mul(step));
