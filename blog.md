@@ -16,7 +16,7 @@ If you are confortable with raymarching skip to [step 2 gravitational lensing](#
 
 Before we do anything with the blackhole, we need to setup our project. For this we are going to start with a modified version of three's [creating a scene](https://threejs.org/manual/#creating-a-scene) tutorial.
 
-:::livecode[step-0]
+<live-code path='step-0'/>
 
 You should see a green box that you can look around with your mouse. I kept the standard mesh box in there so we can make sure that something is properly rendering, we will remove it in the next part.
 
@@ -85,8 +85,26 @@ vec3 raymarch(vec3 ro, vec3 rd){
 }
 ```
 
-<iframe src='https://livecodes.io/?x=https://github.com/BUNN1E5/GaiaBH1/tree/blog/tutorial/step-1-raymarch'></iframe>
+<live-code path='step-1-main'/>
 
 ## Step 2: Gravitational Lensing
 
-$\huge \alpha = \frac{4GM}{c^2b}$
+If you want to get more in depth about the derivation [check out this article](https://rantonels.github.io/starless/). We are gonna just skip to the end and have our geodesic equation. Note we add an extra term $r_s$ for the Schwarzschild radius, and $r$ is our ray position relative to the bh. 
+
+$$
+\vec{F}(r) = -1.5h^2\frac{r_s \vec{r}}{||\vec{r}||^5}
+$$
+
+$$
+h = ||\vec{r} \times \vec{r}_{dir}||^2
+$$
+
+In our case we might not always want the blackhole to be in the center of our scene. So we need to convert our ray position into coordinates relative to the black hole
+
+$$
+\vec{r} = r_{pos} - bh_{pos}
+$$
+
+and now we just have to plug the equations in to get the light bending
+
+<live-code path='step-2'/>

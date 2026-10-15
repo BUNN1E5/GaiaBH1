@@ -77,6 +77,7 @@ class BlackHoleNode extends TempNode{
         this.star_radius = uniform(float(star_radius));
         this.star_color = uniform(star_color);
         this.star_emissive = uniform(star_emissive);
+        this.h2 = uniform(float(10));
     }
 
 
@@ -97,6 +98,10 @@ class BlackHoleNode extends TempNode{
             iterations: int(0)
         }).toVar();
 
+        const rel_p_s = r.get('pos').sub(this.black_hole_center);
+        const L = rel_p_s.cross(r.get('dir'));
+        const h2 = L.dot(L);
+
         Loop(this.iterations, ({ i }) => {
             r.get('iterations').assign(i);
             const d = this.map({p: r.get('pos')});
@@ -114,10 +119,8 @@ class BlackHoleNode extends TempNode{
                 Break();
             });
             
-            const L = rel_p.cross(r.get('dir'));
-            const h2 = L.dot(L);
-            const divisor = r2.mul(r2).mul(r_len);
-            const accel = this.schwarzschild_radius.mul(-1.5).mul(h2).mul(rel_p).div(divisor);
+            const divisor = r2.mul(r2);
+            const accel = this.schwarzschild_radius.mul(-1.5).mul(h2).mul(normalize(rel_p)).div(divisor);
             const step_size = min(d, r_len.mul(this.near_bh_step_mult));
 
             r.get('dist').addAssign(step_size);

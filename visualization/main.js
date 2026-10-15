@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { pass, mrt, output, emissive } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FlyControls } from 'three/addons/controls/FlyControls.js';
 import { OrbitManager } from './orbit-manager.js'
 import BlackHoleNode from './shaders/blackhole-tsl.js'
 import Stats from 'three/addons/libs/stats.module.js';
@@ -75,6 +76,7 @@ blackHoleFolder.add(blackHoleNode.max_dist, 'value', 1, 100000).name('maximum di
 blackHoleFolder.add(blackHoleNode.sky_brightness, 'value', 0, 5).name('sky brightness');
 blackHoleFolder.add(blackHoleNode.near_bh_step_mult, 'value', 0.001, .25).name('near-hole step');
 blackHoleFolder.add(blackHoleNode.use_redshift, 'value').name('redshift');
+blackHoleFolder.add(blackHoleNode.h2, 'value',  1, 50).name('h2');
 
 const starFolder = gui.addFolder('Star');
 starFolder.addColor(blackHoleNode.star_color, 'value').name('star color');
@@ -87,7 +89,7 @@ const bloomPass = bloom( scenePassColor, 1.5, 0.4, 1 );
 scene.backgroundNode = blackHoleNode.rgb;
 renderPipeline.outputNode = scenePassColor.add( bloomPass );
 
-const orbitControls = new OrbitControls(camera, renderer.domElement);
+new OrbitControls(camera, renderer.domElement);
 
 const stats = new Stats();
 document.body.appendChild(stats.dom);
