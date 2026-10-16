@@ -49,6 +49,8 @@ export class BlackHole{
             const r2 = rrp.dot(rrp); 
             const rlen = rrp.length();
             const r5 = r2.mul(r2).mul(rlen);
+
+            //This is our geodesic function
             const f = float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp).div(r5);
 
             rdir.

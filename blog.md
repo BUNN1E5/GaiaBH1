@@ -89,6 +89,18 @@ vec3 raymarch(vec3 ro, vec3 rd){
 
 ## Step 2: Skybox
 
+Before we add the black hole with its lensing lets add a skybox. Three.js [CubeTexture](https://threejs.org/docs/?q=CubeTex#CubeTexture) requires us to define a path for each face. For testing and demonstration we are going to be using these faces:
+
+<p align="center">
+    <img src='./visualization/face_0.jpg' width="10%">
+    <img src='./visualization/face_1.jpg' width="10%">
+    <img src='./visualization/face_2.jpg' width="10%">
+    <img src='./visualization/face_3.jpg' width="10%">
+    <img src='./visualization/face_4.jpg' width="10%">
+    <img src='./visualization/face_5.jpg' width="10%">
+</p>
+
+We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.
 
 
 ## Step 3: Gravitational Lensing
