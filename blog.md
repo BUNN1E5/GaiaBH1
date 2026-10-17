@@ -10,7 +10,7 @@ You might notice that the signature accretion disks are missing. Well that is be
 I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL. However I will provide equivalent GLSL because TSL can get a bit wordy and hard to parse.
 
 
-If you are confortable with raymarching skip to [step 3 gravitational lensing](#step-3-gravitational-lensing)
+If you are comfortable with raymarching skip to [step 3 gravitational lensing](#step-3-gravitational-lensing)
 
 ## Step 0: Setting Up Three.js
 
@@ -28,9 +28,10 @@ Our basic raymarcher is composed of 2 different parts. Our main and raymarch fun
 
 ### The Main Function
 TODO :: CUT THIS SHORTER
+
 Our main function is our entrypoint into the shader. Here we convert the screen position of every pixel on the screen into a world direction by going thru the following transformations, screen -> clip -> view -> world. 
 
-First we need to convert our screen space UVs into clip space. Screen space UVs are usually from 0 to 1 so we must convert them to -1 to 1, we then can set our z to -1 for the near clipping plane, and w to 1 **for reasons**. TODO :: ADD REASONS
+First we need to convert our screen space UVs into clip space. Screen space UVs are usually from 0 to 1 so we must convert them to -1 to 1, we then can set our z to -1 for the near clipping plane, and w to 1.
 
 We then project our clip space into view space by multiplying it by the inverse of our projection matrix, and then dividing the xyz terms by our w term. 
 
@@ -65,6 +66,9 @@ Our raymarch function is the main part of our shader. For every pixel we step a 
 
 We will use a standard raymarch loop and a single [SDF for a sphere](https://iquilezles.org/articles/distfunctions/). This will be the base that we add the gravitational lensing to.
 
+<details>
+    <summary>GLSL</summary>
+
 ```glsl
 const int MAX_STEPS = 100;
 const float EPSILON = .01;
@@ -84,6 +88,8 @@ vec3 raymarch(vec3 ro, vec3 rd){
     return vec3(0);
 }
 ```
+</details>
+
 
 <live-code path='step-1-main'/>
 
@@ -92,12 +98,12 @@ vec3 raymarch(vec3 ro, vec3 rd){
 Before we add the black hole with its lensing lets add a skybox. Three.js' [CubeTexture](https://threejs.org/docs/?q=CubeTex#CubeTexture) requires us to define a path for each face. For testing and demonstration we are going to be using these faces:
 
 <p align="center">
-    <img src='./visualization/face_0.jpg' width="10%">
-    <img src='./visualization/face_1.jpg' width="10%">
-    <img src='./visualization/face_2.jpg' width="10%">
-    <img src='./visualization/face_3.jpg' width="10%">
-    <img src='./visualization/face_4.jpg' width="10%">
-    <img src='./visualization/face_5.jpg' width="10%">
+    <img src='./GaiaBH1/textures/face_0.jpg' width="10%">
+    <img src='./GaiaBH1/textures/face_1.jpg' width="10%">
+    <img src='./GaiaBH1/textures/face_2.jpg' width="10%">
+    <img src='./GaiaBH1/textures/face_3.jpg' width="10%">
+    <img src='./GaiaBH1/textures/face_4.jpg' width="10%">
+    <img src='./GaiaBH1/textures/face_5.jpg' width="10%">
 </p>
 
 We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.

@@ -16,7 +16,18 @@ new OrbitControls(camera, renderer.domElement);
 
 scene.add(camera);
 
-const blackHole = new BlackHole()
+const cubemapFaces = [ // I have some hosted here
+    '../../GaiaBH1/textures/face_0.jpg',
+    '../../GaiaBH1/textures/face_1.jpg',
+    '../../GaiaBH1/textures/face_2.jpg',
+    '../../GaiaBH1/textures/face_3.jpg',
+    '../../GaiaBH1/textures/face_4.jpg',
+    '../../GaiaBH1/textures/face_5.jpg',
+];
+const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
+cubeTexture.colorSpace = THREE.SRGBColorSpace;
+cubeTexture.flipY = false;
+const blackHole = new BlackHole(cubeTexture);
 scene.backgroundNode = blackHole.main()
 
 renderer.setAnimationLoop( render );

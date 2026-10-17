@@ -6,6 +6,9 @@ import {
     length,
     vec3,
     vec4,
+    bool,
+    not,
+    uniformCubeTexture,
     cameraPosition,
     cameraWorldMatrix,
     screenUV,
@@ -16,6 +19,10 @@ import {
 export class BlackHole{
     MAX_STEPS = 100;
     EPSILON = 0.1;
+
+    constructor(cubemap){
+        this.cubemap = uniformCubeTexture(cubemap);
+    }    
 
     //New code here!!
     black_hole_center = vec3(0,0,0);
@@ -53,11 +60,16 @@ export class BlackHole{
             //This is our geodesic function
             const f = float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp).div(r5);
 
-            rdir.
+            // rdir.
             //end new code
 
             rayPosition.addAssign(rd.mul(step));
         });
+
+        If(not(hit), ()=>{
+            color.assign(this.cubemap.sample(rd).rgb);
+        });
+
         return color;
     });
 

@@ -7,7 +7,6 @@ import {
     // New code !!
     bool,
     not,
-    cubeTexture,
     uniformCubeTexture,
     // End new code
     vec3,
@@ -49,8 +48,10 @@ export class BlackHole{
         //New Code !!
 
         If(not(hit), ()=>{
-            // color.assign(cubeTexture(this.cubemap, rd).rgb);
             color.assign(this.cubemap.sample(rd).rgb);
+            
+            // This also would work just fine
+            // color.assign(cubeTexture(this.cubemap, rd).rgb);
         });
 
         //End new code
