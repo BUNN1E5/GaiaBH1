@@ -98,12 +98,12 @@ vec3 raymarch(vec3 ro, vec3 rd){
 Before we add the black hole with its lensing lets add a skybox. Three.js' [CubeTexture](https://threejs.org/docs/?q=CubeTex#CubeTexture) requires us to define a path for each face. For testing and demonstration we are going to be using these faces:
 
 <p align="center">
-    <img src='../demos/GaiaBH1/textures/face_0.jpg' width="10%">
-    <img src='../demos/GaiaBH1/textures/face_1.jpg' width="10%">
-    <img src='../demos/GaiaBH1/textures/face_2.jpg' width="10%">
-    <img src='../demos/GaiaBH1/textures/face_3.jpg' width="10%">
-    <img src='../demos/GaiaBH1/textures/face_4.jpg' width="10%">
-    <img src='../demos/GaiaBH1/textures/face_5.jpg' width="10%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_0.jpg' width="10%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_1.jpg' width="10%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_2.jpg' width="10%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_3.jpg' width="10%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_4.jpg' width="10%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_5.jpg' width="10%">
 </p>
 
 We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.
