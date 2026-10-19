@@ -1,0 +1,10 @@
+{
+  "files": {
+    "index.html": {
+      "contentType": "text/html"
+    },
+    "main.js": {
+      "contentType": "text/javascript"        
+    }
+  }
+}
