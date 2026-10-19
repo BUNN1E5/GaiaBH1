@@ -129,6 +129,5 @@ $$
 $$
 
 and now we just have to plug the equations in to get the light bending
-
-<playground-ide project-src="./tutorial/step-3/project.json"></playground-ide>
+<playground-ide project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json"></playground-ide>
 
