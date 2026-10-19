@@ -1,10 +1,13 @@
 {
-  "files": {
-    "index.html": {
-      "contentType": "text/html"
-    },
-    "main.js": {
-      "contentType": "text/javascript"        
+  "importMap": {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.webgpu.min.js",
+      "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.tsl.min.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
     }
+  },
+  "files": {
+    "index.html": {"contentType": "text/html" },
+    "main.js": { "contentType": "text/javascript"}
   }
 }
