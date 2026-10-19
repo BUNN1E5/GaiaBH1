@@ -91,7 +91,7 @@ vec3 raymarch(vec3 ro, vec3 rd){
 </details>
 
 
-<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-raymarch/project.json"></code-playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-raymarch/project.json" selected="blackhole.js"></code-playground>
 
 ## Step 2: Skybox
 
@@ -108,7 +108,7 @@ Before we add the black hole with its lensing lets add a skybox. Three.js' [Cube
 
 We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.
 
-<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-2/project.json"></code-playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-2/project.json" selected="blackhole.js"></code-playground>
 
 ## Step 3: Gravitational Lensing
 
@@ -129,5 +129,5 @@ $$
 $$
 
 and now we just have to plug the equations in to get the light bending
-<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json"></code-playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json" selected="blackhole.js"></code-playground>
 
