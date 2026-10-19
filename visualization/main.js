@@ -32,12 +32,12 @@ scenePass.setMRT( mrt( {
 
 
 const cubemapFaces = [
-  '../textures/face_0.jpg',
-  '../textures/face_1.jpg',
-  '../textures/face_2.jpg',
-  '../textures/face_3.jpg',
-  '../textures/face_4.jpg',
-  '../textures/face_5.jpg',
+  'https://goldenneedham.com/demos/GaiaBH1/textures/face_0.jpg',
+  'https://goldenneedham.com/demos/GaiaBH1/textures/face_1.jpg',
+  'https://goldenneedham.com/demos/GaiaBH1/textures/face_2.jpg',
+  'https://goldenneedham.com/demos/GaiaBH1/textures/face_3.jpg',
+  'https://goldenneedham.com/demos/GaiaBH1/textures/face_4.jpg',
+  'https://goldenneedham.com/demos/GaiaBH1/textures/face_5.jpg',
 ];
 const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
 cubeTexture.colorSpace = THREE.SRGBColorSpace;
