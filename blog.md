@@ -3,7 +3,7 @@
 I had originally built this blackhole shader for the [Unlikely Collaborators™ Game Jam](https://itch.io/jam/ucgamejam2026). Theme "consciousness and identity through awe and wonder - make awe playable" I had decided to have the setting of the game be centered around one of the most extreme things in our Universe, a black hole, and not just any black hole, [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1) the nearest black hole to us! 
 
 ## Check Out the live demo
-<iframe src="https://goldenneedham.com/demos/GaiaBH1/" width="100%" height="400"></iframe>
+<iframe src="https://goldenneedham.com/demos/GaiaBH1/" width="100%" height="400" style="padding: 5px"></iframe>
 
 You might notice that the signature accretion disks are missing. Well that is because the black hole we are modelling actually does not have them. So our shader doesn't need it either. ~~Although it shouldn't be *too* hard to add them after if you want.~~
 
@@ -58,7 +58,7 @@ scene.backgroundNode = blackHole.main()
 
 In our TSL code we use a couple of handy functions provided to us to make the code a bit easier, but the math is equivalent. Our code so far should look like this:
 
-<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-main/project.json"></code-playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-main/project.json" selected="blackhole.js"></code-playground>
 
 ### The Raymarch Function
 
@@ -98,12 +98,12 @@ vec3 raymarch(vec3 ro, vec3 rd){
 Before we add the black hole with its lensing lets add a skybox. Three.js' [CubeTexture](https://threejs.org/docs/?q=CubeTex#CubeTexture) requires us to define a path for each face. For testing and demonstration we are going to be using these faces:
 
 <p align="center">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_0.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_1.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_2.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_3.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_4.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_5.jpg' width="10%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_0.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_1.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_2.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_3.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_4.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_5.jpg' width="15%">
 </p>
 
 We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.
