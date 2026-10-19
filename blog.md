@@ -16,7 +16,7 @@ If you are comfortable with raymarching skip to [step 3 gravitational lensing](#
 
 Before we do anything with the blackhole, we need to setup our project. For this we are going to start with a modified version of three's [creating a scene](https://threejs.org/manual/#creating-a-scene) tutorial.
 
-<playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-0/project.json"></playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-0/project.json"></code-playground>
 
 You should see a green box that you can look around with your mouse. I kept the standard mesh box in there so we can make sure that something is properly rendering, we will remove it in the next part.
 
@@ -58,7 +58,7 @@ scene.backgroundNode = blackHole.main()
 
 In our TSL code we use a couple of handy functions provided to us to make the code a bit easier, but the math is equivalent. Our code so far should look like this:
 
-<playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-main/project.json"></playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-main/project.json"></code-playground>
 
 ### The Raymarch Function
 
@@ -91,7 +91,7 @@ vec3 raymarch(vec3 ro, vec3 rd){
 </details>
 
 
-<playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-raymarch/project.json"></playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-raymarch/project.json"></code-playground>
 
 ## Step 2: Skybox
 
@@ -108,7 +108,7 @@ Before we add the black hole with its lensing lets add a skybox. Three.js' [Cube
 
 We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.
 
-<playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-2/project.json"></playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-2/project.json"></code-playground>
 
 ## Step 3: Gravitational Lensing
 
@@ -129,5 +129,5 @@ $$
 $$
 
 and now we just have to plug the equations in to get the light bending
-<playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json"></playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json"></code-playground>
 
