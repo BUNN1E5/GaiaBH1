@@ -130,4 +130,5 @@ $$
 
 and now we just have to plug the equations in to get the light bending
 
-<live-code path='./tutorial/step-3'></live-code>
+<playground-ide project-src="./tutorial/step-3/project.json"></playground-ide>
+
