@@ -104,9 +104,13 @@ const timer = new THREE.Timer()
 function render( time ) {
   timer.update()
   //findBestRenderScale(timer.getDelta(), 120)
-  canvas = renderer.domElement;
-  camera.aspect = canvas.clientWidth / canvas.clientHeight;
-  camera.updateProjectionMatrix();
+
+  if (resizeRendererToDisplaySize(renderer)) {
+    canvas = renderer.domElement;
+    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    camera.updateProjectionMatrix();
+  }
+
   orbitManager.update(timer.getDelta());
   renderPipeline.render()
   stats.update();
@@ -120,4 +124,16 @@ function findBestRenderScale(delta, targetFPS){
   let diff = Math.max(1, 1 - (targetDelta - deltaS))
   console.log(diff)
   renderer.setPixelRatio(window.devicePixelRatio * diff)
+}
+
+
+function resizeRendererToDisplaySize(renderer) {
+  const canvas = renderer.domElement;
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  const needResize = canvas.width !== width || canvas.height !== height;
+  if (needResize) {
+    renderer.setSize(width, height, false);
+  }
+  return needResize;
 }
