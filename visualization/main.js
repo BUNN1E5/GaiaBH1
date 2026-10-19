@@ -43,7 +43,8 @@ const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
 cubeTexture.colorSpace = THREE.SRGBColorSpace;
 cubeTexture.flipY = true
 
-const gui = renderer.inspector.createParameters( 'Settings' );
+const gui = renderer.inspector.createParameters('Settings');
+
 const blackHoleNode = new BlackHoleNode(cubeTexture);
 const orbitManager = new OrbitManager(blackHoleNode);
 
@@ -81,6 +82,8 @@ blackHoleFolder.add(blackHoleNode.h2, 'value',  1, 50).name('h2');
 const starFolder = gui.addFolder('Star');
 starFolder.addColor(blackHoleNode.star_color, 'value').name('star color');
 starFolder.add(blackHoleNode.star_emissive, 'value', 0, 10).name('star emissive');
+
+renderer.inspector.hide();
 
 const scenePassColor = scenePass.getTextureNode( 'output' );
 const bloomPass = bloom( scenePassColor, 1.5, 0.4, 1 );
