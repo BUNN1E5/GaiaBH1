@@ -5,10 +5,9 @@ I had originally built this blackhole shader for the [Unlikely Collaborators™ 
 ## Check Out the live demo
 <iframe src="https://goldenneedham.com/demos/GaiaBH1/" width="100%" height="400" style="padding: 5px" class="demo"></iframe>
 
-You might notice that the signature accretion disks are missing. Well that is because the black hole we are modelling actually does not have them. So our shader doesn't need it either. ~~Although it shouldn't be *too* hard to add them after if you want.~~
+You might notice that the signature accretion disks are missing. Well that is because the black hole we are modelling actually does not have them. So our shader doesn't need it either.
 
 I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL. However I will provide equivalent GLSL because TSL can get a bit wordy and hard to parse.
-
 
 If you are comfortable with raymarching skip to [step 3 gravitational lensing](#step-3-gravitational-lensing)
 
@@ -31,13 +30,7 @@ TODO :: CUT THIS SHORTER
 
 Our main function is our entrypoint into the shader. Here we convert the screen position of every pixel on the screen into a world direction by going thru the following transformations, screen -> clip -> view -> world. 
 
-First we need to convert our screen space UVs into clip space. Screen space UVs are usually from 0 to 1 so we must convert them to -1 to 1, we then can set our z to -1 for the near clipping plane, and w to 1.
-
-We then project our clip space into view space by multiplying it by the inverse of our projection matrix, and then dividing the xyz terms by our w term. 
-
-Finally we need to transform the direction from view space into world space. To do this we multiply the camera's world matrix by the viewspace. Set the w component to 0 so that we can ignore the camera's position. Since these are direction vectors we also normalize the vector so they are unit length.
-
-This gives us our ray direction, the ray origin is just our camera's position or the 4th column of the camera's world matrix. If we now return the ray direction we should be able to look around and see a couple of quadrents of colors.
+This gives us our ray direction, the ray origin is just our camera's position or the 4th column of the camera's world matrix. If we now return the ray direction we should be able to look around a couple quadrents of colors.
 
 ```glsl
 vec4 clip = vec4(screen_uv * 2. - 1., -1, 1);
@@ -48,15 +41,13 @@ vec3 rayDirection = normalize(world.xyz);
 vec3 rayOrigin = cameraWorldMatrix[3].xyz;
 ```
 
-
 We also need to add to our main.js file and remove the cube that is in the way.
 ```js
 const blackHole = new BlackHole()
 scene.backgroundNode = blackHole.main()
 ```
 
-
-In our TSL code we use a couple of handy functions provided to us to make the code a bit easier, but the math is equivalent. Our code so far should look like this:
+In our TSL code we use the `transformDirection()` instead of multiplying the cameraWorldMatrix and noramalizing becuase it does those for us. 
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-main/project.json" selected="blackhole.js"></code-playground>
 
@@ -90,7 +81,6 @@ vec3 raymarch(vec3 ro, vec3 rd){
 ```
 </details>
 
-
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-1-raymarch/project.json" selected="blackhole.js"></code-playground>
 
 ## Step 2: Skybox
@@ -107,6 +97,32 @@ Before we add the black hole with its lensing lets add a skybox. Three.js' [Cube
 </p>
 
 We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.
+
+```glsl
+const int MAX_STEPS = 100;
+const float EPSILON = .01;
+
+float sdSphere(vec3 p, float r){ return length(p) - r; }
+
+vec3 raymarch(vec3 ro, vec3 rd){
+    vec3 p = ro;
+    for(int i = 0; i < MAX_STEPS; i++){
+        float step = sdSphere(p, .5);
+
+        if(step < EPSILON){
+            return vec3(1); //hit: white
+        }
+        p += rd * step;
+    }
+
+    if(!hit){
+        return cubeTexture(cubemap, rd).rgb;
+    }
+
+    return vec3(0);
+}
+```
+</details>
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-2/project.json" selected="blackhole.js"></code-playground>
 
@@ -128,6 +144,6 @@ $$
 \vec{r} = r_{pos} - bh_{pos}
 $$
 
-and now we just have to plug the equations in to get the light bending
-<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json" selected="blackhole.js"></code-playground>
+and now we just have to plug the equations into our integrator of choice to get the light bending. We are gonna use a standard Runge Kutta (RK4) implementation
 
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json" selected="blackhole.js"></code-playground>

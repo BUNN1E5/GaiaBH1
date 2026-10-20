@@ -33,9 +33,10 @@ export class BlackHole{
     });
 
     main = Fn(() => {
-        const ndc = vec4(screenUV.x.mul(2).sub(1), screenUV.y.mul(-2).add(1), 0, 1);
-        const view = cameraProjectionMatrixInverse.mul(ndc);
-        const rd = transformDirection(view.xyz.div(view.w), cameraWorldMatrix);
-        return vec3(this.raymarch({ro: cameraPosition, rd: rd}));
+        const clip = vec4(screenUV.x.mul(2).sub(1), screenUV.y.mul(-2).add(1), -1, 1);
+        const hview = cameraProjectionMatrixInverse.mul(clip) 
+        const view = hview.xyz.div(hview.w);
+        const rd = transformDirection(view, cameraWorldMatrix);
+        return rd;
     });
 }
