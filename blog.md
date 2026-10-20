@@ -26,7 +26,6 @@ Now that we have our scene setup we can start with our raymarcher boilerplate. W
 Our basic raymarcher is composed of 2 different parts. Our main and raymarch functions.
 
 ### The Main Function
-TODO :: CUT THIS SHORTER
 
 Our main function is our entrypoint into the shader. Here we convert the screen position of every pixel on the screen into a world direction by going thru the following transformations, screen -> clip -> view -> world. 
 
