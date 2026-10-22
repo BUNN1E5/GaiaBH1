@@ -7,11 +7,8 @@ import {
     length,
     vec3,
     vec4,
-    float,
     bool,
-    min,
     not,
-    normalize,
     uniformCubeTexture,
     cameraPosition,
     cameraWorldMatrix,
@@ -22,60 +19,46 @@ import {
 /* playground-fold-end */
 
 export class BlackHole{
-    MAX_STEPS = 200;
+    /* playground-fold */
+    MAX_STEPS = 100;
     EPSILON = 0.1;
 
     constructor(cubemap){
         this.cubemap = uniformCubeTexture(cubemap);
-    }    
+    }
 
-    black_hole_center = vec3(0,0,0);
-    schwarzschild_radius = float(1);
-
-    /* playground-fold */
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
     /* playground-fold-end */
+
+    star_pos = vec3(0,0,0);
+    star_color = color(1,1,1);
+    star_radius = 1;
+
     raymarch = Fn(({ ro, rd }) => {
+        /* playground-fold */
         const rayPos = ro.toVar();
-        const rdir = rd.toVar();
         const color = vec3(0).toVar();
         const hit = bool(false).toVar();
-        //h2 is conserved so we only need to calculate it once
-        const h = (rayPos.sub(this.black_hole_center)).cross(rdir);
-        const h2 = h.dot(h); // dot product with itself gets square magnitude
-        
+        /* playground-fold-end */
+
         Loop(this.MAX_STEPS, ({ i }) => {
-            const dist = this.sdSphere({p : rayPos.sub(vec3(10)), r : 1});
-            If(dist.lessThan(this.EPSILON), () => {
-                color.assign(vec3(1));
+            const step = this.sdSphere({p : rayPos.sub(this.star_pos), r : this.star_radius});
+            If(step.lessThan(this.EPSILON), () => {
+                color.assign(this.star_color);
                 hit.assign(true);
                 Break();
             });
+            /* playground-fold */
 
-            const rrp = rayPos.sub(this.black_hole_center); //ray relative position
-            const r2 = rrp.dot(rrp); 
-            const rlen = rrp.length();
-            const r5 = r2.mul(r2).mul(rlen);
-
-            //This is our geodesic function
-            //const f = float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp.normalize()).div(r5);
-            const f = this.schwarzschild_radius.mul(-1.5).mul(h2).mul(rrp).div(r5);
-            
-            //We need to make sure that we are doing more steps near the black hole
-            const step_size = min(dist, rlen.mul(.2));
-            
-            //We need to normalize it because it is a direction
-            rdir.assign(normalize(rdir.add(f.mul(step_size))));
-            rayPos.addAssign(rdir.mul(step_size));
-
-
+            rayPos.addAssign(rd.mul(step));
         });
 
         If(not(hit), ()=>{
-            color.assign(this.cubemap.sample(normalize(rdir)).rgb);
+            color.assign(this.cubemap.sample(rd).rgb);
         });
-
+        /* playground-fold-end */
         return color;
+        
     });
 
     /* playground-fold */

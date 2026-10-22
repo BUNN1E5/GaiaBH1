@@ -14,12 +14,13 @@ await renderer.init();
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-/* playground-fold-end */
 camera.position.z = 5;
-/* playground-fold */
 new OrbitControls(camera, renderer.domElement);
 
 scene.add(camera);
+/* playground-fold-end */
+
+//New Code!!
 
 const cubemapFaces = [ // I have some hosted here
     'https://goldenneedham.com/demos/GaiaBH1/textures/face_0.jpg',
@@ -33,7 +34,9 @@ const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
 cubeTexture.colorSpace = THREE.SRGBColorSpace;
 cubeTexture.flipY = false;
 const blackHole = new BlackHole(cubeTexture);
-/* playground-fold-end */
+
+//End new code
+
 scene.backgroundNode = blackHole.main()
 
 /* playground-fold */

@@ -1,4 +1,4 @@
-# Building the GaiaBH1 black hole in a Raymarch Shader
+# Building the GaiaBH1 black hole in a Raymarching Shader
 
 I had originally built this blackhole shader for the [Unlikely Collaborators™ Game Jam](https://itch.io/jam/ucgamejam2026). Theme "consciousness and identity through awe and wonder - make awe playable" I had decided to have the setting of the game be centered around one of the most extreme things in our Universe, a black hole, and not just any black hole, [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1) the nearest black hole to us! 
 
@@ -7,9 +7,12 @@ I had originally built this blackhole shader for the [Unlikely Collaborators™ 
 
 You might notice that the signature accretion disks are missing. Well that is because the black hole we are modelling actually does not have them. So our shader doesn't need it either.
 
-I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL. However I will provide equivalent GLSL because TSL can get a bit wordy and hard to parse.
+<!-- This is really stilted so lets try and rewrite this later -->
+This post is going to go over writing the black hole shader and the orbit controller 
 
-If you are comfortable with raymarching skip to [step 3 gravitational lensing](#step-3-gravitational-lensing)
+I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL.
+
+If you want to skip the setup and just get to the juice you can skip to [step 4 gravitational lensing](#step-4-gravitational-lensing)
 
 ## Step 0: Setting Up Three.js
 
@@ -95,7 +98,8 @@ Before we add the black hole with its lensing lets add a skybox. Three.js' [Cube
     <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_5.jpg' width="15%">
 </p>
 
-We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.
+<!-- WE NEED TO REWRITE THIS -->
+We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. Of course we need to also add a variable to let us know if we hit something so we don't render the cubemap and while we are at it lets also add a constructor so we can define default values.
 
 <details>
     <summary>GLSL</summary>
@@ -129,7 +133,11 @@ vec3 raymarch(vec3 ro, vec3 rd){
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-2/project.json" selected="blackhole.js"></code-playground>
 
-## Step 3: Gravitational Lensing
+## Step 3: Adding the Star
+
+Adding the star is super straightforward, in fact its already in the scene. The sphere we were using to test is perfect for us to use. We just need to define some uniforms for the size and position of the star.
+
+## Step 4: Gravitational Lensing
 
 If you want to get more in depth about the derivation [check out this article](https://rantonels.github.io/starless/). We are gonna just skip to the end and have our geodesic equation. Note we add an extra term $r_s$ for the Schwarzschild radius, and $r$ is our ray position relative to the bh. 
 
@@ -147,6 +155,12 @@ $$
 \vec{r} = r_{pos} - bh_{pos}
 $$
 
-and now we just have to plug the equations into our integrator of choice to get the light bending. We are gonna use Euler integration for now and replace it with an RK4 integrator in the next step.
+and now we just have to plug the equations into our integrator of choice to get the light bending. And you can use your integrator of choice, just to get things running we are gonna use a Euler integrator for now.
 
-<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json" selected="blackhole.js"></code-playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-4/project.json" selected="blackhole.js"></code-playground>
+<!-- TODO :: ADD STEP SKIP LINK -->
+At this point the shader could technically be called done, if you're fine with what we have now feel free to skip to [step-n]. But we can still make the shader better and as a extra treat more performant.
+
+## Step 5: Runge-Kutta (RK4)
+
+Runge-Kutta  

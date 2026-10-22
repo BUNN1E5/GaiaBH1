@@ -23,16 +23,15 @@ export class BlackHole{
     EPSILON = 0.1;
 
     //New Code!
-
     constructor(cubemap){
         this.cubemap = uniformCubeTexture(cubemap);
     }
-    
     //End New Code
 
     /* playground-fold */
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
     /* playground-fold-end */
+
     raymarch = Fn(({ ro, rd }) => {
         const rayPos = ro.toVar();
         const color = vec3(0).toVar();
@@ -48,14 +47,12 @@ export class BlackHole{
         });
 
         //New Code !!
-
         If(not(hit), ()=>{
             color.assign(this.cubemap.sample(rd).rgb);
             
             // This also would work just fine
             // color.assign(cubeTexture(this.cubemap, rd).rgb);
         });
-
         //End new code
         return color;
     });
