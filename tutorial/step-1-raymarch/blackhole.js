@@ -37,6 +37,6 @@ export class BlackHole{
         const hview = cameraProjectionMatrixInverse.mul(clip) 
         const view = hview.xyz.div(hview.w);
         const rd = transformDirection(view, cameraWorldMatrix);
-        return rd;
+        return vec3(this.raymarch({ro: cameraPosition, rd: rd}));
     });
 }
