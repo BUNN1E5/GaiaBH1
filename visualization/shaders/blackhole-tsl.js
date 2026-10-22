@@ -119,13 +119,13 @@ class BlackHoleNode extends TempNode{
                 Break();
             });
             
-            const divisor = r2.mul(r2);
+            const divisor = r2.mul(r2).mul(r_len);
             const accel = this.schwarzschild_radius.mul(-1.5).mul(h2).mul(normalize(rel_p)).div(divisor);
             const step_size = min(d, r_len.mul(this.near_bh_step_mult));
 
             r.get('dist').addAssign(step_size);
-            r.get('pos').addAssign(r.get('dir').mul(step_size));
             r.get('dir').assign(normalize(r.get('dir').add(accel.mul(step_size))));
+            r.get('pos').addAssign(r.get('dir').mul(step_size));
 
             If(r.get('dist').greaterThan(this.max_dist), () => {
                 Break();

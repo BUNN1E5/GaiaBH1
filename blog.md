@@ -147,6 +147,6 @@ $$
 \vec{r} = r_{pos} - bh_{pos}
 $$
 
-and now we just have to plug the equations into our integrator of choice to get the light bending. We are gonna use a standard Runge Kutta (RK4) implementation
+and now we just have to plug the equations into our integrator of choice to get the light bending. We are gonna use Euler integration for now and replace it with an RK4 integrator in the next step.
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json" selected="blackhole.js"></code-playground>

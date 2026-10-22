@@ -21,15 +21,15 @@ export class BlackHole{
 
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
     raymarch = Fn(({ ro, rd }) => {
-        const rayPosition = ro.toVar();
+        const rayPos = ro.toVar();
         const color = vec3(0).toVar();
         Loop(this.MAX_STEPS, ({ i }) => {
-            const step = this.sdSphere({p : rayPosition, r : 1});
+            const step = this.sdSphere({p : rayPos, r : 1});
             If(step.lessThan(this.EPSILON), () => {
                 color.assign(vec3(1));
                 Break();
             });
-            rayPosition.addAssign(rd.mul(step));
+            rayPos.addAssign(rd.mul(step));
         });
         return color;
     });

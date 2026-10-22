@@ -34,17 +34,17 @@ export class BlackHole{
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
     /* playground-fold-end */
     raymarch = Fn(({ ro, rd }) => {
-        const rayPosition = ro.toVar();
+        const rayPos = ro.toVar();
         const color = vec3(0).toVar();
         const hit = bool(false).toVar(); //New Code!!
         Loop(this.MAX_STEPS, ({ i }) => {
-            const step = this.sdSphere({p : rayPosition, r : 1});
+            const step = this.sdSphere({p : rayPos, r : 1});
             If(step.lessThan(this.EPSILON), () => {
                 color.assign(vec3(1));
                 hit.assign(true);
                 Break();
             });
-            rayPosition.addAssign(rd.mul(step));
+            rayPos.addAssign(rd.mul(step));
         });
 
         //New Code !!
