@@ -61,7 +61,7 @@ We will use a standard raymarch loop and a single [SDF for a sphere](https://iqu
 
 ```glsl
 const int MAX_STEPS = 100;
-const float EPSILON = .01;
+const float EPSILON = .1;
 
 float sdSphere(vec3 p, float r){ return length(p) - r; }
 
@@ -97,14 +97,18 @@ Before we add the black hole with its lensing lets add a skybox. Three.js' [Cube
 
 We just need to add a uniform to our cubemap, and sample it at the end of our raymarch loop. While we are at it lets also add a constructor so we can define default values.
 
+<details>
+    <summary>GLSL</summary>
+
 ```glsl
 const int MAX_STEPS = 100;
-const float EPSILON = .01;
+const float EPSILON = .1;
 
 float sdSphere(vec3 p, float r){ return length(p) - r; }
 
 vec3 raymarch(vec3 ro, vec3 rd){
     vec3 p = ro;
+    bool hit = false;
     for(int i = 0; i < MAX_STEPS; i++){
         float step = sdSphere(p, .5);
 
@@ -134,7 +138,7 @@ $$
 $$
 
 $$
-h = ||\vec{r} \times \vec{r}_{dir}||^2
+h^2 = ||\vec{r} \times \vec{r}_{dir}||^2
 $$
 
 In our case we might not always want the blackhole to be in the center of our scene. So we need to convert our ray position into coordinates relative to the black hole

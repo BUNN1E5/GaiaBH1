@@ -1,22 +1,22 @@
+/* playground-fold */
 import {
     Loop,
     Fn,
     If,
     Break,
     length,
-    // New code !!
+    vec3,
+    vec4,
     bool,
     not,
     uniformCubeTexture,
-    // End new code
-    vec3,
-    vec4,
     cameraPosition,
     cameraWorldMatrix,
     screenUV,
     cameraProjectionMatrixInverse,
     transformDirection
 } from 'three/tsl';
+/* playground-fold-end */
 
 export class BlackHole{
     MAX_STEPS = 100;
@@ -30,7 +30,9 @@ export class BlackHole{
     
     //End New Code
 
+    /* playground-fold */
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
+    /* playground-fold-end */
     raymarch = Fn(({ ro, rd }) => {
         const rayPosition = ro.toVar();
         const color = vec3(0).toVar();
@@ -58,6 +60,7 @@ export class BlackHole{
         return color;
     });
 
+    /* playground-fold */
     main = Fn(() => {
         const clip = vec4(screenUV.x.mul(2).sub(1), screenUV.y.mul(-2).add(1), -1, 1);
         const hview = cameraProjectionMatrixInverse.mul(clip) 
@@ -65,4 +68,5 @@ export class BlackHole{
         const rd = transformDirection(view, cameraWorldMatrix);
         return vec3(this.raymarch({ro: cameraPosition, rd: rd}));
     });
+    /* playground-fold-end */
 }

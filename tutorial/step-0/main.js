@@ -1,5 +1,7 @@
+/* playground-fold */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+/* playground-fold-end */
 
 let canvas = document.querySelector( '#c' );
 
@@ -10,7 +12,7 @@ await renderer.init();
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = -5;
+camera.position.z = 5;
 scene.add(camera);
 new OrbitControls(camera, renderer.domElement);
 

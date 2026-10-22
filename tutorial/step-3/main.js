@@ -1,7 +1,10 @@
+/* playground-fold */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { BlackHole } from './blackhole.js'
+import { BlackHole } from './blackhole.js';
+/* playground-fold-end */
 
+/* playground-fold */
 let canvas = document.querySelector( '#c' );
 
 const renderer = new THREE.WebGPURenderer({antialias: true, canvas });
@@ -11,7 +14,9 @@ await renderer.init();
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+/* playground-fold-end */
 camera.position.z = 5;
+/* playground-fold */
 new OrbitControls(camera, renderer.domElement);
 
 scene.add(camera);
@@ -28,8 +33,10 @@ const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
 cubeTexture.colorSpace = THREE.SRGBColorSpace;
 cubeTexture.flipY = false;
 const blackHole = new BlackHole(cubeTexture);
+/* playground-fold-end */
 scene.backgroundNode = blackHole.main()
 
+/* playground-fold */
 renderer.setAnimationLoop( render );
 
 function render( time ) {
@@ -51,3 +58,4 @@ function resizeRendererToDisplaySize(renderer) {
   }
   return needResize;
 }
+/* playground-fold-end */

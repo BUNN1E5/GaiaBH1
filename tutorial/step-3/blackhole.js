@@ -1,3 +1,4 @@
+/* playground-fold */
 import {
     Loop,
     Fn,
@@ -15,6 +16,7 @@ import {
     cameraProjectionMatrixInverse,
     transformDirection
 } from 'three/tsl';
+/* playground-fold-end */
 
 export class BlackHole{
     MAX_STEPS = 100;
@@ -24,24 +26,20 @@ export class BlackHole{
         this.cubemap = uniformCubeTexture(cubemap);
     }    
 
-    //New code here!!
     black_hole_center = vec3(0,0,0);
     schwarzschild_radius = 1;
-    //End new code
 
+    /* playground-fold */
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
+    /* playground-fold-end */
     raymarch = Fn(({ ro, rd }) => {
         const rayPosition = ro.toVar();
         const rdir = rd.toVar();
         const color = vec3(0).toVar();
         
-        //New code here!!
-
         //h2 is conserved so we only need to calculate it once
         const h = (rayPosition.sub(this.black_hole_center)).cross(rdir);
         const h2 = h.dot(h); // dot product with itself gets square magnitude
-        
-        //End new code
         
         Loop(this.MAX_STEPS, ({ i }) => {
             const step = this.sdSphere({p : rayPosition, r : 1});
@@ -49,8 +47,6 @@ export class BlackHole{
                 color.assign(vec3(1));
                 Break();
             });
-
-            //New code here!!
 
             const rrp = rayPosition - this.black_hole_center; //ray relative position
             const r2 = rrp.dot(rrp); 
@@ -61,7 +57,6 @@ export class BlackHole{
             const f = float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp).div(r5);
 
             // rdir.
-            //end new code
 
             rayPosition.addAssign(rd.mul(step));
         });
@@ -73,6 +68,7 @@ export class BlackHole{
         return color;
     });
 
+    /* playground-fold */
     main = Fn(() => {
         const clip = vec4(screenUV.x.mul(2).sub(1), screenUV.y.mul(-2).add(1), -1, 1);
         const hview = cameraProjectionMatrixInverse.mul(clip) 
@@ -80,4 +76,5 @@ export class BlackHole{
         const rd = transformDirection(view, cameraWorldMatrix);
         return vec3(this.raymarch({ro: cameraPosition, rd: rd}));
     });
+    /* playground-fold-end */
 }
