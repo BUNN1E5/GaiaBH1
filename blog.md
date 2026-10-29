@@ -135,14 +135,17 @@ vec3 raymarch(vec3 ro, vec3 rd){
 
 ## Step 3: Adding the Star
 
-Adding the star is super straightforward, in fact its already in the scene. The sphere we were using to test is perfect for us to use. We just need to define some uniforms for the size and position of the star.
+Adding the star is super straightforward, in fact its already in the scene. The sphere we were using to test is perfect for us to use. We just need to define some uniforms for the size and position of the star. We are also going to default the value to `vec3(5,0,0)` just so we dont have the blackhole and star overlap.
+<!-- TODO :: Add GLSL code -->
+
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json" selected="blackhole.js"></code-playground>
 
 ## Step 4: Gravitational Lensing
 
-If you want to get more in depth about the derivation [check out this article](https://rantonels.github.io/starless/). We are gonna just skip to the end and have our geodesic equation. Note we add an extra term $r_s$ for the Schwarzschild radius, and $r$ is our ray position relative to the bh. 
+If you want to get more in depth about the derivation [check out this article](https://rantonels.github.io/starless/). We are gonna just skip to the end and have our geodesic function. Note we add an extra term $r_s$ for the Schwarzschild radius, and $\vec{r}$ is our ray position relative to the bh. Both $r_s$ and $h$ are constant terms and do not change in the geodesic function
 
 $$
-\vec{F}(r) = -1.5h^2\frac{r_s \vec{r}}{||\vec{r}||^5}
+\vec{f}(\vec{r}) = -1.5h^2\frac{r_s \vec{r}}{||\vec{r}||^5}
 $$
 
 $$
@@ -155,12 +158,115 @@ $$
 \vec{r} = r_{pos} - bh_{pos}
 $$
 
-and now we just have to plug the equations into our integrator of choice to get the light bending. And you can use your integrator of choice, just to get things running we are gonna use a Euler integrator for now.
+and now we just have to plug the equations into our integrator of choice to get the light bending. And you can use your integrator of choice, just to get things running we are gonna use a Euler integrator for now. For Euler our position and direction are defined as follows and $\Delta s$ being the step size
 
-<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-4/project.json" selected="blackhole.js"></code-playground>
+$$
+\vec{r}_{pos,n+1} = \vec{r}_{pos,n} + \vec{r}_{vel,n} \Delta s \\
+\vec{r}_{vel,n+1} = \vec{r}_{vel,n} + \vec{F}(\vec{r}_n) \Delta s
+$$
+
+In the geodesic derivation an assumption of 1 as the speed of light, because of this we then want to normalize our velocity to have a unit length of 1 to get our ray direction
+$$
+\vec{r}_{dir} =\frac{\vec{r}_{vel}}{||\vec{r}_{vel}||}
+$$
+
+And finally we want to add an escape condition for rays that reach the inside of the black hole. For this we need to check if our ray's direction is pointing in the direction of the black hole. The reasoning behing doing it this was as opposed to a solid sphere at the schwarschild radius is in the case of a an observer (our camera) being inside the black hole.
+
+$$
+\theta_{approach} = \vec{r} \cdot \vec{r}_{dir} < 0
+$$
+
+
+Now we need to put all that into code
+
 <!-- TODO :: ADD STEP SKIP LINK -->
 At this point the shader could technically be called done, if you're fine with what we have now feel free to skip to [step-n]. But we can still make the shader better and as a extra treat more performant.
 
+<!-- TODO :: Add GLSL code -->
+
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-4/project.json" selected="blackhole.js"></code-playground>
+
 ## Step 5: Runge-Kutta (RK4)
 
-Runge-Kutta  
+One of the main benefits of Runge-Kutta or RK4 is that it is leagues more accurate than Euler. While each RK4 step is more costly than a single Euler step, each step is substansually more accurate, letting us significantly reduce the step count and increasing performance overall. I *borrowed* the math from [here](http://spiff.rit.edu/richmond/nbody/OrbitRungeKutta4.pdf)
+
+RK4 is defined for any differential equation in the following form
+
+$$
+\frac{dy}{dt} = g(t,y)\\
+y_0 =  y(t_0)
+$$
+
+The RK4 solver's definition is as follows
+
+$$
+y_{n+1} = y_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)
+$$
+
+And the terms are defined with $h$ being our step size (same as the $\Delta s$ in the Euler implementation)
+
+$$
+\begin{aligned}
+k_1 &= g(t_n, y_n) \\
+k_2 &= g(t_n + \frac{h}{2},\ y_n + k_1\frac{h}{2}) \\
+k_3 &= g(t_n + \frac{h}{2},\ y_n + k_2\frac{h}{2}) \\
+k_4 &= g(t_n + h,\ y_n + k_3h)
+\end{aligned}
+$$
+
+For our case because we will be integrating over both the position and velocity our Y needs be a matrix of our first derivitive of each
+
+$$
+y= \begin{bmatrix}
+\vec{r}_{vel}\\
+\vec{f}(\vec{r})\end{bmatrix}
+$$
+
+In our specific case our chosen y is an [autonomous differential equation](https://math.libretexts.org/Bookshelves/Analysis/Supplemental_Modules_(Analysis)/Ordinary_Differential_Equations/2%3A_First_Order_Differential_Equations/2.5%3A_Autonomous_Differential_Equations) and doesn't depend on $t$, so we can rewrite our $g$ function and inital condition as 
+
+$$
+\frac{dy}{dt} = g(y)\\
+y_0 = y(0)
+$$
+
+We then need solve for the $k$ terms for all values of our matrix
+
+$$
+\begin{alignedat}{2}
+k_{1,vel} &= g(r_{vel,n})
+&\qquad 
+k_{1,f} &= g(\vec{f}(\vec{r}_n)) \\
+
+k_{2,vel} &= g(r_{vel,n} + k_1\frac{h}{2})
+&\qquad 
+k_{2,f} &= g(\vec{f}(\vec{r}_n) + k_1\frac{h}{2}) \\
+
+k_{3,vel} &= g(r_{vel,n} + k_2\frac{h}{2})
+&\qquad
+k_{3,f} &= g(\vec{f}(\vec{r}_n) + k_2\frac{h}{2}) \\
+
+k_{4,vel} &= g(r_{vel,n} + k_3h)
+&\qquad
+k_{4,f} &= g(\vec{f}(\vec{r}_n) + k_3h)
+\end{alignedat}
+$$
+
+and then solve the RK4 for each value in the matrix. Do note that $\vec{r}_{pos,n}$ is the relative position at iteration $n$
+
+$$
+\begin{aligned}
+\vec{r}_{pos,n+1} &= \vec{r}_{pos,n} + \frac{h}{6}(k_{1,vel} + 2k_{2,vel} + 2k_{3,vel} + k_{4,vel}) \\
+\vec{r}_{vel,n+1} &= \vec{r}_{vel,n} + \frac{h}{6}(k_{1,f} + 2k_{2,f} + 2k_{3,f} + k_{4,f})
+\end{aligned}
+$$
+
+And all that is left is to actually plug this into our code
+
+<!-- TODO :: Add GLSL code  -->
+
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-5/project.json" selected="blackhole.js"></code-playground>
+
+And now our shader is officially done! Now we need to write a controller for it.
+
+## Step 6 : Orbit Controller
+

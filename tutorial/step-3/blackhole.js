@@ -30,7 +30,7 @@ export class BlackHole{
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
     /* playground-fold-end */
 
-    star_pos = vec3(0,0,0);
+    star_pos = vec3(5,0,0);
     star_color = color(1,1,1);
     star_radius = 1;
 

@@ -33,6 +33,10 @@ export class BlackHole{
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
     /* playground-fold-end */
     
+    star_pos = vec3(5,0,0);
+    star_color = vec3(1,1,1);
+    star_radius = 1;
+
     black_hole_center = vec3(0,0,0);
     schwarzschild_radius = float(1);
 
@@ -46,32 +50,47 @@ export class BlackHole{
         const h2 = h.dot(h); // dot product with itself gets square magnitude
         
         Loop(this.MAX_STEPS, ({ i }) => {
-            const dist = this.sdSphere({p : rayPos, r : .1});
-            If(dist.lessThan(this.EPSILON), () => {
-                color.assign(vec3(0));
+            const step = this.sdSphere({p : rayPos.sub(this.star_pos), r : this.star_radius});
+            If(step.lessThan(this.EPSILON), () => {
+                color.assign(this.star_color);
                 hit.assign(true);
                 Break();
             });
 
+            // TODO :: Move this into a blackhole function instead of the raymarch function 
             //ray relative position
             const rrp = rayPos.sub(this.black_hole_center); 
-            const r2 = rrp.dot(rrp); 
+            const r2 = rrp.dot(rrp);
             const rlen = rrp.length();
             const r5 = r2.mul(r2).mul(rlen);
 
             //This is our geodesic function
             const f = float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp).div(r5);
             
+
+            //This checks if we are inside the black hole
+            If(rlen.lessThanEqual(this.schwarzschild_radius), () => {
+                //For this remember that we are calcualting our lightrays backwards from their actual source
+                //If we are inside the bh and our rays are pointing towards the black hole, then there is no escape
+                //If rays are pointing away from the black hole we are likely inside the black hole and can escape
+                If(rrp.dot(rdir).lessThan(0),()=>{
+                    color.assign(vec3(0));
+                    hit.assign(true);
+                    Break();
+                })
+            });
+
             //We need to make sure that we are smaller steps near the black hole
-            const step_size = min(dist, rlen.mul(.2));
+            const step_size = min(step, rlen.mul(.2));
             
-            //We need to normalize it because it is a direction
-            rdir.assign(normalize(rdir.add(f.mul(step_size))));
             rayPos.addAssign(rdir.mul(step_size));
+            //We need to normalize it because it is a direction (this is like a speedcap)
+            rdir.assign(rdir.add(f.mul(step_size)).normalize());
+
         });
 
         If(not(hit), ()=>{
-            color.assign(this.cubemap.sample(normalize(rdir)).rgb);
+            color.assign(this.cubemap.sample(rdir).rgb);
         });
 
         return color;
