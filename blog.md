@@ -166,6 +166,7 @@ $$
 $$
 
 In the geodesic derivation an assumption of 1 as the speed of light, because of this we then want to normalize our velocity to have a unit length of 1 to get our ray direction
+
 $$
 \vec{r}_{dir} =\frac{\vec{r}_{vel}}{||\vec{r}_{vel}||}
 $$
