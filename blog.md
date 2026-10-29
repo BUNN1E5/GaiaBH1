@@ -217,9 +217,15 @@ $$
 For our case because we will be integrating over both the position and velocity our Y needs be a matrix of our first derivitive of each
 
 $$
-y= \begin{bmatrix}
+y = \begin{bmatrix}
+\vec{r}_{pos}\\
+\vec{r}_{vel}
+\end{bmatrix},
+\qquad
+y' = \begin{bmatrix}
 \vec{r}_{vel}\\
-\vec{f}(\vec{r})\end{bmatrix}
+\vec{F}(\vec{r}_{pos})
+\end{bmatrix}
 $$
 
 In our specific case our chosen y is an [autonomous differential equation](https://math.libretexts.org/Bookshelves/Analysis/Supplemental_Modules_(Analysis)/Ordinary_Differential_Equations/2%3A_First_Order_Differential_Equations/2.5%3A_Autonomous_Differential_Equations) and doesn't depend on $t$, so we can rewrite our $g$ function and inital condition as 
@@ -233,21 +239,21 @@ We then need solve for the $k$ terms for all values of our matrix
 
 $$
 \begin{alignedat}{2}
-k_{1,vel} &= g(r_{vel,n})
+k_{1,pos} &= g(r_{vel,n})
 &\qquad 
-k_{1,f} &= g(\vec{f}(\vec{r}_n)) \\
+k_{1,vel} &= g(\vec{f}(\vec{r}_n)) \\
 
-k_{2,vel} &= g(r_{vel,n} + k_1\frac{h}{2})
+k_{2,pos} &= g(r_{vel,n} + k_1\frac{h}{2})
 &\qquad 
-k_{2,f} &= g(\vec{f}(\vec{r}_n) + k_1\frac{h}{2}) \\
+k_{2,vel} &= g(\vec{f}(\vec{r}_n) + k_1\frac{h}{2}) \\
 
-k_{3,vel} &= g(r_{vel,n} + k_2\frac{h}{2})
+k_{3,pos} &= g(r_{vel,n} + k_2\frac{h}{2})
 &\qquad
-k_{3,f} &= g(\vec{f}(\vec{r}_n) + k_2\frac{h}{2}) \\
+k_{3,vel} &= g(\vec{f}(\vec{r}_n) + k_2\frac{h}{2}) \\
 
-k_{4,vel} &= g(r_{vel,n} + k_3h)
+k_{4,pos} &= g(r_{vel,n} + k_3h)
 &\qquad
-k_{4,f} &= g(\vec{f}(\vec{r}_n) + k_3h)
+k_{4,vel} &= g(\vec{f}(\vec{r}_n) + k_3h)
 \end{alignedat}
 $$
 
@@ -255,8 +261,8 @@ and then solve the RK4 for each value in the matrix. Do note that $\vec{r}_{pos,
 
 $$
 \begin{aligned}
-\vec{r}_{pos,n+1} &= \vec{r}_{pos,n} + \frac{h}{6}(k_{1,vel} + 2k_{2,vel} + 2k_{3,vel} + k_{4,vel}) \\
-\vec{r}_{vel,n+1} &= \vec{r}_{vel,n} + \frac{h}{6}(k_{1,f} + 2k_{2,f} + 2k_{3,f} + k_{4,f})
+\vec{r}_{pos,n+1} &= \vec{r}_{pos,n} + \frac{h}{6}(k_{1,pos} + 2k_{2,pos} + 2k_{3,pos} + k_{4,pos}) \\
+\vec{r}_{vel,n+1} &= \vec{r}_{vel,n} + \frac{h}{6}(k_{1,vel} + 2k_{2,vel} + 2k_{3,vel} + k_{4,vel})
 \end{aligned}
 $$
 
