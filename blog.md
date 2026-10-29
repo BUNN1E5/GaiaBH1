@@ -239,21 +239,21 @@ We then need solve for the $k$ terms for all values of our matrix
 
 $$
 \begin{alignedat}{2}
-k_{1,pos} &= g(r_{vel,n})
+k_{1,pos} &= r_{vel,n}
 &\qquad 
-k_{1,vel} &= g(\vec{f}(\vec{r}_n)) \\
+k_{1,vel} &= \vec{f}(\vec{r}_n) \\
 
-k_{2,pos} &= g(r_{vel,n} + k_1\frac{h}{2})
+k_{2,pos} &= r_{vel,n} + k_1\frac{h}{2}
 &\qquad 
-k_{2,vel} &= g(\vec{f}(\vec{r}_n) + k_1\frac{h}{2}) \\
+k_{2,vel} &= \vec{f}(\vec{r}_n) + k_1\frac{h}{2} \\
 
-k_{3,pos} &= g(r_{vel,n} + k_2\frac{h}{2})
+k_{3,pos} &= r_{vel,n} + k_2\frac{h}{2}
 &\qquad
-k_{3,vel} &= g(\vec{f}(\vec{r}_n) + k_2\frac{h}{2}) \\
+k_{3,vel} &= \vec{f}(\vec{r}_n) + k_2\frac{h}{2} \\
 
-k_{4,pos} &= g(r_{vel,n} + k_3h)
+k_{4,pos} &= r_{vel,n} + k_3h
 &\qquad
-k_{4,vel} &= g(\vec{f}(\vec{r}_n) + k_3h)
+k_{4,vel} &= \vec{f}(\vec{r}_n) + k_3h
 \end{alignedat}
 $$
 
