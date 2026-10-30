@@ -215,7 +215,7 @@ k_4 &= g(t_n + h,\ y_n + k_3h)
 \end{aligned}
 $$
 
-For our case because we will be integrating over both the position and velocity our Y needs be a matrix of our first derivitive of each
+For our case because we will be integrating over both the position and velocity our Y needs be a vector of our first derivitive of each
 
 $$
 y = \begin{bmatrix}
@@ -236,7 +236,7 @@ $$
 y_0 = y(0)
 $$
 
-We then need solve for the $k$ terms for all values of our matrix
+We then need solve for the $k$ terms for all values of our y vector
 
 $$
 \begin{alignedat}{2}
@@ -244,17 +244,17 @@ k_{1,pos} &= r_{vel,n}
 &\qquad 
 k_{1,vel} &= \vec{f}(\vec{r}_n) \\
 
-k_{2,pos} &= r_{vel,n} + k_1\frac{h}{2}
+k_{2,pos} &= r_{vel,n} + k_{1,vel}\frac{h}{2}
 &\qquad 
-k_{2,vel} &= \vec{f}(\vec{r}_n) + k_1\frac{h}{2} \\
+k_{2,vel} &= \vec{f}(\vec{r}_n) + k_{1,pos}\frac{h}{2} \\
 
-k_{3,pos} &= r_{vel,n} + k_2\frac{h}{2}
+k_{3,pos} &= r_{vel,n} + k_{2,vel}\frac{h}{2}
 &\qquad
-k_{3,vel} &= \vec{f}(\vec{r}_n) + k_2\frac{h}{2} \\
+k_{3,vel} &= \vec{f}(\vec{r}_n) + k_{2,pos}\frac{h}{2} \\
 
-k_{4,pos} &= r_{vel,n} + k_3h
+k_{4,pos} &= r_{vel,n} + k_{3,vel}h
 &\qquad
-k_{4,vel} &= \vec{f}(\vec{r}_n) + k_3h
+k_{4,vel} &= \vec{f}(\vec{r}_n) + k_{3,pos}h
 \end{alignedat}
 $$
 
