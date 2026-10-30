@@ -246,15 +246,15 @@ k_{1,vel} &= \vec{f}(\vec{r}_n) \\
 
 k_{2,pos} &= r_{vel,n} + k_{1,vel}\frac{h}{2}
 &\qquad 
-k_{2,vel} &= \vec{f}(\vec{r}_n) + k_{1,pos}\frac{h}{2} \\
+k_{2,vel} &= \vec{f}(\vec{r}_n + k_{1,pos}\frac{h}{2}) \\
 
 k_{3,pos} &= r_{vel,n} + k_{2,vel}\frac{h}{2}
 &\qquad
-k_{3,vel} &= \vec{f}(\vec{r}_n) + k_{2,pos}\frac{h}{2} \\
+k_{3,vel} &= \vec{f}(\vec{r}_n + k_{2,pos}\frac{h}{2}) \\
 
 k_{4,pos} &= r_{vel,n} + k_{3,vel}h
 &\qquad
-k_{4,vel} &= \vec{f}(\vec{r}_n) + k_{3,pos}h
+k_{4,vel} &= \vec{f}(\vec{r}_n + k_{3,pos}h)
 \end{alignedat}
 $$
 
