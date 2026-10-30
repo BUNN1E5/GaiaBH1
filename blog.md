@@ -174,7 +174,7 @@ $$
 And finally we want to add an escape condition for rays that reach the inside of the black hole. For this we need to check if our ray's direction is pointing in the direction of the black hole. The reasoning behing doing it this was as opposed to a solid sphere at the schwarschild radius is in the case of a an observer (our camera) being inside the black hole.
 
 $$
-\theta_{approach} = \vec{r} \cdot \vec{r}_{dir} < 0
+\text{terminate if} \quad ||\vec{r}|| < r_s \quad \text{and} \quad \vec{r} \cdot \vec{r}_{dir} < 0
 $$
 
 
