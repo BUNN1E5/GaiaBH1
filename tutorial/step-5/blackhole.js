@@ -11,6 +11,7 @@ import {
     bool,
     min,
     not,
+    array,
     normalize,
     uniformCubeTexture,
     cameraPosition,
@@ -22,8 +23,11 @@ import {
 /* playground-fold-end */
 
 export class BlackHole{
+    
+    //We can get away with 1/4th the steps
+    MAX_STEPS = 50;
+
     /* playground-fold */
-    MAX_STEPS = 200;
     EPSILON = 0.1;
 
     constructor(cubemap){
@@ -41,7 +45,7 @@ export class BlackHole{
     black_hole_center = vec3(0,0,0);
     schwarzschild_radius = float(1);
     
-    geodesic = Fn((rpos, h2)=>{
+    geodesic = Fn(([rpos, h2])=>{
         const rrp = rpos.sub(this.black_hole_center);
         const r2 = rrp.dot(rrp);
         const rlen = rrp.length();
@@ -50,28 +54,32 @@ export class BlackHole{
         return float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp).div(r5);
     })
 
-    rk4 = Fn(({rpos, rvel, h2, s}) =>{
+    rk4 = Fn(([rpos, rvel, h2, s]) =>{
 
-        const k1pos = rvel;
+        const k1pos = rvel.toVar();
         const k1vel = this.geodesic(rpos, h2);
 
         const k2vel = this.geodesic(rpos.add(k1pos.mul(s.mul(.5))), h2);
-        const k2pos = rvel.add(k1vel.mul(s.mul(.5))).normalize();
+        const k2pos = rvel.add(k1vel.mul(s.mul(.5)));
 
         const k3vel = this.geodesic(rpos.add(k2pos.mul(s.mul(.5))), h2);
-        const k3pos = rvel.add(k2vel.mul(s.mul(.5))).normalize();
+        const k3pos = rvel.add(k2vel.mul(s.mul(.5)));
 
         const k4vel = this.geodesic(rpos.add(k3pos.mul(s)), h2);
-        const k4pos = rvel.add(k3vel.mul(s)).normalize();
+        const k4pos = rvel.add(k3vel.mul(s));
 
         const _rvel = rvel.add(s.div(6).mul(k1vel.add(k2vel.mul(2).add(k3vel.mul(2).add(k4vel)))));
         const _rpos = rpos.add(s.div(6).mul(k1pos.add(k2pos.mul(2).add(k3pos.mul(2).add(k4pos)))));
 
-        rpos.assign(_rpos);
-        rvel.assign(_rvel);
+        return array([
+            _rpos, 
+            _rvel
+        ]);
     });
 
     raymarch = Fn(({ ro, rd }) => {
+        
+        /* playground-fold */
         const rpos = ro.toVar();
         const rdir = rd.toVar();
         const color = vec3(0).toVar();
@@ -80,8 +88,10 @@ export class BlackHole{
         //h2 is conserved so we only need to calculate it once
         const h = (rpos.sub(this.black_hole_center)).cross(rdir);
         const h2 = h.dot(h); // dot product with itself gets square magnitude
-        
+        /* playground-fold-end */
+
         Loop(this.MAX_STEPS, ({ i }) => {
+            /* playground-fold */
             const step = this.sdSphere({p : rpos.sub(this.star_pos), r : this.star_radius});
             If(step.lessThan(this.EPSILON), () => {
                 color.assign(this.star_color);
@@ -89,40 +99,34 @@ export class BlackHole{
                 Break();
             });
 
+            /* playground-fold-end */
+
             //ray relative position
             const rrp = rpos.sub(this.black_hole_center); 
-            const r2 = rrp.dot(rrp);
             const rlen = rrp.length();
-            const r5 = r2.mul(r2).mul(rlen);
-
-            //This is our geodesic function
-            const f = float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp).div(r5);
             
-
-            //This checks if we are inside the black hole
             If(rlen.lessThanEqual(this.schwarzschild_radius), () => {
-                //For this remember that we are calcualting our lightrays backwards from their actual source
-                //If we are inside the bh and our rays are pointing towards the black hole, then there is no escape
-                //If rays are pointing away from the black hole we are likely inside the black hole and can escape
-                If(rrp.dot(rdir).lessThan(0),()=>{
+               If(rrp.dot(rdir).lessThan(0),()=>{
                     color.assign(vec3(0));
                     hit.assign(true);
                     Break();
                 })
             });
 
-            //We need to make sure that we are smaller steps near the black hole
-            const step_size = min(step, rlen.mul(.2));
-            this.rk4(rpos, rdir, h2, step_size);
-            // rayPos.addAssign(rdir.mul(step_size));
-            //We need to normalize it because it is a direction (this is like a speedcap)
-            // rdir.assign(rdir.add(f.mul(step_size)).normalize());
-
+            //We can get away with much larger steps 
+            const step_size = min(step, rlen.mul(.8)).toVar();
+            const nstate = this.rk4(rpos, rdir, h2, step_size);
+            rpos.assign(nstate[0]);
+            rdir.assign(nstate[1].normalize()); //Light still has a max speed of c=1
         });
+
+        /* playground-fold */
 
         If(not(hit), ()=>{
             color.assign(this.cubemap.sample(rdir).rgb);
         });
+
+        /* playground-fold-end */
 
         return color;
     });
