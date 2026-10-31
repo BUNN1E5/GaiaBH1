@@ -232,27 +232,26 @@ $$
 In our specific case our chosen y is an [autonomous differential equation](https://math.libretexts.org/Bookshelves/Analysis/Supplemental_Modules_(Analysis)/Ordinary_Differential_Equations/2%3A_First_Order_Differential_Equations/2.5%3A_Autonomous_Differential_Equations) and doesn't depend on $t$, so we can rewrite our $g$ function and inital condition as 
 
 $$
-\frac{dy}{dt} = g(y)\\
-y_0 = y(0)
+\frac{dy}{dt} = \vec{g}(\vec{y})\\
 $$
 
 We then need solve for the $k$ terms for all values of our y vector
 
 $$
 \begin{alignedat}{2}
-k_{1,pos} &= r_{vel,n}
+k_{1,pos} &= \vec{r}_{vel,n}
 &\qquad 
 k_{1,vel} &= \vec{f}(\vec{r}_n) \\
 
-k_{2,pos} &= r_{vel,n} + k_{1,vel}\frac{h}{2}
+k_{2,pos} &= \vec{r}_{vel,n} + k_{1,vel}\frac{h}{2}
 &\qquad 
 k_{2,vel} &= \vec{f}(\vec{r}_n + k_{1,pos}\frac{h}{2}) \\
 
-k_{3,pos} &= r_{vel,n} + k_{2,vel}\frac{h}{2}
+k_{3,pos} &= \vec{r}_{vel,n} + k_{2,vel}\frac{h}{2}
 &\qquad
 k_{3,vel} &= \vec{f}(\vec{r}_n + k_{2,pos}\frac{h}{2}) \\
 
-k_{4,pos} &= r_{vel,n} + k_{3,vel}h
+k_{4,pos} &= \vec{r}_{vel,n} + k_{3,vel}h
 &\qquad
 k_{4,vel} &= \vec{f}(\vec{r}_n + k_{3,pos}h)
 \end{alignedat}
