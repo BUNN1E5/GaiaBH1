@@ -37,7 +37,7 @@ export class BlackHole{
     star_color = vec3(1,1,1);
     star_radius = 1;
     /* playground-fold-end */
-    
+
     black_hole_center = vec3(0,0,0);
     schwarzschild_radius = float(1);
 
@@ -46,6 +46,7 @@ export class BlackHole{
         const rdir = rd.toVar();
         const color = vec3(0).toVar();
         const hit = bool(false).toVar();
+        
         //h2 is conserved so we only need to calculate it once
         const h = (rayPos.sub(this.black_hole_center)).cross(rdir);
         const h2 = h.dot(h); // dot product with itself gets square magnitude
