@@ -2,17 +2,14 @@
 
 I had originally built this blackhole shader for the [Unlikely Collaborators™ Game Jam](https://itch.io/jam/ucgamejam2026). Theme "consciousness and identity through awe and wonder - make awe playable" I had decided to have the setting of the game be centered around one of the most extreme things in our Universe, a black hole, and not just any black hole, [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1) the nearest black hole to us! 
 
+I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL.
+
 ## Check Out the live demo
 <iframe src="https://goldenneedham.com/demos/GaiaBH1/" width="100%" height="400" style="padding: 5px" class="demo"></iframe>
 
 You might notice that the signature accretion disks are missing. Well that is because the black hole we are modelling actually does not have them. So our shader doesn't need it either.
-
 <!-- This is really stilted so lets try and rewrite this later -->
-This post is going to go over writing the black hole shader and the orbit controller 
-
-I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL.
-
-If you want to skip the setup and just get to the juice you can skip to [step 4 gravitational lensing](#step-4-gravitational-lensing)
+This post is going to go over writing the black hole shader and the orbit controller. If you want to skip the setup and just get to the juice you can skip to [step 4 gravitational lensing](#step-4-gravitational-lensing)
 
 ## Step 0: Setting Up Three.js
 
@@ -181,11 +178,14 @@ $$
 Now we need to put all that into code
 
 <!-- TODO :: ADD STEP SKIP LINK -->
-At this point the shader could technically be called done, if you're fine with what we have now feel free to skip to [step-n]. But we can still make the shader better and as a extra treat more performant.
 
 <!-- TODO :: Add GLSL code -->
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-4/project.json" selected="blackhole.js"></code-playground>
+
+At this point the shader could technically be called done, if you're fine with what we have now feel free to skip to [step-n]. But we can still make the shader better and as a extra treat more performant.
+
+
 
 ## Step 5: Runge-Kutta (RK4)
 
@@ -273,7 +273,7 @@ And all that is left is to actually plug this into our code
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-5/project.json" selected="blackhole.js"></code-playground>
 
-And now our shader is officially done! Now we need to write a controller for it.
+And now our shader is officially done! Now we just need to write a controller for it to get things into motion.
 
 ## Step 6 : Orbit Controller
 

@@ -31,12 +31,13 @@ export class BlackHole{
     }
 
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
-    /* playground-fold-end */
+
     
     star_pos = vec3(5,0,0);
     star_color = vec3(1,1,1);
     star_radius = 1;
-
+    /* playground-fold-end */
+    
     black_hole_center = vec3(0,0,0);
     schwarzschild_radius = float(1);
 
@@ -57,7 +58,6 @@ export class BlackHole{
                 Break();
             });
 
-            // TODO :: Move this into a blackhole function instead of the raymarch function 
             //ray relative position
             const rrp = rayPos.sub(this.black_hole_center); 
             const r2 = rrp.dot(rrp);
