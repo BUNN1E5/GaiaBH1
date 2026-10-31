@@ -1,0 +1,15 @@
+{
+  "importMap": {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three/build/three.webgpu.min.js",
+      "three/webgpu": "https://cdn.jsdelivr.net/npm/three/build/three.webgpu.min.js",
+      "three/tsl": "https://cdn.jsdelivr.net/npm/three/build/three.tsl.min.js",
+      "three/addons/": "https://unpkg.com/three/examples/jsm/"
+    }
+  },
+  "files": {
+    "index.html": {"contentType": "text/html" },
+    "main.js": { "contentType": "text/javascript"},
+    "blackhole.js": { "contentType": "text/javascript"}
+  }
+}

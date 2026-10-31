@@ -185,8 +185,7 @@ Now we need to put all that into code
 
 At this point the shader could technically be called done, if you're fine with what we have now feel free to skip to [step-n]. But we can still make the shader better and as a extra treat more performant.
 
-
-
+<details>
 ## Step 5: Runge-Kutta (RK4)
 
 One of the main benefits of Runge-Kutta or RK4 is that it is leagues more accurate than Euler. While each RK4 step is more costly than a single Euler step, each step is substansually more accurate, letting us significantly reduce the step count and increasing performance overall. I *borrowed* the math from [here](http://spiff.rit.edu/richmond/nbody/OrbitRungeKutta4.pdf)
@@ -273,6 +272,7 @@ And all that is left is to actually plug this into our code
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-5/project.json" selected="blackhole.js"></code-playground>
 
 And now our shader is officially done! Now we just need to write a controller for it to get things into motion.
+</details>
 
 ## Step 6 : Orbit Controller
 
