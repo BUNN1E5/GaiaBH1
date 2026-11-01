@@ -1,6 +1,6 @@
 # Building the GaiaBH1 black hole in a Raymarching Shader
 
-I had originally built this blackhole shader for the [Unlikely Collaborators™ Game Jam](https://itch.io/jam/ucgamejam2026). Theme "consciousness and identity through awe and wonder - make awe playable" I had decided to have the setting of the game be centered around one of the most extreme things in our Universe, a black hole, and not just any black hole, [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1) the nearest black hole to us! 
+I had originally built this blackhole shader for the [Unlikely Collaborators™ Game Jam](https://itch.io/jam/ucgamejam2026). Theme "consciousness and identity through awe and wonder - make awe playable" I had decided to have the setting of the game be centered around one of the most extreme things in our Universe, a black hole, and not just any black hole, [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1) the nearest known black hole to us! 
 
 I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL.
 
@@ -188,7 +188,7 @@ At this point the shader could technically be called done, if you're fine with w
 
 ## Step 5: Runge-Kutta (RK4)
 
-One of the main benefits of Runge-Kutta or RK4 is that it is leagues more accurate than Euler. While each RK4 step is more costly than a single Euler step, each step is substansually more accurate, letting us significantly reduce the step count and increasing performance overall. I *borrowed* the math from [here](http://spiff.rit.edu/richmond/nbody/OrbitRungeKutta4.pdf)
+One of the main benefits of Runge-Kutta or RK4 is that it is leagues more accurate than Euler. While each RK4 step is more costly than a single Euler step, each step is substansually more accurate, letting us significantly reduce the step count and increasing performance overall. I *borrowed* a lot of the math from [here](http://spiff.rit.edu/richmond/nbody/OrbitRungeKutta4.pdf)
 
 RK4 is defined for any differential equation in the following form
 
@@ -203,18 +203,18 @@ $$
 y_{n+1} = y_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)
 $$
 
-And the terms are defined with $h$ being our step size (same as the $\Delta s$ in the Euler implementation)
+And the terms are as follows, with $\Delta s$ being the step size, same as our Euler implmentation 
 
 $$
 \begin{aligned}
 k_1 &= g(t_n, y_n) \\
-k_2 &= g(t_n + \frac{h}{2},\ y_n + k_1\frac{h}{2}) \\
-k_3 &= g(t_n + \frac{h}{2},\ y_n + k_2\frac{h}{2}) \\
-k_4 &= g(t_n + h,\ y_n + k_3h)
+k_2 &= g(t_n + \frac{\Delta s}{2},\ y_n + k_1\frac{\Delta s}{2}) \\
+k_3 &= g(t_n + \frac{\Delta s}{2},\ y_n + k_2\frac{\Delta s}{2}) \\
+k_4 &= g(t_n + \Delta s,\ y_n + k_3\Delta s)
 \end{aligned}
 $$
 
-For our case because we will be integrating over both the position and velocity our Y needs be a vector of our first derivitive of each
+For our case because we will be integrating over both the position and velocity our $y$ needs be a vector of our first derivitive of each
 
 $$
 y = \begin{bmatrix}
@@ -242,17 +242,17 @@ k_{1,pos} &= \vec{r}_{vel,n}
 &\qquad 
 k_{1,vel} &= \vec{f}(\vec{r}_n) \\
 
-k_{2,pos} &= \vec{r}_{vel,n} + k_{1,vel}\frac{h}{2}
+k_{2,pos} &= \vec{r}_{vel,n} + k_{1,vel}\frac{\Delta s}{2}
 &\qquad 
-k_{2,vel} &= \vec{f}(\vec{r}_n + k_{1,pos}\frac{h}{2}) \\
+k_{2,vel} &= \vec{f}(\vec{r}_n + k_{1,pos}\frac{\Delta s}{2}) \\
 
-k_{3,pos} &= \vec{r}_{vel,n} + k_{2,vel}\frac{h}{2}
+k_{3,pos} &= \vec{r}_{vel,n} + k_{2,vel}\frac{\Delta s}{2}
 &\qquad
-k_{3,vel} &= \vec{f}(\vec{r}_n + k_{2,pos}\frac{h}{2}) \\
+k_{3,vel} &= \vec{f}(\vec{r}_n + k_{2,pos}\frac{\Delta s}{2}) \\
 
-k_{4,pos} &= \vec{r}_{vel,n} + k_{3,vel}h
+k_{4,pos} &= \vec{r}_{vel,n} + k_{3,vel}\Delta s
 &\qquad
-k_{4,vel} &= \vec{f}(\vec{r}_n + k_{3,pos}h)
+k_{4,vel} &= \vec{f}(\vec{r}_n + k_{3,pos}\Delta s)
 \end{alignedat}
 $$
 
