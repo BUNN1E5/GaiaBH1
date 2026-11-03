@@ -9,6 +9,7 @@ import {
     vec4,
     bool,
     not,
+    color,
     uniformCubeTexture,
     cameraPosition,
     cameraWorldMatrix,
