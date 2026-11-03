@@ -7,7 +7,7 @@ import { BlackHole } from './blackhole.js';
 /* playground-fold */
 let canvas = document.querySelector( '#c' );
 
-const renderer = new THREE.WebGPURenderer({antialias: true, forceWebGL:false, canvas });
+const renderer = new THREE.WebGPURenderer({antialias: true, canvas });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 await renderer.init();

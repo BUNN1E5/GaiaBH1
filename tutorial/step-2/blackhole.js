@@ -49,7 +49,6 @@ export class BlackHole{
         //New Code !!
         If(not(hit), ()=>{
             color.assign(this.cubemap.sample(rd).rgb);
-            
             // This also would work just fine
             // color.assign(cubeTexture(this.cubemap, rd).rgb);
         });

@@ -109,7 +109,6 @@ float sdSphere(vec3 p, float r){ return length(p) - r; }
 
 vec3 raymarch(vec3 ro, vec3 rd){
     vec3 p = ro;
-    bool hit = false;
     for(int i = 0; i < MAX_STEPS; i++){
         float step = sdSphere(p, .5);
 
@@ -119,9 +118,7 @@ vec3 raymarch(vec3 ro, vec3 rd){
         p += rd * step;
     }
 
-    if(!hit){
-        return cubeTexture(cubemap, rd).rgb;
-    }
+    return cubeTexture(cubemap, rd).rgb;
 
     return vec3(0);
 }
@@ -133,7 +130,33 @@ vec3 raymarch(vec3 ro, vec3 rd){
 ## Step 3: Adding the Star
 
 Adding the star is super straightforward, in fact, it's already in the scene. The sphere we were using to test is perfect for us to use. We just need to define some uniforms for the size and position of the star. We are also going to default the value to `vec3(5,0,0)` just so we don't have the black hole and star overlap.
-<!-- TODO :: Add GLSL code -->
+<details>
+    <summary>GLSL</summary>
+
+```glsl
+const int MAX_STEPS = 100;
+const float EPSILON = .1;
+
+uniform vec3 starPosition = vec3(5,0,0);
+uniform vec3 starColor = vec3(1,1,1);
+uniform float starRadius = 1;
+
+float sdSphere(vec3 p, float r){ return length(p) - r; }
+
+vec3 raymarch(vec3 ro, vec3 rd){
+    vec3 p = ro;
+    bool hit = false;
+    for(int i = 0; i < MAX_STEPS; i++){
+        float step = sdSphere(p - starPosition, starRadius);
+        if(step < EPSILON){
+            return vec3(starColor);
+        }
+        p += rd * step;
+    }
+    return cubeTexture(cubemap, rd).rgb;
+}
+```
+</details>
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-3/project.json" selected="blackhole.js"></code-playground>
 
@@ -179,7 +202,55 @@ Now we need to put all that into code.
 
 <!-- TODO :: ADD STEP SKIP LINK -->
 
-<!-- TODO :: Add GLSL code -->
+<details>
+    <summary>GLSL</summary>
+
+```glsl
+const int MAX_STEPS = 100;
+const float EPSILON = .1;
+
+uniform vec3 starPosition = vec3(5,0,0);
+uniform vec3 starColor = vec3(1,1,1);
+uniform float starRadius = 1;
+
+uniform vec3 blackholePosition = vec3(5,0,0);
+uniform float schwarzschildRadius = 1;
+
+float sdSphere(vec3 p, float r){ return length(p) - r; }
+
+vec3 raymarch(vec3 ro, vec3 rd){
+    vec3 p = ro;
+    vec3 rdir = rd;
+    bool hit = false;
+    for(int i = 0; i < MAX_STEPS; i++){
+        float step = sdSphere(p - starPosition, starRadius);
+        if(step < EPSILON){
+            return vec3(starColor);
+        }
+
+        vec3 rrp = p - this.blackHolePos;
+        float r2 = rrp.dot(rrp);
+        float rlen = rrp.length();
+        float r5 = r2*r2*rlen;
+
+        vec3 f = (-1.5 * h2 * schwarzschildRadius * rrp) / r5;
+
+        if(rlen < schwarzschildRadius){
+            if(rrp.dot(rdir) < 0){
+                return vec3(0);
+            }
+        }
+
+        float stepSize = min(step, rlen * .2);
+
+        rdir = normalize(rdir + f * stepSize);
+        p += rdir * stepSize;
+    }
+
+    return cubeTexture(cubemap, rd).rgb;
+}
+```
+</details>
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-4/project.json" selected="blackhole.js"></code-playground>
 
@@ -267,7 +338,81 @@ $$
 
 And all that is left is to actually plug this into our code. However, we also need to move our geodesic calculation into its own function
 
-<!-- TODO :: Add GLSL code  -->
+
+<details>
+    <summary>GLSL</summary>
+
+```glsl
+const int MAX_STEPS = 100;
+const float EPSILON = .1;
+
+uniform vec3 starPosition = vec3(5,0,0);
+uniform vec3 starColor = vec3(1,1,1);
+uniform float starRadius = 1;
+
+uniform vec3 blackholePosition = vec3(5,0,0);
+uniform float schwarzschildRadius = 1;
+
+float sdSphere(vec3 p, float r){ return length(p) - r; }
+
+vec3 geodesic(vec3 p, float h2){
+    vec3 rrp = p - this.blackHolePos;
+    float r2 = rrp.dot(rrp);
+    float rlen = rrp.length();
+    float r5 = r2*r2*rlen;
+
+    vec3 f = (-1.5 * h2 * schwarzschildRadius * rrp) / r5;
+}
+
+vec3[2] rk4(vec3 rpos, vec3 rvel, float h2, float s){
+    vec3 k1pos = rvel;
+    vec3 k1vel = geodesic(rpos, h2);
+
+    vec3 k2pos = rvel + k1vel * .5;
+    vec3 k2vel = geodesic(rpos + k1pos * .5, h2);
+
+    vec3 k3pos = rvel + k2vel * .5;
+    vec3 k3vel = geodesic(rpos + k2pos * .5, h2);
+
+    vec3 k4pos = rvel + k3vel * .5;
+    vec3 k4vel = geodesic(rpos + k3pos * .5, h2);
+
+    vec3 _rvel = rvel + (s/6) * (k1vel + k2vel*2. + k3vel*2. + k4vel);
+    vec3 _rpos = rpos + (s/6) * (k1pos + k2pos*2. + k3pos*2. + k4pos);
+
+    return vec3[2](_rpos, _rvel);
+}
+
+vec3 raymarch(vec3 ro, vec3 rd){
+    vec3 p = ro;
+    vec3 rdir = rd;
+    bool hit = false;
+    for(int i = 0; i < MAX_STEPS; i++){
+        float step = sdSphere(p - starPosition, starRadius);
+        if(step < EPSILON){
+            return vec3(starColor);
+        }
+
+        vec3 rrp = p - this.blackHolePos;
+        float rlen = rrp.length();
+
+        if(rlen < schwarzschildRadius){
+            if(rrp.dot(rdir) < 0){
+                return vec3(0);
+            }
+        }
+
+        float stepSize = min(step, rlen * .8);
+
+        vec3[] state = rk4(p, rdir, h2, stepSize);
+        p = state[0];
+        rdir = normalize(state[1]);
+    }
+
+    return cubeTexture(cubemap, rd).rgb;
+}
+```
+</details>
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-5/project.json" selected="blackhole.js"></code-playground>
 
@@ -295,16 +440,17 @@ $$
 
 For our specific case, let's take another look at the Wikipedia page of [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1). We can get all of the relevant information we need in order to properly simulate it under Orbit and Details.
 
-<!-- TODO :: FORMAT THIS -->
-<!-- $$
-Sun-like star \\
-Mass	0.93±0.05 M☉ \\
-Radius	0.99±0.05 R☉ \\
-Luminosity (bolometric)	1.06±0.04 L☉ \\
-Surface gravity (log g)	4.55±0.16 cgs \\
-Temperature	5850±50 K \\
-Black hole \\
-Mass	9.27±0.10[4] M☉
-$$ -->
+$$
+\begin{array}{ll}
+\textbf{Sun-like star} & \\
+\text{Mass} & 0.93 \pm 0.05\,M_\odot \\
+\text{Radius} & 0.99 \pm 0.05\,R_\odot \\
+\text{Luminosity (bolometric)} & 1.06 \pm 0.04\,L_\odot \\
+\text{Surface gravity }(\log g) & 4.55 \pm 0.16\,\mathrm{cgs} \\
+\text{Temperature} & 5850 \pm 50\,\mathrm{K} \\[6pt]
+\textbf{Black hole} & \\
+\text{Mass} & 9.27 \pm 0.10[4]\,M_\odot
+\end{array}
+$$
 
 ### Finding our initial positions

@@ -27,7 +27,7 @@ export class BlackHole{
             const step = this.sdSphere({p : rayPos, r : 1});
             If(step.lessThan(this.EPSILON), () => {
                 color.assign(vec3(1));
-                Break();
+                Break(); //Early returns are not allowed in TSL
             });
             rayPos.addAssign(rd.mul(step));
         });
@@ -37,7 +37,7 @@ export class BlackHole{
     main = Fn(() => {
         /* playground-fold */
         const clip = vec4(screenUV.x.mul(2).sub(1), screenUV.y.mul(-2).add(1), -1, 1);
-        const hview = cameraProjectionMatrixInverse.mul(clip) 
+        const hview = cameraProjectionMatrixInverse.mul(clip)
         const view = hview.xyz.div(hview.w);
         const rd = transformDirection(view, cameraWorldMatrix);
         /* playground-fold-end */
