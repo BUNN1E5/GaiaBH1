@@ -52,7 +52,7 @@ export class BlackHole{
         const r5 = r2.mul(r2).mul(rlen);
 
         return float(-1.5).mul(h2).mul(this.schwarzschild_radius).mul(rrp).div(r5);
-    })
+    });
 
     rk4 = Fn(([rpos, rvel, h2, s]) =>{
 
@@ -110,7 +110,7 @@ export class BlackHole{
                     color.assign(vec3(0));
                     hit.assign(true);
                     Break();
-                })
+                });
             });
 
             //We can get away with much larger steps 
@@ -134,7 +134,7 @@ export class BlackHole{
     /* playground-fold */
     main = Fn(() => {
         const clip = vec4(screenUV.x.mul(2).sub(1), screenUV.y.mul(-2).add(1), -1, 1);
-        const hview = cameraProjectionMatrixInverse.mul(clip) 
+        const hview = cameraProjectionMatrixInverse.mul(clip);
         const view = hview.xyz.div(hview.w);
         const rd = transformDirection(view, cameraWorldMatrix);
         return vec3(this.raymarch({ro: cameraPosition, rd: rd}));

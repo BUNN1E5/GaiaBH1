@@ -34,7 +34,7 @@ This gives us our ray direction. The ray origin is just our camera's position or
 ```glsl
 vec4 clip = vec4(screen_uv * 2. - 1., -1, 1);
 vec4 hview = inverseProjectionMatrix * clip;
-vec3 view = hview.xyz/hview.w;
+vec3 view = hview.xyz / hview.w;
 vec4 world = cameraWorldMatrix * vec4(view, 0);
 vec3 rayDirection = normalize(world.xyz);
 vec3 rayOrigin = cameraWorldMatrix[3].xyz;
@@ -61,21 +61,26 @@ We will use a standard raymarch loop and a single [SDF for a sphere](https://iqu
 
 ```glsl
 const int MAX_STEPS = 100;
-const float EPSILON = .1;
+const float EPSILON = 0.1;
 
-float sdSphere(vec3 p, float r){ return length(p) - r; }
+float sdSphere(vec3 p, float r) {
+    return length(p) - r;
+}
 
-vec3 raymarch(vec3 ro, vec3 rd){
+vec3 raymarch(vec3 ro, vec3 rd) {
     vec3 p = ro;
-    for(int i = 0; i < MAX_STEPS; i++){
-        float step = sdSphere(p, .5);
 
-        if(step < EPSILON){
-            return vec3(1); //hit: white
+    for (int i = 0; i < MAX_STEPS; i++) {
+        float step = sdSphere(p, 0.5);
+
+        if (step < EPSILON) {
+            return vec3(1.0); // Hit: white.
         }
+
         p += rd * step;
     }
-    return vec3(0);
+
+    return vec3(0.0);
 }
 ```
 </details>
@@ -103,24 +108,28 @@ We just need to add a uniform to our cubemap, and sample it at the end of our ra
 
 ```glsl
 const int MAX_STEPS = 100;
-const float EPSILON = .1;
+const float EPSILON = 0.1;
 
-float sdSphere(vec3 p, float r){ return length(p) - r; }
+uniform samplerCube cubemap;
 
-vec3 raymarch(vec3 ro, vec3 rd){
+float sdSphere(vec3 p, float r) {
+    return length(p) - r;
+}
+
+vec3 raymarch(vec3 ro, vec3 rd) {
     vec3 p = ro;
-    for(int i = 0; i < MAX_STEPS; i++){
-        float step = sdSphere(p, .5);
 
-        if(step < EPSILON){
-            return vec3(1); //hit: white
+    for (int i = 0; i < MAX_STEPS; i++) {
+        float step = sdSphere(p, 0.5);
+
+        if (step < EPSILON) {
+            return vec3(1.0);
         }
+
         p += rd * step;
     }
 
-    return cubeTexture(cubemap, rd).rgb;
-
-    return vec3(0);
+    return texture(cubemap, rd).rgb;
 }
 ```
 </details>
@@ -135,25 +144,31 @@ Adding the star is super straightforward, in fact, it's already in the scene. Th
 
 ```glsl
 const int MAX_STEPS = 100;
-const float EPSILON = .1;
+const float EPSILON = 0.1;
 
-uniform vec3 starPosition = vec3(5,0,0);
-uniform vec3 starColor = vec3(1,1,1);
-uniform float starRadius = 1;
+uniform samplerCube cubemap;
+uniform vec3 starPosition = vec3(5.0, 0.0, 0.0);
+uniform vec3 starColor = vec3(1.0, 1.0, 1.0);
+uniform float starRadius = 1.0;
 
-float sdSphere(vec3 p, float r){ return length(p) - r; }
+float sdSphere(vec3 p, float r) {
+    return length(p) - r;
+}
 
-vec3 raymarch(vec3 ro, vec3 rd){
+vec3 raymarch(vec3 ro, vec3 rd) {
     vec3 p = ro;
-    bool hit = false;
-    for(int i = 0; i < MAX_STEPS; i++){
+
+    for (int i = 0; i < MAX_STEPS; i++) {
         float step = sdSphere(p - starPosition, starRadius);
-        if(step < EPSILON){
-            return vec3(starColor);
+
+        if (step < EPSILON) {
+            return starColor;
         }
+
         p += rd * step;
     }
-    return cubeTexture(cubemap, rd).rgb;
+
+    return texture(cubemap, rd).rgb;
 }
 ```
 </details>
@@ -204,48 +219,53 @@ Now we need to put all that into code.
     <summary>GLSL</summary>
 
 ```glsl
-const int MAX_STEPS = 100;
-const float EPSILON = .1;
+const int MAX_STEPS = 200;
+const float EPSILON = 0.1;
 
-uniform vec3 starPosition = vec3(5,0,0);
-uniform vec3 starColor = vec3(1,1,1);
-uniform float starRadius = 1;
+uniform samplerCube cubemap;
+uniform vec3 starPosition = vec3(5.0, 0.0, 0.0);
+uniform vec3 starColor = vec3(1.0, 1.0, 1.0);
+uniform float starRadius = 1.0;
+uniform vec3 blackHolePosition = vec3(0.0, 0.0, 0.0);
+uniform float schwarzschildRadius = 1.0;
 
-uniform vec3 blackholePosition = vec3(5,0,0);
-uniform float schwarzschildRadius = 1;
+float sdSphere(vec3 p, float r) {
+    return length(p) - r * 0.5;
+}
 
-float sdSphere(vec3 p, float r){ return length(p) - r; }
-
-vec3 raymarch(vec3 ro, vec3 rd){
+vec3 raymarch(vec3 ro, vec3 rd) {
     vec3 p = ro;
     vec3 rdir = rd;
-    bool hit = false;
-    for(int i = 0; i < MAX_STEPS; i++){
+
+    vec3 h = cross(p - blackHolePosition, rdir);
+    float h2 = dot(h, h);
+
+    for (int i = 0; i < MAX_STEPS; i++) {
         float step = sdSphere(p - starPosition, starRadius);
-        if(step < EPSILON){
-            return vec3(starColor);
+
+        if (step < EPSILON) {
+            return starColor;
         }
 
-        vec3 rrp = p - this.blackHolePos;
-        float r2 = rrp.dot(rrp);
-        float rlen = rrp.length();
-        float r5 = r2*r2*rlen;
+        vec3 rrp = p - blackHolePosition;
+        float r2 = dot(rrp, rrp);
+        float rlen = length(rrp);
+        float r5 = r2 * r2 * rlen;
 
         vec3 f = (-1.5 * h2 * schwarzschildRadius * rrp) / r5;
 
-        if(rlen < schwarzschildRadius){
-            if(rrp.dot(rdir) < 0){
-                return vec3(0);
+        if (rlen <= schwarzschildRadius) {
+            if (dot(rrp, rdir) < 0.0) {
+                return vec3(0.0);
             }
         }
 
-        float stepSize = min(step, rlen * .2);
-
+        float stepSize = min(step, rlen * 0.2);
         rdir = normalize(rdir + f * stepSize);
         p += rdir * stepSize;
     }
 
-    return cubeTexture(cubemap, rd).rgb;
+    return texture(cubemap, rdir).rgb;
 }
 ```
 </details>
@@ -341,73 +361,75 @@ And all that is left is to actually plug this into our code. However, we also ne
     <summary>GLSL</summary>
 
 ```glsl
-const int MAX_STEPS = 100;
-const float EPSILON = .1;
+const int MAX_STEPS = 50;
+const float EPSILON = 0.1;
 
-uniform vec3 starPosition = vec3(5,0,0);
-uniform vec3 starColor = vec3(1,1,1);
-uniform float starRadius = 1;
+uniform samplerCube cubemap;
+uniform vec3 starPosition = vec3(5.0, 0.0, 0.0);
+uniform vec3 starColor = vec3(1.0, 1.0, 1.0);
+uniform float starRadius = 1.0;
+uniform vec3 blackHolePosition = vec3(0.0, 0.0, 0.0);
+uniform float schwarzschildRadius = 1.0;
 
-uniform vec3 blackholePosition = vec3(5,0,0);
-uniform float schwarzschildRadius = 1;
-
-float sdSphere(vec3 p, float r){ return length(p) - r; }
-
-vec3 geodesic(vec3 p, float h2){
-    vec3 rrp = p - this.blackHolePos;
-    float r2 = rrp.dot(rrp);
-    float rlen = rrp.length();
-    float r5 = r2*r2*rlen;
-
-    vec3 f = (-1.5 * h2 * schwarzschildRadius * rrp) / r5;
+float sdSphere(vec3 p, float r) {
+    return length(p) - r * 0.5;
 }
 
-vec3[2] rk4(vec3 rpos, vec3 rvel, float h2, float s){
+vec3 geodesic(vec3 rpos, float h2) {
+    vec3 rrp = rpos - blackHolePosition;
+    float r2 = dot(rrp, rrp);
+    float rlen = length(rrp);
+    float r5 = r2 * r2 * rlen;
+
+    return (-1.5 * h2 * schwarzschildRadius * rrp) / r5;
+}
+
+void rk4(inout vec3 rpos, inout vec3 rvel, float h2, float s) {
     vec3 k1pos = rvel;
     vec3 k1vel = geodesic(rpos, h2);
 
-    vec3 k2pos = rvel + k1vel * .5;
-    vec3 k2vel = geodesic(rpos + k1pos * .5, h2);
+    vec3 k2vel = geodesic(rpos + k1pos * s * 0.5, h2);
+    vec3 k2pos = rvel + k1vel * s * 0.5;
 
-    vec3 k3pos = rvel + k2vel * .5;
-    vec3 k3vel = geodesic(rpos + k2pos * .5, h2);
+    vec3 k3vel = geodesic(rpos + k2pos * s * 0.5, h2);
+    vec3 k3pos = rvel + k2vel * s * 0.5;
 
-    vec3 k4pos = rvel + k3vel * .5;
-    vec3 k4vel = geodesic(rpos + k3pos * .5, h2);
+    vec3 k4vel = geodesic(rpos + k3pos * s, h2);
+    vec3 k4pos = rvel + k3vel * s;
 
-    vec3 _rvel = rvel + (s/6) * (k1vel + k2vel*2. + k3vel*2. + k4vel);
-    vec3 _rpos = rpos + (s/6) * (k1pos + k2pos*2. + k3pos*2. + k4pos);
-
-    return vec3[2](_rpos, _rvel);
+    //c = 1
+    rvel = normalize(rvel + s / 6.0 * (k1vel + 2.0 * k2vel + 2.0 * k3vel + k4vel));
+    rpos += s / 6.0 * (k1pos + 2.0 * k2pos + 2.0 * k3pos + k4pos);
 }
 
-vec3 raymarch(vec3 ro, vec3 rd){
-    vec3 p = ro;
+vec3 raymarch(vec3 ro, vec3 rd) {
+    vec3 rpos = ro;
     vec3 rdir = rd;
-    bool hit = false;
-    for(int i = 0; i < MAX_STEPS; i++){
-        float step = sdSphere(p - starPosition, starRadius);
-        if(step < EPSILON){
-            return vec3(starColor);
+
+    vec3 h = cross(rpos - blackHolePosition, rdir);
+    float h2 = dot(h, h);
+
+    for (int i = 0; i < MAX_STEPS; i++) {
+        float step = sdSphere(rpos - starPosition, starRadius);
+
+        if (step < EPSILON) {
+            return starColor;
         }
 
-        vec3 rrp = p - this.blackHolePos;
-        float rlen = rrp.length();
+        vec3 rrp = rpos - blackHolePosition;
+        float rlen = length(rrp);
 
-        if(rlen < schwarzschildRadius){
-            if(rrp.dot(rdir) < 0){
-                return vec3(0);
+        if (rlen <= schwarzschildRadius) {
+            if (dot(rrp, rdir) < 0.0) {
+                return vec3(0.0);
             }
         }
 
-        float stepSize = min(step, rlen * .8);
-
-        vec3[] state = rk4(p, rdir, h2, stepSize);
-        p = state[0];
-        rdir = normalize(state[1]);
+        float stepSize = min(step, rlen * 0.8);
+        rk4(rpos, rdir, h2, stepSize);
     }
 
-    return cubeTexture(cubemap, rd).rgb;
+    return texture(cubemap, rdir).rgb;
 }
 ```
 </details>
