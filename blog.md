@@ -31,6 +31,9 @@ Our main function is our entry point into the shader. Here we convert the screen
 
 This gives us our ray direction. The ray origin is just our camera's position or the 4th column of the camera's world matrix. If we now return the ray direction we should be able to look around a few quadrants of color.
 
+<details>
+    <summary>GLSL</summary>
+
 ```glsl
 vec4 clip = vec4(screen_uv * 2. - 1., -1, 1);
 vec4 hview = inverseProjectionMatrix * clip;
@@ -39,8 +42,9 @@ vec4 world = cameraWorldMatrix * vec4(view, 0);
 vec3 rayDirection = normalize(world.xyz);
 vec3 rayOrigin = cameraWorldMatrix[3].xyz;
 ```
+</details>
 
-We also need to add this to our main.js file and remove the cube that is in the way.
+Of course we actually want our shader to render to the screen, and the easiest way is to have our scene's background node point to our shader. Anything else in the scene will end up rendering in front of our shader, but that isnt an issue for us.  
 ```js
 const blackHole = new BlackHole()
 scene.backgroundNode = blackHole.main()
@@ -92,12 +96,12 @@ vec3 raymarch(vec3 ro, vec3 rd) {
 Before we add the black hole with its lensing, let's add a skybox. Three.js' [CubeTexture](https://threejs.org/docs/?q=CubeTex#CubeTexture) requires us to define a path for each face. For testing and demonstration, we are going to be using these faces:
 
 <p align="center">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_0.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_1.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_2.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_3.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_4.jpg' width="10%">
-    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_5.jpg' width="10%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_0.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_1.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_2.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_3.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_4.jpg' width="15%">
+    <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_5.jpg' width="15%">
 </p>
 
 <!-- WE NEED TO REWRITE THIS -->
@@ -177,7 +181,7 @@ vec3 raymarch(vec3 ro, vec3 rd) {
 
 ## Step 4: Gravitational Lensing
 
-If you want to get more in-depth about the derivation, [check out this article](https://rantonels.github.io/starless/). We are gonna just skip to the end and have our geodesic function. Note we add an extra term $r_s$ for the Schwarzschild radius, and $\vec{r}$ is our ray position relative to the bh. Both $r_s$ and $h$ are constant terms and do not change in the geodesic function.
+If you want to get more in-depth about the derivation, [check out this article](https://rantonels.github.io/starless/). We are gonna just skip to the end and have our [geodesic](https://en.wikipedia.org/wiki/Geodesic) function. Note we add an extra term $r_s$ for the Schwarzschild radius, and $\vec{r}$ is our ray position relative to the bh. Both $r_s$ and $h$ are constant terms and do not change in the geodesic function.
 
 $$
 \vec{f}(\vec{r}) = -1.5h^2\frac{r_s \vec{r}}{||\vec{r}||^5}
@@ -187,7 +191,7 @@ $$
 h^2 = ||\vec{r} \times \vec{r}_{dir}||^2
 $$
 
-In our case, we might not always want the black hole to be in the center of our scene. So we need to convert our ray position into coordinates relative to the black hole.
+In our case, we might not always want the black hole to be in the center of our scene. The rays defined in our shader are in world space and not relative to the black hole so we need to calculate our ray's relative position, $\vec{r}$.
 
 $$
 \vec{r} = r_{pos} - bh_{pos}
@@ -211,7 +215,6 @@ And finally, we want to add a termination condition for rays that reach the insi
 $$
 \text{terminate if} \quad ||\vec{r}|| < r_s \quad \text{and} \quad \vec{r} \cdot \vec{r}_{dir} < 0
 $$
-
 
 Now we need to put all that into code.
 
@@ -354,7 +357,7 @@ $$
 \end{aligned}
 $$
 
-And all that is left is to actually plug this into our code. However, we also need to move our geodesic calculation into its own function
+And all that is left is to actually plug this into our code. However, we also need to move our geodesic calculation into its own function so we can call it in our RK4 calculation.
 
 
 <details>
@@ -436,11 +439,44 @@ vec3 raymarch(vec3 ro, vec3 rd) {
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-5/project.json" selected="blackhole.js"></code-playground>
 
-And now our shader is officially done! Now we just need to write a controller for it to get things into motion.
+And now our shader is officially done! Now we need to get everything in motion.
 
-## Step 6: Orbit Controller
+## Step 6: Getting things into motion
 
-Now we need to write some code for our shader that actually sets the positions of each object. There are a couple ways to do this, but we are going to use [Cowell's method](https://en.wikipedia.org/w/index.php?title=Orbit_modeling&oldid=1345085470#Cowell's_method)
+Before we do anything else lets first grab the key terms we need from the Wikipedia page of [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1).
+
+$$
+\begin{array}{ll}
+\text{Black hole Mass } (m_{bh}) &9.27 \pm 0.10\,M_\odot \\
+\text{Star Mass } (m_{s}) &0.93 \pm 0.05\,M_\odot \\
+\text{Eccentricity } (e) &0.43230±0.00002 \\
+\text{Semi-major axis } (a) & 1.40±0.01\,AU \\
+
+\end{array}
+$$
+
+### Calculating our initial positions
+
+To calculate the inital position of our stellar bodies, the black hole and star, we need to calculate distance ($d$) betwen the two bodies and their [barycenter](https://en.wikipedia.org/wiki/Barycenter). Luckily for us, we already know our orbit's semi-major axis and eccentricity which makes solving for both easy.
+
+First lets find our distance at apoapsis
+$$
+d = a(1+e) = 1.40(1 + .4323) =  2.00522 \, AU
+$$
+
+Then we find the distance from the body and the barycenter, lets solve for the black hole first
+$$
+r_{bh} = \frac{d}{1 + \frac{m_{bh}}{m_{s}}} = \frac{2.00522}{1 + \frac{9.27}{.93}} = 0.18283 \, AU\\
+r_{s} = d - r_1 = 2.00522 - 0.18283 = 1.82239 \, AU
+$$
+
+### Calculating our inital velocitys
+
+Blablabla [Vis-Viva](https://en.wikipedia.org/wiki/Vis-viva_equation)
+
+### Simulating the orbit
+
+ There are a couple ways to do this, but we are going to use [Cowell's method](https://en.wikipedia.org/w/index.php?title=Orbit_modeling&oldid=1345085470#Cowell's_method)
 
 $$
 \ddot{r}_i = \sum_{j=1}^{n}Gm_j\frac{r_j-r_i}{r^3_{ij}}
@@ -457,20 +493,3 @@ $$
 & r_{ij} \text{ is the distance from object } i \text{ to object } j
 \end{align*}
 $$
-
-For our specific case, let's take another look at the Wikipedia page of [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1). We can get all of the relevant information we need in order to properly simulate it under Orbit and Details.
-
-$$
-\begin{array}{ll}
-\textbf{Sun-like star} & \\
-\text{Mass} & 0.93 \pm 0.05\,M_\odot \\
-\text{Radius} & 0.99 \pm 0.05\,R_\odot \\
-\text{Luminosity (bolometric)} & 1.06 \pm 0.04\,L_\odot \\
-\text{Surface gravity }(\log g) & 4.55 \pm 0.16\,\mathrm{cgs} \\
-\text{Temperature} & 5850 \pm 50\,\mathrm{K} \\[6pt]
-\textbf{Black hole} & \\
-\text{Mass} & 9.27 \pm 0.10[4]\,M_\odot
-\end{array}
-$$
-
-### Finding our initial positions
