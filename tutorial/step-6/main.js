@@ -4,8 +4,7 @@ import { pass, mrt, output, emissive } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { BlackHole } from './blackhole.js';
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
-/* playground-fold-end */
-/* playground-fold */
+/* playground-fold-end */ /* playground-fold */
 let canvas = document.querySelector( '#c' );
 
 const renderer = new THREE.WebGPURenderer({antialias: true, canvas });
@@ -61,7 +60,6 @@ function render( time ) {
     renderPipeline.render()
     //renderer.render( scene, camera );
 }
-
 /* playground-fold */
 function resizeRendererToDisplaySize(renderer) {
   const canvas = renderer.domElement;
