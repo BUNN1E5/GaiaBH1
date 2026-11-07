@@ -487,9 +487,10 @@ $$
 \mu = G(m_{bh} + m_s) = 39.478(9.27 + .93) = 402.676 \,AU^3y^{-2} \\ 
 v^2 = \mu(\frac{2}{d} - \frac{1}{a}) = 402.675(\frac{2}{2.00522} - \frac{1}{1.40}) = 114.00175 \, AU^2y^-2 \\
 v = \sqrt{114.00175} = 10.67716 \, AU/y
-$$  
+$$
 
 Since we are at apoapsis this is the velocitities for both of our bodies where 
+
 $$
 v_{bh} = v\frac{m_s}{m_bh + m_s} = 10.67716 \frac{.93}{9.27 + .93} = 0.97351 \, AU/y \\
 v_s = v - v_{bh} = 10.67716 - .97351 = 9.70365 \, AU/y
