@@ -1,35 +1,34 @@
 # Building the Gaia BH1 black hole in a Raymarching Shader
 
-I had originally built this black hole shader for the [Unlikely Collaborators™ Game Jam](https://itch.io/jam/ucgamejam2026). Theme "consciousness and identity through awe and wonder - make awe playable." I had decided to have the setting of the game be centered around one of the most extreme things in our Universe, a black hole, and not just any black hole, [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1), the nearest known black hole to us!
+I had originally built this black hole shader for the [Unlikely Collaborators™ Game Jam](https://itch.io/jam/ucgamejam2026). Its theme was "consciousness and identity through awe and wonder - make awe playable." I decided to center the game's setting around one of the most extreme things in our Universe: a black hole. Specifically, it would feature [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1), the nearest known black hole to us!
 
-I had originally written the shader in the Godot shader language but the live web demo and what we will be working on here today was built in Three.js Shading Language or TSL.
+I had originally written the shader in the Godot shader language, but the live web demo and the example we will build today were created in Three.js Shading Language, or TSL.
 
 ## Check Out the live demo
 <iframe src="https://goldenneedham.com/demos/GaiaBH1/" width="100%" height="400" style="padding: 5px" class="demo"></iframe>
 
-You might notice that the signature accretion disks are missing. Well that is because the black hole we are modelling actually does not have them. So our shader doesn't need it either.
-<!-- This is really stilted so lets try and rewrite this later -->
-This post is going to go over writing the black hole shader and the orbit controller. If you want to skip the setup and just get to the juice you can skip to [step 4 gravitational lensing](#step-4-gravitational-lensing).
+You might notice that the signature accretion disks are missing. That is because the black hole we are modeling does not have them, so our shader does not need to render them either.
+This post goes over writing the black hole shader and the orbit controller. If you want to skip the setup and jump straight to the interesting parts, you can skip to [Step 4: Gravitational Lensing](#step-4-gravitational-lensing).
 
 ## Step 0: Setting Up Three.js
 
-Before we do anything with the black hole, we need to set up our project. For this we are going to start with a modified version of Three.js' [creating a scene](https://threejs.org/manual/#creating-a-scene) tutorial.
+Before we do anything with the black hole, we need to set up our project. We will start with a modified version of Three.js's [Creating a Scene](https://threejs.org/manual/#creating-a-scene) tutorial.
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-0/project.json"></code-playground>
 
-You should see a green box that you can look around with your mouse. I kept the standard mesh box in there so we can make sure that something is properly rendering, we will remove it in the next part.
+You should see a green box that you can look around with your mouse. I kept the standard mesh box in place so we can verify that something is rendering properly. We will remove it in the next part.
 
 ## Step 1: Basic Raymarching
 
-Now that we have our scene setup we can start with our raymarcher boilerplate. We are gonna start with an uncolored sphere just to make sure that everything is working.
+Now that we have our scene set up, we can start with our raymarcher boilerplate. We will begin with an uncolored sphere to make sure that everything is working.
 
-Our basic raymarcher is composed of 2 different parts. Our main and raymarch functions.
+Our basic raymarcher is composed of two different parts: our main and raymarch functions.
 
 ### The Main Function
 
 Our main function is our entry point into the shader. Here we convert the screen position of every pixel on the screen into a world direction by going through the following transformations: screen -> clip -> view -> world.
 
-This gives us our ray direction. The ray origin is just our camera's position or the 4th column of the camera's world matrix. If we now return the ray direction we should be able to look around a few quadrants of color.
+This gives us our ray direction. The ray origin is just our camera's position or the fourth column of the camera's world matrix. If we now return the ray direction, we should be able to look around a few quadrants of color.
 
 <details>
     <summary>GLSL</summary>
@@ -44,7 +43,7 @@ vec3 rayOrigin = cameraWorldMatrix[3].xyz;
 ```
 </details>
 
-Of course we actually want our shader to render to the screen, and the easiest way is to have our scene's background node point to our shader. Anything else in the scene will end up rendering in front of our shader, but that isnt an issue for us.  
+Of course, we want our shader to render to the screen, and the easiest way is to have our scene's background node point to our shader. Anything else in the scene will render in front of our shader, but that isn't an issue for us.
 ```js
 const blackHole = new BlackHole()
 scene.backgroundNode = blackHole.main()
@@ -142,7 +141,7 @@ vec3 raymarch(vec3 ro, vec3 rd) {
 
 ## Step 3: Adding the Star
 
-Adding the star is super straightforward, in fact, it's already in the scene. The sphere we were using to test is perfect for us to use. We just need to define some uniforms for the size and position of the star. We are also going to default the value to `vec3(5,0,0)` just so we don't have the black hole and star overlap.
+Adding the star is quite straightforward; in fact, it is already in the scene. The sphere we were using for testing is perfect for this purpose. We just need to define some uniforms for the star's size and position. We will also default the position to `vec3(5,0,0)` so that the black hole and star do not overlap.
 <details>
     <summary>GLSL</summary>
 
@@ -181,7 +180,7 @@ vec3 raymarch(vec3 ro, vec3 rd) {
 
 ## Step 4: Gravitational Lensing
 
-If you want to get more in-depth about the derivation, [check out this article](https://rantonels.github.io/starless/). We are gonna just skip to the end and have our [geodesic](https://en.wikipedia.org/wiki/Geodesic) function. Note we add an extra term $r_s$ for the Schwarzschild radius, and $\vec{r}$ is our ray position relative to the bh. Both $r_s$ and $h$ are constant terms and do not change in the geodesic function
+If you want a more in-depth derivation, [check out this article](https://rantonels.github.io/starless/). We will skip to the end and use our [geodesic](https://en.wikipedia.org/wiki/Geodesic) function. We add an extra term, $r_s$, for the Schwarzschild radius, and $\vec{r}$ is our ray position relative to the black hole. Both $r_s$ and $h$ are constant terms and do not change in the geodesic function.
 
 $$
 \vec{f}(\vec{r}) = -1.5h^2\frac{r_s \vec{r}}{||\vec{r}||^5}
@@ -191,20 +190,20 @@ $$
 h^2 = ||\vec{r} \times \vec{r}_{dir}||^2
 $$
 
-In our case, we might not always want the black hole to be in the center of our scene. The rays defined in our shader are in world space and not relative to the black hole so we need to calculate our ray's relative position, $\vec{r}$
+In our case, we might not always want the black hole in the center of our scene. The rays defined in our shader are in world space and not relative to the black hole, so we need to calculate our ray's relative position, $\vec{r}$.
 
 $$
 \vec{r} = r_{pos} - bh_{pos}
 $$
 
-and now we just have to plug the equations into our integrator of choice to get the light bending. And you can use your integrator of choice, just to get things running we are gonna use an Euler integrator for now. For Euler our position and direction are defined as follows and $\Delta s$ being the step size
+Now we just have to plug the equations into an integrator of our choice to calculate the light bending. You can use any integrator you prefer, but we will use an Euler integrator to get started. For Euler, our position and direction are defined as follows, with $\Delta s$ as the step size:
 
 $$
 \vec{r}_{pos,n+1} = \vec{r}_{pos,n} + \vec{r}_{vel,n} \Delta s \\
 \vec{r}_{vel,n+1} = \vec{r}_{vel,n} + \vec{f}(\vec{r}_n) \Delta s
 $$
 
-In the geodesic derivation an assumption of 1 as the speed of light, because of this we then want to normalize our velocity to have a unit length of 1 to get our ray direction
+The geodesic derivation assumes a speed of light of 1. Because of this, we normalize the velocity to a unit length of 1 to get our ray direction:
 
 $$
 \vec{r}_{dir} =\frac{\vec{r}_{vel}}{||\vec{r}_{vel}||}
@@ -443,13 +442,13 @@ And now our shader is officially done!
 
 ## Step 6: Adding Bloom
 
-This part is optional, but adding a small amount of bloom really elevates the look. Three.js makes this fairly easily just add the following, and any color value greater than 1 will be emissive.
+This part is optional, but adding a small amount of bloom really elevates the look. Three.js makes this fairly easy. Add the following, and any color value greater than 1 will be emissive.
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-6/project.json" selected="main.js"></code-playground>
 
 ## Step 7: Calculating our Orbits
 
-Before we do anything else lets first grab the key terms we need from the Wikipedia page of [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1)
+Before we do anything else, let's gather the key terms we need from the Wikipedia page for [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1).
 
 $$
 \begin{array}{ll}
@@ -464,15 +463,15 @@ $$
 
 ### Calculating our initial positions
 
-To calculate the inital position of our stellar bodies, the black hole and star, we need to calculate distance ($d$) betwen the two bodies and their [barycenter](https://en.wikipedia.org/wiki/Barycenter). Luckily for us, we already know our orbit's semi-major axis and eccentricity which makes solving for both easy.
+To calculate the initial positions of our stellar bodies, the black hole and star, we need to calculate the distance ($d$) between the two bodies and their [barycenter](https://en.wikipedia.org/wiki/Barycenter). Luckily, we already know our orbit's semi-major axis and eccentricity, which makes solving for both easy.
 
-First lets find our distance at apoapsis
+First, let's find our distance at apoapsis:
 
 $$
 d = a(1+e) = 1.40(1 + .4323) =  2.00522 \, AU
 $$
 
-Then we find the distance from the body and the barycenter, lets solve for the black hole first
+Then we find each body's distance from the barycenter. Let's solve for the black hole first:
 
 $$
 r_{bh} = \frac{d}{1 + \frac{m_{bh}}{m_{s}}} = \frac{2.00522}{1 + \frac{9.27}{.93}} = 0.18283 \, AU\\
@@ -484,9 +483,9 @@ $$
 r_{s} = d - r_{bh} = 2.00522 - 0.18283 = 1.82239 \, AU
 $$
 
-### Calculating our inital velocitys
+### Calculating our initial velocities
 
-Now we want to find our inital velocities, this can be found with the [Vis-Viva Equation](https://en.wikipedia.org/wiki/Vis-viva_equation)
+Now we want to find our initial velocities. These can be found using the [Vis-Viva Equation](https://en.wikipedia.org/wiki/Vis-viva_equation).
 
 $$
 \mu = G(m_{bh} + m_s) = 39.478(9.27 + .93) = 402.676 \,AU^3y^{-2} \\ 
@@ -498,7 +497,7 @@ $$
 v = \sqrt{114.00175} = 10.67716 \, AU/y
 $$
 
-Since we are at apoapsis this is the velocitities for both of our bodies are defines as 
+Since we are at apoapsis, the velocities for both bodies are defined as:
 
 $$
 v_{bh} = v\frac{m_s}{m_bh + m_s} = 10.67716 \frac{.93}{9.27 + .93} = 0.97351 \, AU/y \\
@@ -509,7 +508,7 @@ $$
 
 ## Step 8: Simulating the orbit
  
-There are a couple ways to do this, but we are going to use [Cowell's method](https://en.wikipedia.org/w/index.php?title=Orbit_modeling&oldid=1345085470#Cowell's_method). This basically just sums the acceleration due to gravity for every other other object to get the total acceleration
+There are a couple of ways to do this, but we are going to use [Cowell's method](https://en.wikipedia.org/w/index.php?title=Orbit_modeling&oldid=1345085470#Cowell's_method). This basically sums the acceleration due to gravity for every other object to get the total acceleration.
 
 $$
 \ddot{r}_i = \sum_{j=1}^{n}Gm_j\frac{r_j-r_i}{r^3_{ij}}
@@ -527,7 +526,7 @@ $$
 \end{align*}
 $$
 
-From here it is basically the equivalent as our Euler or RK4 implementation above. In Three.js and TSL accessing the shader uniforms are trivial, you can just treat it like any variable in a standard object.
+From here, it is essentially equivalent to our Euler or RK4 implementation above. In Three.js and TSL, accessing the shader uniforms is trivial; you can just treat them like variables in a standard object.
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-7/project.json" selected="main.js"></code-playground>
 
