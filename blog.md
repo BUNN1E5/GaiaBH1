@@ -201,7 +201,7 @@ and now we just have to plug the equations into our integrator of choice to get 
 
 $$
 \vec{r}_{pos,n+1} = \vec{r}_{pos,n} + \vec{r}_{vel,n} \Delta s \\
-\vec{r}_{vel,n+1} = \vec{r}_{vel,n} + \vec{F}(\vec{r}_n) \Delta s
+\vec{r}_{vel,n+1} = \vec{r}_{vel,n} + \vec{f}(\vec{r}_n) \Delta s
 $$
 
 In the geodesic derivation an assumption of 1 as the speed of light, because of this we then want to normalize our velocity to have a unit length of 1 to get our ray direction
@@ -275,7 +275,7 @@ vec3 raymarch(vec3 ro, vec3 rd) {
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-4/project.json" selected="blackhole.js"></code-playground>
 
-At this point, the shader could technically be called done; if you're fine with what we have now, feel free to skip to [Step 6](#step-6-orbit-controller). But we can still make the shader better and, as an extra treat, more performant.
+At this point, the shader could technically be called done; if you're fine with what we have now, feel free to skip to [Step 8](#step-8-simulating-the-orbit). But we can still make the shader better and, as an extra treat, more performant.
 
 
 ## Step 5: Runge-Kutta (RK4)
@@ -316,7 +316,7 @@ y = \begin{bmatrix}
 \qquad
 y' = \begin{bmatrix}
 \vec{r}_{vel}\\
-\vec{F}(\vec{r}_{pos})
+\vec{f}(\vec{r}_{pos})
 \end{bmatrix}
 $$
 
@@ -352,8 +352,8 @@ and then solve the RK4 for each value in the matrix. Do note that $\vec{r}_{pos,
 
 $$
 \begin{aligned}
-\vec{r}_{pos,n+1} &= \vec{r}_{pos,n} + \frac{h}{6}(k_{1,pos} + 2k_{2,pos} + 2k_{3,pos} + k_{4,pos}) \\
-\vec{r}_{vel,n+1} &= \vec{r}_{vel,n} + \frac{h}{6}(k_{1,vel} + 2k_{2,vel} + 2k_{3,vel} + k_{4,vel})
+\vec{r}_{pos,n+1} &= \vec{r}_{pos,n} + \frac{\Delta s}{6}(k_{1,pos} + 2k_{2,pos} + 2k_{3,pos} + k_{4,pos}) \\
+\vec{r}_{vel,n+1} &= \vec{r}_{vel,n} + \frac{\Delta s}{6}(k_{1,vel} + 2k_{2,vel} + 2k_{3,vel} + k_{4,vel})
 \end{aligned}
 $$
 
@@ -447,7 +447,7 @@ This part is optional, but adding a small amount of bloom really elevates the lo
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-6/project.json" selected="main.js"></code-playground>
 
-## Step 7: Getting things into motion
+## Step 7: Calculating our Orbits
 
 Before we do anything else lets first grab the key terms we need from the Wikipedia page of [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1)
 
@@ -477,7 +477,9 @@ Then we find the distance from the body and the barycenter, lets solve for the b
 $$
 r_{bh} = \frac{d}{1 + \frac{m_{bh}}{m_{s}}} = \frac{2.00522}{1 + \frac{9.27}{.93}} = 0.18283 \, AU\\
 $$
+
 Solving for the star is easy, its just the back hole's position subtracted by the distance between the two bodies
+
 $$
 r_{s} = d - r_{bh} = 2.00522 - 0.18283 = 1.82239 \, AU
 $$
@@ -505,7 +507,7 @@ $$
 v_s = v - v_{bh} = 10.67716 - .97351 = 9.70365 \, AU/y
 $$
 
-### Simulating the orbit
+## Step 8: Simulating the orbit
  
 There are a couple ways to do this, but we are going to use [Cowell's method](https://en.wikipedia.org/w/index.php?title=Orbit_modeling&oldid=1345085470#Cowell's_method). This basically just sums the acceleration due to gravity for every other other object to get the total acceleration
 
@@ -529,8 +531,8 @@ From here it is basically the equivalent as our Euler or RK4 implementation abov
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-7/project.json" selected="main.js"></code-playground>
 
-And thats everything! We now have our completed black hole scene!
+And that's everything! We now have our completed black hole scene!
 
-### Full Complete Shader Code
+### Full Demo Code
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/project.json" selected="main.js"></code-playground>

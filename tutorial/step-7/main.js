@@ -18,7 +18,6 @@ await renderer.init();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
-/* playground-fold-end */
 
 const renderPipeline = new THREE.RenderPipeline(renderer);
 const scenePass = pass( scene, camera );
@@ -31,9 +30,6 @@ const scenePassColor = scenePass.getTextureNode( 'output' );
 const bloomPass = bloom( scenePassColor, 1.5, 0.4, 1 );
 
 renderPipeline.outputNode = scenePassColor.add( bloomPass );
-
-
-/* playground-fold */
 
 new OrbitControls(camera, renderer.domElement);
 
@@ -64,10 +60,9 @@ function render( time ) {
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
     }
-    /* playground-fold-end */
 
     renderPipeline.render()
-    //renderer.render( scene, camera );
+    /* playground-fold-end */
 }
 
 /* playground-fold */
