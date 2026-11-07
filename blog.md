@@ -451,6 +451,7 @@ $$
 \text{Star Mass } (m_{s}) &0.93 \pm 0.05\,M_\odot \\
 \text{Eccentricity } (e) &0.43230±0.00002 \\
 \text{Semi-major axis } (a) & 1.40±0.01\,AU \\
+\text{Gravitational Constant } (G) & 39.478 \,AU^3yr^{-2}M_\odot^{-1}\\
 
 \end{array}
 $$
@@ -467,16 +468,29 @@ $$
 Then we find the distance from the body and the barycenter, lets solve for the black hole first
 $$
 r_{bh} = \frac{d}{1 + \frac{m_{bh}}{m_{s}}} = \frac{2.00522}{1 + \frac{9.27}{.93}} = 0.18283 \, AU\\
-r_{s} = d - r_1 = 2.00522 - 0.18283 = 1.82239 \, AU
+r_{s} = d - r_{bh} = 2.00522 - 0.18283 = 1.82239 \, AU
 $$
 
 ### Calculating our inital velocitys
 
-Blablabla [Vis-Viva](https://en.wikipedia.org/wiki/Vis-viva_equation)
+Now we want to find our inital velocities, this can be found with the [Vis-Viva Equation](https://en.wikipedia.org/wiki/Vis-viva_equation).
+
+$$
+\mu = G(m_{bh} + m_s) = 39.478(9.27 + .93) = 402.676 \,AU^3y^{-2} \\ 
+v^2 = \mu(\frac{2}{d} - \frac{1}{a}) = 402.675(\frac{2}{2.00522} - \frac{1}{1.40}) = 114.00175 \, AU^2y^-2 \\
+v = \sqrt{114.00175} = 10.67716 \, AU/y
+$$  
+
+Since we are at apoapsis this is the velocitities for both of our bodies where 
+$$
+v_{bh} = v\frac{m_s}{m_bh + m_s} = 10.67716 \frac{.93}{9.27 + .93} = 0.97351 \, AU/y \\
+v_s = v - v_{bh} = 10.67716 - .97351 = 9.70365 \, AU/y
+$$
 
 ### Simulating the orbit
 
- There are a couple ways to do this, but we are going to use [Cowell's method](https://en.wikipedia.org/w/index.php?title=Orbit_modeling&oldid=1345085470#Cowell's_method)
+Now that we have our positions and velocities, we just need to ac
+There are a couple ways to do this, but we are going to use [Cowell's method](https://en.wikipedia.org/w/index.php?title=Orbit_modeling&oldid=1345085470#Cowell's_method)
 
 $$
 \ddot{r}_i = \sum_{j=1}^{n}Gm_j\frac{r_j-r_i}{r^3_{ij}}
