@@ -471,6 +471,14 @@ r_{bh} = \frac{d}{1 + \frac{m_{bh}}{m_{s}}} = \frac{2.00522}{1 + \frac{9.27}{.93
 r_{s} = d - r_{bh} = 2.00522 - 0.18283 = 1.82239 \, AU
 $$
 
+<!-- Now that we have their positions relative to the barycenter, assuming the barycenter position is `(0,0,0)` we just need to apply those positions along an arbitray axis. Let's just choose the $x$ axis
+$$
+\begin{array}{ll}
+bh_{pos,0} &= -r_{bh} \vec{x}\\
+star_{pos,0} &= r_{star} \vec{x}
+\end{array}
+$$ -->
+
 ### Calculating our inital velocitys
 
 Now we want to find our inital velocities, this can be found with the [Vis-Viva Equation](https://en.wikipedia.org/wiki/Vis-viva_equation).
@@ -486,7 +494,7 @@ $$
 v_{bh} = v\frac{m_s}{m_bh + m_s} = 10.67716 \frac{.93}{9.27 + .93} = 0.97351 \, AU/y \\
 v_s = v - v_{bh} = 10.67716 - .97351 = 9.70365 \, AU/y
 $$
-
+<!-- 
 ### Simulating the orbit
 
 Now that we have our positions and velocities, we just need to ac
@@ -506,4 +514,4 @@ $$
 & r_i \text{ and } r_j \text{ are the position vectors of the objects } i \text{ and } j \\
 & r_{ij} \text{ is the distance from object } i \text{ to object } j
 \end{align*}
-$$
+$$ -->
