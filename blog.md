@@ -461,11 +461,13 @@ $$
 To calculate the inital position of our stellar bodies, the black hole and star, we need to calculate distance ($d$) betwen the two bodies and their [barycenter](https://en.wikipedia.org/wiki/Barycenter). Luckily for us, we already know our orbit's semi-major axis and eccentricity which makes solving for both easy.
 
 First lets find our distance at apoapsis
+
 $$
 d = a(1+e) = 1.40(1 + .4323) =  2.00522 \, AU
 $$
 
 Then we find the distance from the body and the barycenter, lets solve for the black hole first
+
 $$
 r_{bh} = \frac{d}{1 + \frac{m_{bh}}{m_{s}}} = \frac{2.00522}{1 + \frac{9.27}{.93}} = 0.18283 \, AU\\
 r_{s} = d - r_{bh} = 2.00522 - 0.18283 = 1.82239 \, AU
