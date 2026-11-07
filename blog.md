@@ -467,7 +467,14 @@ $$
 Then we find the distance from the body and the barycenter, lets solve for the black hole first
 $$
 r_{bh} = \frac{d}{1 + \frac{m_{bh}}{m_{s}}} = \frac{2.00522}{1 + \frac{9.27}{.93}} = 0.18283 \, AU\\
-r_{s} = d - r_1 = 2.00522 - 0.18283 = 1.82239 \, AU
+r_{star} = d - r_1 = 2.00522 - 0.18283 = 1.82239 \, AU
+$$
+Now that we have their positions relative to the barycenter, assuming the barycenter position is `(0,0,0)` we just need to apply those positions along an arbitray axis. Let's just choose the $x$ axis
+$$
+\begin{array}{ll}
+bh_{pos,0} &= -r_{bh} \vec{x}\\
+star_{pos,0} &= r_{star} \vec{x}
+\end{array}
 $$
 
 ### Calculating our inital velocitys
