@@ -22,11 +22,8 @@ import {
 } from 'three/tsl';
 /* playground-fold-end */
 
-export class BlackHole{
-    /* playground-fold */
-    
+export class BlackHole{ /* playground-fold */
     MAX_STEPS = 50;
-
     EPSILON = 0.1;
 
     constructor(cubemap){
@@ -37,9 +34,7 @@ export class BlackHole{
 
     star_pos = vec3(5,0,0);
     /* playground-fold-end */
-
     star_color = vec3(1.1,1.1,1.1);
-
     /* playground-fold */
     star_radius = 1;
 
@@ -123,7 +118,7 @@ export class BlackHole{
 
         return color;
     });
-
+    /* playground-fold */
     main = Fn(() => {
         const clip = vec4(screenUV.x.mul(2).sub(1), screenUV.y.mul(-2).add(1), -1, 1);
         const hview = cameraProjectionMatrixInverse.mul(clip);
@@ -132,4 +127,5 @@ export class BlackHole{
         return vec3(this.raymarch({ro: cameraPosition, rd: rd}));
     });
     /* playground-fold-end */
+
 }
