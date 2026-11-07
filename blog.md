@@ -530,3 +530,7 @@ From here it is basically the equivalent as our Euler or RK4 implementation abov
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-7/project.json" selected="main.js"></code-playground>
 
 And thats everything! We now have our completed black hole scene!
+
+### Full Complete Shader Code
+
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/project.json" selected="main.js"></code-playground>

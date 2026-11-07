@@ -5,8 +5,6 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { BlackHole } from './blackhole.js';
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 /* playground-fold-end */
-
-
 /* playground-fold */
 let canvas = document.querySelector( '#c' );
 
@@ -19,7 +17,6 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
 /* playground-fold-end */
-
 const renderPipeline = new THREE.RenderPipeline(renderer);
 const scenePass = pass( scene, camera );
 scenePass.setMRT( mrt( {
@@ -31,10 +28,7 @@ const scenePassColor = scenePass.getTextureNode( 'output' );
 const bloomPass = bloom( scenePassColor, 1.5, 0.4, 1 );
 
 renderPipeline.outputNode = scenePassColor.add( bloomPass );
-
-
 /* playground-fold */
-
 new OrbitControls(camera, renderer.domElement);
 
 scene.add(camera);
@@ -55,7 +49,6 @@ scene.backgroundNode = blackHole.main()
 
 renderer.setAnimationLoop( render );
 /* playground-fold-end */
-
 function render( time ) {
     /* playground-fold */
 
@@ -65,7 +58,6 @@ function render( time ) {
         camera.updateProjectionMatrix();
     }
     /* playground-fold-end */
-
     renderPipeline.render()
     //renderer.render( scene, camera );
 }
