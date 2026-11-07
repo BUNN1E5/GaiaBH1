@@ -8,11 +8,11 @@ I had originally written the shader in the Godot shader language, but the live w
 <iframe src="https://goldenneedham.com/demos/GaiaBH1/" width="100%" height="400" style="padding: 5px" class="demo"></iframe>
 
 You might notice that the signature accretion disks are missing. That is because the black hole we are modeling does not have them, so our shader does not need to render them either.
-This post goes over writing the black hole shader and the orbit controller. If you want to skip the setup and jump straight to the interesting parts, you can skip to [Step 4: Gravitational Lensing](#step-4-gravitational-lensing).
+This post goes over writing the black hole shader and the orbit controller. If you want to skip the setup and jump straight to the interesting parts, you can jump to [Step 4: Gravitational Lensing](#step-4-gravitational-lensing).
 
 ## Step 0: Setting Up Three.js
 
-Before we do anything with the black hole, we need to set up our project. We will start with a modified version of Three.js's [Creating a Scene](https://threejs.org/manual/#creating-a-scene) tutorial.
+Before we do anything with the black hole, we need to set up our project. We will start with a modified version of Three.js' [Creating a Scene](https://threejs.org/manual/#creating-a-scene) tutorial.
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-0/project.json"></code-playground>
 
@@ -22,13 +22,13 @@ You should see a green box that you can look around with your mouse. I kept the 
 
 Now that we have our scene set up, we can start with our raymarcher boilerplate. We will begin with an uncolored sphere to make sure that everything is working.
 
-Our basic raymarcher is composed of two different parts: our main and raymarch functions.
+Our basic raymarcher is composed of 2 different parts: our main and raymarch functions.
 
 ### The Main Function
 
 Our main function is our entry point into the shader. Here we convert the screen position of every pixel on the screen into a world direction by going through the following transformations: screen -> clip -> view -> world.
 
-This gives us our ray direction. The ray origin is just our camera's position or the fourth column of the camera's world matrix. If we now return the ray direction, we should be able to look around a few quadrants of color.
+This gives us our ray direction. The ray origin is just our camera's position or the 4th column of the camera's world matrix. If we now return the ray direction, we should be able to look around a few quadrants of color.
 
 <details>
     <summary>GLSL</summary>
@@ -92,7 +92,7 @@ vec3 raymarch(vec3 ro, vec3 rd) {
 
 ## Step 2: Skybox
 
-Before we add the black hole with its lensing, let's add a skybox. Three.js' [CubeTexture](https://threejs.org/docs/?q=CubeTex#CubeTexture) requires us to define a path for each face. For testing and demonstration, we are going to be using these faces:
+Before we add the black hole with it's lensing, let's add a skybox. Three.js' [CubeTexture](https://threejs.org/docs/?q=CubeTex#CubeTexture) requires us to define a path for each face. For testing and demonstration, we are going to be using these faces:
 
 <p align="center">
     <img src='https://bunn1e5.github.io/GaiaBH1/textures/face_0.jpg' width="15%">
@@ -347,7 +347,7 @@ k_{4,vel} &= \vec{f}(\vec{r}_n + k_{3,pos}\Delta s)
 \end{alignedat}
 $$
 
-and then solve the RK4 for each value in the matrix. Do note that $\vec{r}_{pos,n}$ is the relative position at iteration $n$
+and then solve the RK4 for each value in the vector. Do note that $\vec{r}_{pos,n}$ is the relative position at iteration $n$
 
 $$
 \begin{aligned}
@@ -356,7 +356,7 @@ $$
 \end{aligned}
 $$
 
-And all that is left is to actually plug this into our code. However, we also need to move our geodesic calculation into its own function so we can call it in our RK4 calculation.
+And all that is left is to actually plug this into our code. However, we also need to move our geodesic calculation into it's own function so we can call it in our RK4 calculation.
 
 
 <details>
@@ -448,7 +448,7 @@ This part is optional, but adding a small amount of bloom really elevates the lo
 
 ## Step 7: Calculating our Orbits
 
-Before we do anything else, let's gather the key terms we need from the Wikipedia page for [GaiaBH1](https://en.wikipedia.org/wiki/Gaia_BH1).
+Before we do anything else, let's grab the key terms we need from the Wikipedia page for [Gaia BH1](https://en.wikipedia.org/wiki/Gaia_BH1).
 
 $$
 \begin{array}{ll}
@@ -477,7 +477,7 @@ $$
 r_{bh} = \frac{d}{1 + \frac{m_{bh}}{m_{s}}} = \frac{2.00522}{1 + \frac{9.27}{.93}} = 0.18283 \, AU\\
 $$
 
-Solving for the star is easy, its just the back hole's position subtracted by the distance between the two bodies
+Solving for the star is easy. Its position is the distance between the two bodies minus the black hole's position:
 
 $$
 r_{s} = d - r_{bh} = 2.00522 - 0.18283 = 1.82239 \, AU
@@ -491,7 +491,7 @@ $$
 \mu = G(m_{bh} + m_s) = 39.478(9.27 + .93) = 402.676 \,AU^3y^{-2} \\ 
 $$
 $$
-v^2 = \mu(\frac{2}{d} - \frac{1}{a}) = 402.675(\frac{2}{2.00522} - \frac{1}{1.40}) = 114.00175 \, AU^2y^-2 \\
+v^2 = \mu(\frac{2}{d} - \frac{1}{a}) = 402.676(\frac{2}{2.00522} - \frac{1}{1.40}) = 114.00175 \, AU^2y^-2 \\
 $$
 $$
 v = \sqrt{114.00175} = 10.67716 \, AU/y
@@ -526,7 +526,7 @@ $$
 \end{align*}
 $$
 
-From here, it is essentially equivalent to our Euler or RK4 implementation above. In Three.js and TSL, accessing the shader uniforms is trivial; you can just treat them like variables in a standard object.
+From here, it is essentially equivalent to our Euler or RK4 implementation above. In Three.js and TSL, accessing the shader uniforms is trivial. You can just treat them like variables in a standard object.
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-7/project.json" selected="main.js"></code-playground>
 
