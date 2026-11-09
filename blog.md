@@ -463,7 +463,7 @@ $$
 
 ### Calculating our initial positions
 
-To calculate the initial positions of our stellar bodies, the black hole and star, we need to calculate the distance ($d$) between the two bodies and their [barycenter](https://en.wikipedia.org/wiki/Barycenter). Luckily, we already know our orbit's semi-major axis and eccentricity, which makes solving for both easy.
+To calculate the initial positions of our stellar bodies, the black hole and star, we need to calculate the distance $(d)$ between the two bodies and their [barycenter](https://en.wikipedia.org/wiki/Barycenter). Luckily, we already know our orbit's semi-major axis and eccentricity, which makes solving for both easy.
 
 First, let's find our distance at apoapsis:
 
