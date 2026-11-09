@@ -42,12 +42,12 @@ const cubemapFaces = [ // I have some hosted here
 ];
 
 const starmapFaces = [ // I have some hosted here
-    './textures/star_0.jpg',
-    './textures/star_1.jpg',
-    './textures/star_2.jpg',
-    './textures/star_3.jpg',
-    './textures/star_4.jpg',
-    './textures/star_5.jpg',
+    'https://goldenneedham.com/demos/GaiaBH1/textures/star_0.jpg',
+    'https://goldenneedham.com/demos/GaiaBH1/textures/star_1.jpg',
+    'https://goldenneedham.com/demos/GaiaBH1/textures/star_2.jpg',
+    'https://goldenneedham.com/demos/GaiaBH1/textures/star_3.jpg',
+    'https://goldenneedham.com/demos/GaiaBH1/textures/star_4.jpg',
+    'https://goldenneedham.com/demos/GaiaBH1/textures/star_5.jpg',
 ];
 
 const cubeTexture = await new THREE.CubeTextureLoader().loadAsync(cubemapFaces);
