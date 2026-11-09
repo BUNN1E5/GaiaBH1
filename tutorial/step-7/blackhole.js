@@ -1,4 +1,5 @@
 /* playground-fold */
+import { Vector3 } from 'three';
 import {
     Loop,
     Fn,
@@ -13,6 +14,7 @@ import {
     not,
     array,
     normalize,
+    uniform,
     uniformCubeTexture,
     cameraPosition,
     cameraWorldMatrix,
@@ -35,16 +37,16 @@ export class BlackHole{
 
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
 
-    star_pos = vec3(5,0,0);
+    star_pos = uniform(new Vector3(5,0,0));
     /* playground-fold-end */
 
-    star_color = vec3(1.1,1.1,1.1);
+    star_color = vec3(1.01,1.01,1.01);
 
     /* playground-fold */
-    star_radius = 1;
+    star_radius = uniform(1);
 
-    black_hole_center = vec3(0,0,0);
-    schwarzschild_radius = float(1);
+    black_hole_center = uniform(new Vector3());
+    schwarzschild_radius = uniform(1);
     
     geodesic = Fn(([rpos, h2])=>{
         const rrp = rpos.sub(this.black_hole_center);

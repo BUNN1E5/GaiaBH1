@@ -34,7 +34,7 @@ export class BlackHole{ /* playground-fold */
 
     star_pos = vec3(5,0,0);
     /* playground-fold-end */
-    star_color = vec3(1.1,1.1,1.1);
+    star_color = vec3(1.01,1.01,1.01);
     /* playground-fold */
     star_radius = 1;
 

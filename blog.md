@@ -482,6 +482,13 @@ Solving for the star is easy. Its position is the distance between the two bodie
 $$
 r_{s} = d - r_{bh} = 2.00522 - 0.18283 = 1.82239 \, AU
 $$
+And of course these are just distances from the barycenter, we want to define their positions in a vector. We will assume `(0,0,0)` as the barycenter, and have the orbit be along the $X$ axis. So our initial positions will be as follows:
+$$
+\begin{array}{ll}
+\vec{p}_{bh} &= {-}(0.18283, 0, 0) \, AU\\
+\vec{p}_s &= \mkern14mu (1.82239, 0, 0) \, AU
+\end{array}
+$$
 
 ### Calculating our initial velocities
 
@@ -506,19 +513,27 @@ $$
 v_s = v - v_{bh} = 10.67716 - .97351 = 9.70365 \, AU/y
 $$
 
+And again we need to define these as a vector, the direction is perpendicular to the direction of our inital positions. We will choose the $Z$ axis as our direction
+$$
+\begin{array}{ll}
+\vec{v}_{bh} &= {-}(0, 0, 0.97351) \, AU/y \\
+\vec{v}_{s} &= \mkern14mu (0, 0, 9.70365) \, AU/y
+\end{array}
+$$
+
 ## Step 8: Simulating the orbit
  
 There are a couple of ways to do this, but we are going to use [Cowell's method](https://en.wikipedia.org/w/index.php?title=Orbit_modeling&oldid=1345085470#Cowell's_method). This basically sums the acceleration due to gravity for every other object to get the total acceleration.
 
 $$
-\ddot{r}_i = \sum_{j=1}^{n}Gm_j\frac{r_j-r_i}{r^3_{ij}}
+\vec{a}_i = \sum_{j=1}^{n}Gm_j\frac{\vec{r}_j-\vec{r}_i}{r^3_{ij}}
 $$
 
 
 $$
 \begin{align*}
 \text{where}\\
-& \ddot{r_i} \text{ is the acceleration vector of body } i \\
+& \vec{a}_i \text{ is the acceleration vector of body } i \\
 & G \text{ is the gravitational constant} \\
 & m_j \text{ is the mass of the other body} \\
 & r_i \text{ and } r_j \text{ are the position vectors of the objects } i \text{ and } j \\
