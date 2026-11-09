@@ -551,4 +551,4 @@ And that's everything! We now have our completed black hole scene!
 
 ### Full Demo Code
 
-<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/project.json" selected="main.js"></code-playground>
+<code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/project.json" selected="demo/main.js"></code-playground>
