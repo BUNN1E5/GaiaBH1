@@ -184,44 +184,51 @@ const params = {
   background: 'starmap'
 };
 
-renderer.inspector = new Inspector();
-const gui = renderer.inspector.createParameters('Settings');
+const queryString = window.location.search; 
+const urlParams = new URLSearchParams(queryString);
+const noInspector = urlParams.has('noinspector'); 
 
-renderer.inspector.hide();
+console.log(noInspector);
+if(!noInspector) {
+  renderer.inspector = new Inspector();
+  const gui = renderer.inspector.createParameters('Settings');
 
-gui.addSelect(params, 'background', ['cubemap', 'starmap']).name('Background').onChange((value) => {
-    blackHole.cubemap.value = backgroundTextures[value].texture;
-    blackHole.background_brightness.value = backgroundTextures[value].brightness;
-});
-gui.add(blackHole.background_brightness, 'value', 1, 100).name('Background Brightness');
-gui.addSelect(simSettings, 'referencePoint', ['blackhole', 'star', '(0,0,0)']).name('Reference Point').onChange((value) => {
-    switch(value){
-        case 'blackhole':
-            referencePoint = blackhole;
-            break;
-        case 'star':
-            referencePoint = star;
-            break;
-        case '(0,0,0)':
-            referencePoint = {position: new THREE.Vector3(0, 0, 0)};
-            break;
-    }
-});
+  renderer.inspector.hide();
 
-const orbitFolder = gui.addFolder('Orbit');
-orbitFolder.add(simSettings, 'AUScale', 1, 1000).name('AU Scale');
-orbitFolder.add(simSettings, 'timescale', 0, .5).name('Time Scale');
+  gui.addSelect(params, 'background', ['cubemap', 'starmap']).name('Background').onChange((value) => {
+      blackHole.cubemap.value = backgroundTextures[value].texture;
+      blackHole.background_brightness.value = backgroundTextures[value].brightness;
+  });
+  gui.add(blackHole.background_brightness, 'value', 1, 100).name('Background Brightness');
+  gui.addSelect(simSettings, 'referencePoint', ['blackhole', 'star', '(0,0,0)']).name('Reference Point').onChange((value) => {
+      switch(value){
+          case 'blackhole':
+              referencePoint = blackhole;
+              break;
+          case 'star':
+              referencePoint = star;
+              break;
+          case '(0,0,0)':
+              referencePoint = {position: new THREE.Vector3(0, 0, 0)};
+              break;
+      }
+  });
 
-const scaleFolder = gui.addFolder('Scale');
-scaleFolder.add(simSettings, 'scaleMult', 0, 50).name('Stellar Object Scale');
-scaleFolder.add(simSettings, 'blackHoleScaleMult', 0, 20000).name('Black Hole Scale');
-scaleFolder.add(simSettings, 'starScalMult', 0, 100).name('Star Scale');
+  const orbitFolder = gui.addFolder('Orbit');
+  orbitFolder.add(simSettings, 'AUScale', 1, 1000).name('AU Scale');
+  orbitFolder.add(simSettings, 'timescale', 0, .5).name('Time Scale');
 
-const uniformsFolder = gui.addFolder('Shader Uniforms');
-uniformsFolder.add(blackHole.MAX_STEPS, 'value', 1, 200, 1).name('Max Steps');
-uniformsFolder.add(blackHole.EPSILON, 'value', 0.001, 2).name('Hit Epsilon');
-uniformsFolder.add(blackHole.bh_step_mult, 'value', 0.01, 1).name('BH Step Mult');
-for (const axis of ['x', 'y', 'z']) {
-  uniformsFolder.add(blackHole.star_color.value, axis, 0, 2)
-    .name(`Star Color ${axis.toUpperCase()}`);
+  const scaleFolder = gui.addFolder('Scale');
+  scaleFolder.add(simSettings, 'scaleMult', 0, 50).name('Stellar Object Scale');
+  scaleFolder.add(simSettings, 'blackHoleScaleMult', 0, 20000).name('Black Hole Scale');
+  scaleFolder.add(simSettings, 'starScalMult', 0, 100).name('Star Scale');
+
+  const uniformsFolder = gui.addFolder('Shader Uniforms');
+  uniformsFolder.add(blackHole.MAX_STEPS, 'value', 1, 200, 1).name('Max Steps');
+  uniformsFolder.add(blackHole.EPSILON, 'value', 0.001, 2).name('Hit Epsilon');
+  uniformsFolder.add(blackHole.bh_step_mult, 'value', 0.01, 1).name('BH Step Mult');
+  for (const axis of ['x', 'y', 'z']) {
+    uniformsFolder.add(blackHole.star_color.value, axis, 0, 2)
+      .name(`Star Color ${axis.toUpperCase()}`);
+  }
 }
