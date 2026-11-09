@@ -22,11 +22,9 @@ export class BlackHole{
     MAX_STEPS = 100;
     EPSILON = 0.1;
 
-    //New Code!
     constructor(cubemap){
         this.cubemap = uniformCubeTexture(cubemap);
     }
-    //End New Code
 
     /* playground-fold */
     sdSphere = Fn(({p, r}) => { return length(p).sub(r.mul(.5)); });
@@ -46,13 +44,11 @@ export class BlackHole{
             rayPos.addAssign(rd.mul(step));
         });
 
-        //New Code !!
         If(not(hit), ()=>{
             color.assign(this.cubemap.sample(rd).rgb);
             // This also would work just fine
             // color.assign(cubeTexture(this.cubemap, rd).rgb);
         });
-        //End new code
         return color;
     });
 
