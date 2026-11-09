@@ -118,6 +118,7 @@ function acceleration(otherMass, selfPosition, otherPosition) {
   return numerator.divideScalar(denominator);
 }
 
+/* playground-fold */
 function rk4(body, other, s) {
     const pos = body.position.clone();
     const vel = body.velocity.clone();
@@ -153,6 +154,7 @@ function rk4(body, other, s) {
     body.position.copy(nextPos);
     body.velocity.copy(nextVel);
 }
+/* playground-fold-end */
 
 /* playground-fold */
 function resizeRendererToDisplaySize(renderer) {
