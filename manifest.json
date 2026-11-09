@@ -1,7 +1,7 @@
 {
     "title":"Building the Gaia BH1 black hole in a Raymarching Shader",
-    "demo_path": "",
-    "blog_path": "",
+    "demo_path": "https://goldenneedham.com/demos/GaiaBH1/?noinspector",
+    "blog_path": "https://goldenneedham.com/blog/GaiaBH1/",
     "tags": [
         "Raymarching",
         "TSL",
@@ -13,6 +13,6 @@
     "description": "A raymarching shader demo of GaiaBH1 built with Three.js and WebGPU.",
     "thumbnail": "",
     "author": "Jade Golden-Needham",
-    "date_published": "",
-    "last_modified": ""
+    "date_published": "11/8/2026",
+    "last_modified": "11/8/2026"
 }

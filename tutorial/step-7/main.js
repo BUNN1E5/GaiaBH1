@@ -100,8 +100,17 @@ var referencePoint = blackhole;
 
 
 function orbit(dt){
-  rk4(star, blackhole, dt * timescale);
-  rk4(blackhole, star, dt * timescale);
+  //Euler is good enough for us
+  const timestep = dt * timescale;
+
+  const sA = acceleration(blackhole.mass, star.position, blackhole.position).multiplyScalar(timestep);
+  const bhA = acceleration(star.mass, blackhole.position, star.position).multiplyScalar(timestep);
+
+  star.velocity.add(sA);
+  star.position.addScaledVector(star.velocity, timestep);
+
+  blackhole.velocity.add(bhA);
+  blackhole.position.addScaledVector(blackhole.velocity, timestep);
 
   blackHole.black_hole_center.value.copy(blackhole.position.clone().sub(referencePoint.position).multiplyScalar(AUScale ));  
   blackHole.schwarzschild_radius.value = 2 * G * blackhole.mass / (c * c) * AUScale * blackHoleScaleMult;
@@ -117,44 +126,6 @@ function acceleration(otherMass, selfPosition, otherPosition) {
   const denominator = r.lengthSq(); //r^2 because noramlize already divides by r
   return numerator.divideScalar(denominator);
 }
-
-/* playground-fold */
-function rk4(body, other, s) {
-    const pos = body.position.clone();
-    const vel = body.velocity.clone();
-
-    const k1pos = vel.clone();
-    const k1vel = acceleration(other.mass, pos, other.position);
-
-    const k2pos =  vel.clone().add(k1vel.clone().multiplyScalar(s * 0.5));
-    const k2vel = acceleration(other.mass, pos.clone().add(k1pos.clone().multiplyScalar(s * 0.5)), other.position);
-
-    const k3pos = vel.clone().add(k2vel.clone().multiplyScalar(s * 0.5));
-    const k3vel = acceleration(other.mass, pos.clone().add(k2pos.clone().multiplyScalar(s * 0.5)), other.position);
-
-    const k4pos = vel.clone().add(k3vel.clone().multiplyScalar(s));
-    const k4vel = acceleration(other.mass, pos.clone().add(k3pos.clone().multiplyScalar(s)), other.position);
-
-    const nextPos = pos.clone().add(
-        k1pos.clone()
-            .add(k2pos.clone().multiplyScalar(2))
-            .add(k3pos.clone().multiplyScalar(2))
-            .add(k4pos)
-            .multiplyScalar(s / 6)
-    );
-
-    const nextVel = vel.clone().add(
-        k1vel.clone()
-            .add(k2vel.clone().multiplyScalar(2))
-            .add(k3vel.clone().multiplyScalar(2))
-            .add(k4vel)
-            .multiplyScalar(s / 6)
-    );
-
-    body.position.copy(nextPos);
-    body.velocity.copy(nextVel);
-}
-/* playground-fold-end */
 
 /* playground-fold */
 function resizeRendererToDisplaySize(renderer) {

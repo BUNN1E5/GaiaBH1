@@ -209,7 +209,7 @@ $$
 \vec{r}_{dir} =\frac{\vec{r}_{vel}}{||\vec{r}_{vel}||}
 $$
 
-And finally, we want to add a termination condition for rays that reach the inside of the black hole. For this, we need to check if our ray's direction is pointing in the direction of the black hole. The reasoning behind doing this as opposed to a solid sphere at the Schwarzschild radius is in the case of an observer (our camera) being inside the black hole
+And finally, we want to add a termination condition for rays that reach the inside of the black hole. For this, we need to check if our ray's direction is pointing in the direction of the black hole. The reasoning behind doing this as opposed to a solid sphere at the Schwarzschild radius is as an observer (our camera) is entering the black hole we want to render the entire world being engulfed into it.
 
 $$
 \text{terminate if} \quad ||\vec{r}|| < r_s \quad \text{and} \quad \vec{r} \cdot \vec{r}_{dir} < 0
@@ -274,7 +274,7 @@ vec3 raymarch(vec3 ro, vec3 rd) {
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-4/project.json" selected="blackhole.js"></code-playground>
 
-At this point, the shader could technically be called done; if you're fine with what we have now, feel free to skip to [Step 8](#step-8-simulating-the-orbit). But we can still make the shader better and, as an extra treat, more performant.
+At this point, the shader could technically be called done; if you're fine with what we have now, feel free to skip to [Step 8](#step-8-simulating-the-orbit). But we can still make the shader better and, as an extra treat, faster.
 
 
 ## Step 5: Runge-Kutta (RK4)

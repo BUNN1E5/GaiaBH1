@@ -10,6 +10,7 @@
   "files": {
     "index.html": {"contentType": "text/html" },
     "demo/main.js": { "contentType": "text/javascript"},
-    "demo/blackhole.js": { "contentType": "text/javascript"}
+    "demo/blackhole.js": { "contentType": "text/javascript"},
+    "demo/blackholeCamera.js": { "contentType": "text/javascript"}
   }
 }

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { pass, mrt, output, emissive } from 'three/tsl';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { BlackHoleCamera } from './blackholeCamera.js';
 import { BlackHole } from './blackhole.js';
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import { Inspector } from 'three/addons/inspector/Inspector.js';
@@ -28,7 +28,7 @@ const bloomPass = bloom( scenePassColor, 1.5, 0.4, 1 );
 
 renderPipeline.outputNode = scenePassColor.add( bloomPass );
 
-new OrbitControls(camera, renderer.domElement);
+const blackHoleCamera = new BlackHoleCamera(camera, renderer.domElement);
 
 scene.add(camera);
 
@@ -60,6 +60,8 @@ starTexture.flipY = false;
 
 const blackHole = new BlackHole(starTexture);
 blackHole.background_brightness.value = 50;
+blackHole.bh_step_mult.value = 0.25;
+blackHole.MAX_STEPS.value = 65;
 scene.backgroundNode = blackHole.main()
 
 
@@ -73,6 +75,7 @@ function render( time ) {
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
     }
+    blackHoleCamera.update();
     renderPipeline.render()
     orbit(timer.getDelta());
 
@@ -110,11 +113,21 @@ var star = {
 var referencePoint = blackhole;
 
 function orbit(dt){
-  rk4(star, blackhole, dt * simSettings.timescale);
-  rk4(blackhole, star, dt * simSettings.timescale);
+  const timestep = dt * simSettings.timescale;
+
+  const sA = acceleration(blackhole.mass, star.position, blackhole.position).multiplyScalar(timestep);
+  const bhA = acceleration(star.mass, blackhole.position, star.position).multiplyScalar(timestep);
+
+  star.velocity.add(sA);
+  star.position.addScaledVector(star.velocity, timestep);
+
+  blackhole.velocity.add(bhA);
+  blackhole.position.addScaledVector(blackhole.velocity, timestep);
 
   blackHole.black_hole_center.value.copy(blackhole.position.clone().sub(referencePoint.position).multiplyScalar(simSettings.AUScale));
   blackHole.schwarzschild_radius.value = 2 * G * blackhole.mass / (c * c) * simSettings.AUScale * simSettings.blackHoleScaleMult * simSettings.scaleMult;
+  blackHoleCamera.shwarzschildRadius = blackHole.schwarzschild_radius.value;
+  blackHoleCamera.minDistance = .076 * blackHoleCamera.shwarzschildRadius;
 
   blackHole.star_pos.value.copy(star.position.clone().sub(referencePoint.position).multiplyScalar(simSettings.AUScale));
   blackHole.star_radius.value = .97 * SOLAR_RADII_TO_AU * simSettings.AUScale * simSettings.starScalMult * simSettings.scaleMult;
@@ -126,42 +139,6 @@ function acceleration(otherMass, selfPosition, otherPosition) {
   const numerator = r.clone().normalize().multiplyScalar(G * otherMass);
   const denominator = r.lengthSq(); //r^2 because noramlize already divides by r
   return numerator.divideScalar(denominator);
-}
-
-function rk4(body, other, s) {
-    const pos = body.position.clone();
-    const vel = body.velocity.clone();
-
-    const k1pos = vel.clone();
-    const k1vel = acceleration(other.mass, pos, other.position);
-
-    const k2pos =  vel.clone().add(k1vel.clone().multiplyScalar(s * 0.5));
-    const k2vel = acceleration(other.mass, pos.clone().add(k1pos.clone().multiplyScalar(s * 0.5)), other.position);
-
-    const k3pos = vel.clone().add(k2vel.clone().multiplyScalar(s * 0.5));
-    const k3vel = acceleration(other.mass, pos.clone().add(k2pos.clone().multiplyScalar(s * 0.5)), other.position);
-
-    const k4pos = vel.clone().add(k3vel.clone().multiplyScalar(s));
-    const k4vel = acceleration(other.mass, pos.clone().add(k3pos.clone().multiplyScalar(s)), other.position);
-
-    const nextPos = pos.clone().add(
-        k1pos.clone()
-            .add(k2pos.clone().multiplyScalar(2))
-            .add(k3pos.clone().multiplyScalar(2))
-            .add(k4pos)
-            .multiplyScalar(s / 6)
-    );
-
-    const nextVel = vel.clone().add(
-        k1vel.clone()
-            .add(k2vel.clone().multiplyScalar(2))
-            .add(k3vel.clone().multiplyScalar(2))
-            .add(k4vel)
-            .multiplyScalar(s / 6)
-    );
-
-    body.position.copy(nextPos);
-    body.velocity.copy(nextVel);
 }
 
 function resizeRendererToDisplaySize(renderer) {
@@ -181,14 +158,14 @@ const backgroundTextures = {
 };
 
 const params = {
-  background: 'starmap'
+  background: 'starmap',
+  use_rk4: false
 };
 
 const queryString = window.location.search; 
 const urlParams = new URLSearchParams(queryString);
 const noInspector = urlParams.has('noinspector'); 
 
-console.log(noInspector);
 if(!noInspector) {
   renderer.inspector = new Inspector();
   const gui = renderer.inspector.createParameters('Settings');
@@ -200,6 +177,7 @@ if(!noInspector) {
       blackHole.background_brightness.value = backgroundTextures[value].brightness;
   });
   gui.add(blackHole.background_brightness, 'value', 1, 100).name('Background Brightness');
+
   gui.addSelect(simSettings, 'referencePoint', ['blackhole', 'star', '(0,0,0)']).name('Reference Point').onChange((value) => {
       switch(value){
           case 'blackhole':
@@ -213,6 +191,7 @@ if(!noInspector) {
               break;
       }
   });
+  
 
   const orbitFolder = gui.addFolder('Orbit');
   orbitFolder.add(simSettings, 'AUScale', 1, 1000).name('AU Scale');
@@ -224,6 +203,7 @@ if(!noInspector) {
   scaleFolder.add(simSettings, 'starScalMult', 0, 100).name('Star Scale');
 
   const uniformsFolder = gui.addFolder('Shader Uniforms');
+  uniformsFolder.add(blackHole.use_rk4, 'value').name("Use RK4");
   uniformsFolder.add(blackHole.MAX_STEPS, 'value', 1, 200, 1).name('Max Steps');
   uniformsFolder.add(blackHole.EPSILON, 'value', 0.001, 2).name('Hit Epsilon');
   uniformsFolder.add(blackHole.bh_step_mult, 'value', 0.01, 1).name('BH Step Mult');

@@ -43,6 +43,8 @@ export class BlackHole{
 
     star_radius = uniform(1);
 
+    use_rk4 = uniform(true);
+
     black_hole_center = uniform(new Vector3());
     schwarzschild_radius = uniform(1);
     
@@ -111,9 +113,15 @@ export class BlackHole{
             });
 
             const step_size = min(step, rlen.mul(this.bh_step_mult)).toVar();
-            const nstate = this.rk4(rpos, rdir, h2, step_size);
-            rpos.assign(nstate[0]);
-            rdir.assign(nstate[1].normalize()); //Light still has a max speed of c=1
+            
+            If(this.use_rk4, ()=>{
+                const nstate = this.rk4(rpos, rdir, h2, step_size);
+                rpos.assign(nstate[0]);
+                rdir.assign(nstate[1].normalize()); //Light still has a max speed of c=1
+            }).Else(()=>{
+                rpos.addAssign(rdir.mul(step_size));
+                rdir.assign(rdir.add(this.geodesic(rpos, h2).mul(step_size)).normalize());
+            })
         });
 
         If(not(hit), ()=>{
