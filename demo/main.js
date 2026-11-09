@@ -164,7 +164,7 @@ const params = {
 
 const queryString = window.location.search; 
 const urlParams = new URLSearchParams(queryString);
-const noInspector = urlParams.has('noinspector'); 
+const noInspector = urlParams.has('noinspector') || urlParams.has('mini'); 
 
 if(!noInspector) {
   renderer.inspector = new Inspector();
