@@ -483,6 +483,7 @@ $$
 r_{s} = d - r_{bh} = 2.00522 - 0.18283 = 1.82239 \, AU
 $$
 And of course these are just distances from the barycenter, we want to define their positions in a vector. We will assume `(0,0,0)` as the barycenter, and have the orbit be along the $X$ axis. So our initial positions will be as follows:
+
 $$
 \begin{array}{ll}
 \vec{p}_{bh} &= {-}(0.18283, 0, 0) \, AU\\
@@ -514,6 +515,7 @@ v_s = v - v_{bh} = 10.67716 - .97351 = 9.70365 \, AU/y
 $$
 
 And again we need to define these as a vector, the direction is perpendicular to the direction of our inital positions. We will choose the $Z$ axis as our direction
+
 $$
 \begin{array}{ll}
 \vec{v}_{bh} &= {-}(0, 0, 0.97351) \, AU/y \\

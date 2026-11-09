@@ -186,6 +186,9 @@ const params = {
 
 renderer.inspector = new Inspector();
 const gui = renderer.inspector.createParameters('Settings');
+
+renderer.inspector.hide();
+
 gui.addSelect(params, 'background', ['cubemap', 'starmap']).name('Background').onChange((value) => {
     blackHole.cubemap.value = backgroundTextures[value].texture;
     blackHole.background_brightness.value = backgroundTextures[value].brightness;
