@@ -162,9 +162,31 @@ const params = {
   use_rk4: false
 };
 
+
+
 const queryString = window.location.search; 
 const urlParams = new URLSearchParams(queryString);
 const noInspector = urlParams.has('noinspector') || urlParams.has('mini'); 
+
+
+
+if(urlParams.has('mini') || urlParams.has('stoppable')){
+  //So we can stop it from a main page
+  window.addEventListener("message", (event)=>{
+    if (event.origin !== window.location.origin) return;
+
+    const msg = event.data;
+    if (typeof msg !== "object" || msg === null) return;
+
+    if (msg.type === "halt" || msg.type === "stop") {
+      renderer.setAnimationLoop( null );
+    }
+
+    if (msg.type === "resume" || msg.type === "start") {
+      renderer.setAnimationLoop( render );
+    }
+  })
+}
 
 if(!noInspector) {
   renderer.inspector = new Inspector();
