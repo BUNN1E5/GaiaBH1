@@ -81,8 +81,6 @@ const c = 63241.08; //Speed of light in AU/yr
 const AU_TO_SOLAR_RADII = 215.032; //1 AU = 215.032 Solar Radii
 const SOLAR_RADII_TO_AU = 1 / AU_TO_SOLAR_RADII; //1 Solar Radii = 0.00465047 AU
 
-//Center point of our sim
-var referencePoint = new THREE.Vector3(0,0,0);
 
 //Inital Values for our Stellar Bodies
 var blackhole = {
@@ -97,16 +95,18 @@ var star = {
   velocity: new THREE.Vector3(0, 0, 9.70365)
 }
 
+//Center point of our sim
+var referencePoint = blackhole;
+
+
 function orbit(dt){
   rk4(star, blackhole, dt * timescale);
   rk4(blackhole, star, dt * timescale);
 
-  referencePoint.copy(blackhole.position);
-
-  blackHole.black_hole_center.value.copy(blackhole.position.clone().sub(referencePoint).multiplyScalar(AUScale ));  
+  blackHole.black_hole_center.value.copy(blackhole.position.clone().sub(referencePoint.position).multiplyScalar(AUScale ));  
   blackHole.schwarzschild_radius.value = 2 * G * blackhole.mass / (c * c) * AUScale * blackHoleScaleMult;
 
-  blackHole.star_pos.value.copy(star.position.clone().sub(referencePoint).multiplyScalar(AUScale));
+  blackHole.star_pos.value.copy(star.position.clone().sub(referencePoint.position).multiplyScalar(AUScale));
   blackHole.star_radius.value = .97 * SOLAR_RADII_TO_AU * AUScale * starScalMult;
 }
 
