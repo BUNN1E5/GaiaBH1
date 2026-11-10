@@ -52,6 +52,7 @@ scene.backgroundNode = blackHole.main()
 renderer.setAnimationLoop( render );
 /* playground-fold-end */
 const timer = new THREE.Timer();
+timer.connect(document);
 function render( time ) {
     /* playground-fold */
 
