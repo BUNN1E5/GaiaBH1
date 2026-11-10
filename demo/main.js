@@ -68,7 +68,9 @@ scene.backgroundNode = blackHole.main()
 renderer.setAnimationLoop( render );
 const timer = new THREE.Timer();
 function render( time ) {
-
+    if(document.hidden) //Dont run if the user isnt looking at our page
+      return;
+    
     timer.update(time);
     if (resizeRendererToDisplaySize(renderer)) {
         canvas = renderer.domElement;
