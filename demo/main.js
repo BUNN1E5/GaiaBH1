@@ -183,6 +183,7 @@ if(urlParams.has('mini') || urlParams.has('stoppable')){
     }
 
     if (msg.type === "resume" || msg.type === "start") {
+      timer.reset();
       renderer.setAnimationLoop( render );
     }
   })

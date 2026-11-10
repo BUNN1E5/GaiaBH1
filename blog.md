@@ -16,7 +16,7 @@ Before we do anything with the black hole, we need to set up our project. We wil
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/tutorial/step-0/project.json"></code-playground>
 
-You should see a green box that you can look around with your mouse. I kept the standard mesh box in place so we can verify that something is rendering properly. We will remove it in the next part.
+You should see a green box that you can look around and zoom in and out with your mouse . I kept the standard mesh box in place so we can verify that something is rendering properly. We will remove it in the next part.
 
 ## Step 1: Basic Raymarching
 
