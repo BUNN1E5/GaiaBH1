@@ -1,4 +1,5 @@
 /* playground-fold */
+import { Vector3 } from 'three';
 import {
     Loop,
     Fn,
@@ -13,6 +14,7 @@ import {
     not,
     array,
     normalize,
+    uniform,
     uniformCubeTexture,
     cameraPosition,
     cameraWorldMatrix,

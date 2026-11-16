@@ -10,6 +10,8 @@ I had originally written the shader in the Godot shader language, but the live w
 You might notice that the signature accretion disks are missing. That is because the black hole we are modeling does not have them, so our shader does not need to render them either.
 This post goes over writing the black hole shader and the orbit controller. If you want to skip the setup and jump straight to the interesting parts, you can jump to [Step 4: Gravitational Lensing](#step-4-gravitational-lensing).
 
+Note: In the code playgrounds I collapse code from previous parts, if you want to look at them just click the `...` and it'll expand that section.
+
 ## Step 0: Setting Up Three.js
 
 Before we do anything with the black hole, we need to set up our project. We will start with a modified version of Three.js' [Creating a Scene](https://threejs.org/manual/#creating-a-scene) tutorial.
