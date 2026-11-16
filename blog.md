@@ -552,6 +552,7 @@ From here, it is essentially equivalent to our Euler or RK4 implementation above
 And that's everything! We now have our completed black hole scene!
 
 ### Full Demo Code
+There are a couple of things that I added for the live demo like inspector, and the custom camera controller. I just don't go over them in the tutorial
 
 <code-playground project-src="https://goldenneedham.com/demos/GaiaBH1/project.json" selected="demo/main.js" preview-aspect-ratio="1" editor-height="600px"></code-playground>
 
