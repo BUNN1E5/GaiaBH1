@@ -3,8 +3,10 @@ import * as THREE from 'three';
 import { pass, mrt, output, emissive } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { BlackHole } from './blackhole.js';
+/* playground-fold-end */ 
+
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
-/* playground-fold-end */ /* playground-fold */
+/* playground-fold */
 let canvas = document.querySelector( '#c' );
 
 const renderer = new THREE.WebGPURenderer({antialias: true, canvas });
